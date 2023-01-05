@@ -1,0 +1,205 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openofpublicfacpage" lay-filter="publicfacform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.name'/></label><!-- 名称 -->
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-name" id ="edit-name" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.publicF.enter.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-name"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+        </div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			    <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	            <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="find-floor">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			       </#if>
+	             </select>
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div> 
+	    </#if>
+	    <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.type'/></label><!-- 类型 -->
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-categoryId" id="edit-categoryId" lay-filter="upCategory">
+	               <option value="">-<@spring.message code='mess.publicF.enter.type'/>-</option><!--请选择类型 -->
+	               <#if userType ?? && userType != -2>
+	                <#if publicCate??>
+						<#list publicCate as publicC>
+							<option value="${publicC.id}">${publicC.name}</option>
+						</#list>
+				    </#if>
+				   <#elseif userType == -2>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.floor'/></label><!-- 楼层 -->
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-floor" id="edit-floor" lay-filter="upcheck">
+	               <option value="">-<@spring.message code='mess.publicF.enter.floor'/>-</option><!--请选择楼层 -->
+	               <#if userType ?? && userType != -2>
+	                <#if floorlist??>
+						<#list floorlist as floor>
+							<#if floor?number gt 0>
+								<option value="${floor}">${floor}<@spring.message code='mess.publicF.layer'/></option><!--层 -->
+							<#else >
+								<option value="${floor}">${floor-1}<@spring.message code='mess.publicF.layer'/></option><!--层-->
+							</#if>
+						</#list>
+				    </#if>
+				   <#elseif userType == -2>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.area'/></label><!-- 区域 -->
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-area" id ="edit-area" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.publicF.enter.area'/>">
+	            </div>
+	            <div class="layui-form-mid layui-word-aux" id="check-area"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+        </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.point'/></label><!-- 点位 -->
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-point" id ="edit-point" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.publicF.enter.point'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-point"><@spring.message code='mess.publicF.10char'/></div><!-- 10个字符以内 -->
+        </div>
+        <div class="layui-form-item" id="public_passedfloor">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.pass.floor'/></label><!-- 经停楼层 -->
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-passedfloor" id ="edit-passedfloor" class="layui-input" autocomplete="off" placeholder="<@spring.message code='mess.publicF.enter.passfloor'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-point"><@spring.message code='mess.publicF.pass.note'/></div><!-- 多个楼层用,分隔 -->
+	    </div>
+	    <div class="layui-form-item" id="public_direction">
+	          <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.way'/></label><!-- 方向 -->
+              <div class="layui-input-inline" id="US-form-select">
+                <select name="edit-direction" id="edit-direction" lay-filter="upway">
+                 <option value="">-<@spring.message code='mess.publicF.enter.way'/>-</option><!-- 请选择楼梯方向 -->
+                 <option value="up" selected="selected"><@spring.message code='mess.publicF.up'/></option><!--向上-->
+                 <option value="down"><@spring.message code='mess.publicF.down'/></option><!--向下-->
+                 <option value="all"><@spring.message code='mess.publicF.all'/></option><!--全部-->
+                </select>
+              </div>
+              <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item" id="public_ESreach_1">
+	         <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.arrive.floor'/></label><!-- 到达楼层 -->
+	         <div class="layui-input-inline" style="width: 80px;">
+                  <input type="text" name="reachFloor" id="reachFloor" oninput = "value=value.replace(/[^\d]/g,'')" class="layui-input">
+             </div>
+             <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+             <div class="layui-form-mid layui-word-aux" id="check-point"><@spring.message code='mess.publicF.10char'/></div><!-- 10个字符以内 -->
+        </div>
+	    <div class="layui-form-item" id="public_ESreach_2">
+	         <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.updown.floor'/></label><!-- 上下楼层 -->
+	         <div class="layui-input-inline" style="width: 80px;">
+                  <input type="text" name="reachFloor_1" id="reachFloor_1" oninput = "value=value.replace(/[^\d]/g,'')" class="layui-input">
+             </div>
+             <div class="layui-input-inline" style="width: 6px;">
+                  -
+             </div>
+             <div class="layui-input-inline" style="width: 80px;">
+                  <input type="text" name="reachFloor_2" id="reachFloor_2" oninput = "value=value.replace(/[^\d]/g,'')" class="layui-input">
+             </div>
+             <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+             <div class="layui-form-mid layui-word-aux" id="check-area"><@spring.message code='mess.publicF.arrive.note'/></div><!-- 扶梯向上或向下所到达的楼层 -->
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.showlogo'/></label><!-- LOGO显示 -->
+	            <div class="layui-input-inline">
+					<select name="edit-showLogo" id="edit-showLogo">
+		                <option value="1" selected="selected"><@spring.message code='mess.publicF.show'/></option><!--显示-->
+		                <option value="0"><@spring.message code='mess.publicF.hide'/></option><!--不显示-->
+	                </select>
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicF.status'/></label><!-- 状态 -->
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-status" id="edit-status">
+                <option value="1" selected="selected"><@spring.message code='mess.publicF.enable'/></option><!--启用-->
+                <option value="0"><@spring.message code='mess.publicF.disable'/></option><!--未启用-->
+               </select>
+             </div>
+        </div>
+        <div class="layui-form-item">
+        	<div class="layui-upload" id="US-form-upload">
+	              <button type="button" class="layui-btn" id="test-upload-logo"><!--上传现场图 --><@spring.message code='mess.publicF.upscene'/></button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" name="img-upload-logo" id="img-upload-logo" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 100px;"><span><!--注：支持jpg,png类型上传<br>图片大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.activity.note'/></span></div>
+	                <p id="p-upload-logo"></p>
+	                <input type="hidden" name="logoload" id ="logoload">
+	                <input type="hidden" name="logo" id ="logo">
+	                <input type="hidden" name="logoUrl" id ="logoUrl">
+	              </div>
+	        </div>
+	    </div>
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-name').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-name').text("<@spring.message code='mess.bformat.beyond20chart'/>");//当前已超出20字符
+			$('#check-name').css("color","red");
+		}else{
+			$('#check-name').text("<@spring.message code='mess.bformat.20chart'/>");//20个字符以内
+			$('#check-name').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-area').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-area').text("<@spring.message code='mess.bformat.beyond20chart'/>");//当前已超出20字符
+			$('#check-area').css("color","red");
+		}else{
+			$('#check-area').text("<@spring.message code='mess.bformat.20chart'/>");//20个字符以内
+			$('#check-area').css("color","#999");
+		}
+	});
+	
+	//10字符以内
+	$('#edit-point').on("input propertychange", function () {
+		if($(this).val().length > 10){
+			$('#check-point').text("<@spring.message code='mess.publicF.over.10char'/>");//当前已超出10字符
+			$('#check-point').css("color","red");
+		}else{
+			$('#check-point').text("<@spring.message code='mess.publicF.10char'/>");//10个字符以内
+			$('#check-point').css("color","#999");
+		}
+	});
+	
+	
+</script>
+</body>

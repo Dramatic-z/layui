@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>商场详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px; */
+     white-space: normal;
+  }  
+  </style>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">商场基本信息</div>
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	      商场名： <div class="layui-inline">
+                <input class="layui-input" name="nameMarket" id="search-market" autocomplete="off">
+            </div>
+      	
+		    <button class="layui-btn" data-type="reload">  搜索</button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()">重置</button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload" style="margin: 50px;"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="addspoint">添加商场</button>
+              </div>
+            </script>
+            <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			  <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="Import">导入初始化数据</a>
+			  <a class="layui-btn layui-btn-xs layui-btn-warm" href="http://106.14.220.4/guide/EXCEL/excel导入模板.xls">下载导入模板</a>
+			</script>
+              <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <form class="layui-form" hidden="" id="openofImportpage">
+	  		<div class="layui-form-item" style="margin-top: 20px;">
+	            <label class="layui-form-label">选择文件</label>
+	            <div class="layui-input-block">
+                  <input type="file" name="file" id="ExcelFolder" value="请选择文件" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="check-marketName">请选择excel文件（.xls）</div>
+		    </div>
+	</form>
+  </div>
+  
+  <#include '/views/market/marketedit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer;
+	 	 
+  element.render();
+  form.render(null, 'marketform');
+    	
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/market/queryMarketList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+	    ,title: '商场信息表'
+	    ,cols: [[
+		  /* {type: 'checkbox', fixed: 'left'}
+	      , */{field:'id', title:'序号', width:80,templet:'#zizeng',align:'center'}
+	      ,{field:'marketName', title:'商场名', width:200,align:'center'}
+	      ,{field:'marketNameeng', title:'商场英文名', width:200,align:'center'}
+	      ,{field:'memo', title:'城市', width:200,align:'center'}
+	      ,{field:'flist', title:'商场楼层', width:200,align:'center'}
+	      ,{field:'finalmodiftime', title:'创建时间',align:'center'}
+	  	  ,{fixed: 'right',title:'操作',toolbar:'#test-table-barDemo',width:280,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+   });
+   
+   //头工具栏事件
+   table.on('toolbar(test-table-reload)', function(obj){
+   //var checkStatus = table.checkStatus(obj.config.id);
+     switch(obj.event){
+	      case 'addspoint':
+	    	  form.val("marketform", {
+	    		   "edit-marketNameeng": null
+     	    	   ,"edit-marketName": null
+				   ,"floor_min": null
+				   ,"floor_max": null
+			  });
+	    	layer.open({
+	            type: 1,
+	            title: '添加操作',
+	            skin: 'layui-layer-rim',
+	            area: ['800px', '360px'],
+	            btn: ['添加', '取消'],
+	            content: $('#openofmarketpage'),
+	            yes: function(index, layero){
+	            	 var mName =$("#edit-marketName").val();
+	            	 var mNameeng =$("#edit-marketNameeng").val();
+	            	 var memo =$("#edit-city").val();
+	            	 var floormin =$("#floor_min").val();
+	            	 var floormax =$("#floor_max").val();
+	            	 if(mName!=null&&mName!=''&&mNameeng!=''&&mNameeng!=null&&memo!=null&&memo!=''&&floormin!=null&&floormin!=''&&floormax!=null&&floormax!=''){
+	            		 if(mName.length<=20&&mNameeng.length<=20&&memo.length<=10){
+		                	 $.ajax({
+			                     url: '${rc.contextPath}/market/addMarket',
+			                     type: "POST",
+			                     data:{marketName:mName,marketNameeng:mNameeng,memo:memo,begfloor:floormin,endfloor:floormax},
+			                     dataType: 'json',
+			                     success: function (result) {
+			                  	     if ("0" == result.code) {
+			                  		 	 layer.msg(result.msg);
+			                         }else{
+			                        	 layer.msg('保存失败');
+			                         }
+			                  	     layer.close(index);
+			                  	     tableinit.reload({
+			                  	    	   where: {}
+			                  	    	  ,page: {curr: 1}
+			                  	     });
+			                     }
+			                 });
+	                	 }else{
+		                	 layer.msg('所填字符超出上限。');
+		                 }
+	                 }else{
+	                	 layer.msg('必填项不可为空');
+	                 }
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	        }); 
+	        form.render();
+	  	  break;
+	  };
+    });
+ 	
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  $.ajax({
+              url: '${rc.contextPath}/market/toSelectMarketById',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	var upmark = result.data;
+           	    	form.val("marketform", {
+           	    		"edit-id": upmark.id
+           	    	   ,"edit-marketName": upmark.marketName
+    				   ,"edit-marketNameeng": upmark.marketNameeng
+    				   ,"edit-city": upmark.memo
+    				   ,"floor_min": upmark.begfloor
+    				   ,"floor_max": upmark.endfloor
+    				});
+           	    	form.render();
+           	    	layer.open({
+        	            type: 1,
+        	            title: '编辑操作',
+        	            skin: 'layui-layer-rim',
+        	            area: ['800px', '360px'],
+        	            btn: ['提交', '取消'],
+        	            content: $("#openofmarketpage"),
+        	            yes: function(index, layero){
+        	            	 var id =$("#edit-id").val();
+        	            	 var mName =$("#edit-marketName").val();
+        	            	 var mNameeng =$("#edit-marketNameeng").val();
+        	            	 var memo =$("#edit-city").val();
+        	            	 var floormin =$("#floor_min").val();
+        	            	 var floormax =$("#floor_max").val();
+        	            	 if(mName!=null&&mName!=''&&mNameeng!=''&&mNameeng!=null&&memo!=null&&memo!=''&&floormin!=null&&floormax!=null){
+        	            		 if(mName.length<=20&&mNameeng.length<=20&&memo.length<=10){
+        		                	 $.ajax({
+        			                     url: '${rc.contextPath}/market/updateMarket',
+        			                     type: "POST",
+        			                     data:{id:id,marketName:mName,marketNameeng:mNameeng,memo:memo,begfloor:floormin,endfloor:floormax},
+        			                     dataType: 'json',
+        			                     success: function (result) {
+        			                  	     if (result.data!=null) {
+        			                  		 	 layer.msg(result.msg);
+        			                  		 }else{
+        			                        	 layer.msg('保存失败');
+        			                         }
+        			                  	     layer.close(index);
+	  			                     	     tableinit.reload({
+	  			                     	    	   where: {}
+	  			                     	    	  ,page: {curr: 1}
+	  			                     	     });
+        			                  	 }
+        			                 });
+        	                	 }else{
+        		                	 layer.msg('所填字符超出上限。');
+        		                 }
+        	                 }else{
+        	                	 layer.msg('必填项不可为空');
+        	                 }
+        	            },
+        	            btn2: function(index, layero){layer.close(index)}
+        	        });
+                  	form.render();
+                 }
+           	  }
+          });
+      }else if(obj.event === 'Import'){
+    	  layer.open({
+	            type: 1,
+	            title: '导入操作',
+	            skin: 'layui-layer-rim',
+	            area: ['450px', '250px'],
+	            btn: ['提交', '取消'],
+	            content: $("#openofImportpage"),
+	            yes: function(index, layero){
+	            	var ExcelFlie =$("#ExcelFolder").val();
+	            	if(ExcelFlie==null||ExcelFlie==''){
+	            		layer.msg('请先选择文件');
+	            		return false;
+	            	}
+	            	var  formData = new FormData($("#openofImportpage")[0]);
+	            	formData.append("market",data.id);
+	            	$.ajax({
+	                     url: '${rc.contextPath}/market/excelImportMarketData',
+	                     type: "POST",
+	                     contentType:false,
+	                     processData:false,
+	                     data:formData,
+	                     dataType: 'json',
+	                     success: function (result) {
+	                    	 if (result!=null&&result.code==0) {
+	                  		 	 layer.msg(result.msg);
+	                  		 }else if(result!=null&&result.code==1){
+	                        	 layer.msg(result.msg);
+	                         }else{
+	                        	 layer.msg("导入失败");
+	                         }
+	                  	     layer.close(index);
+                     	     tableinit.reload({
+                     	    	   where: {}
+                     	    	  ,page: {curr: 1}
+                     	     });
+	                  	}
+	                });
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	      });
+    	  /* layer.confirm('真的删除么', function(index){
+  	        window.location = "${rc.contextPath}/market/deleteMarket?id="+data.id;
+  	        layer.close(index);
+  	      }); */
+      }
+    });
+    
+     var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var market = $('#search-market');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	marketName: market.val()
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     //开始日期
+     var insStart = laydate.render({
+     	elem: '#test-startTime'
+      // ,min: 0
+       ,done: function(value, date){
+         //更新结束日期的最小日期
+         insEnd.config.min = lay.extend({}, date, {
+           month: date.month - 1
+         });
+         //自动弹出结束日期的选择器
+        insEnd.config.elem[0].focus();
+       }
+     });
+     
+     //结束日期
+     var insEnd = laydate.render({
+       elem: '#test-endTime'
+      // ,min: 0
+       ,done: function(value, date){
+         //更新开始日期的最大日期
+         insStart.config.max = lay.extend({}, date, {
+           month: date.month - 1
+         });
+       }
+     });
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+    <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

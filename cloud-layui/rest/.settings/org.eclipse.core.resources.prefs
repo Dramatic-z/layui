@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+encoding//src/main/java=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//src/main/resources/html/spring.ftl=UTF-8
+encoding//src/main/resources/i18n/mess.properties=UTF-8
+encoding//src/main/resources/i18n/mess_en_US.properties=UTF-8
+encoding//src/main/resources/i18n/mess_zh_CN.properties=UTF-8
+encoding//src/main/resources/i18n/mess_zh_HK.properties=UTF-8
+encoding//src/test/java=UTF-8
+encoding//src/test/resources=UTF-8
+encoding/<project>=UTF-8

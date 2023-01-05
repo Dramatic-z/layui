@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.bformat.bformat'/><!-- 商铺基本信息 --></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+  } 
+   /* .laytable-cell-1-logoUrl{
+     height: auto!important;
+     max-width: 100%;
+  } */  
+  </style>
+  <style type="text/css" <!--en_US-->>
+    
+  </style>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!--商铺基本信息--><@spring.message code='mess.store.info'/></div>
+          <input type="hidden" name="txtendflag" id ="txtendflag">
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form " style="margin-bottom: 10px;" lay-filter="component-form-group">
+            <div class="layui-form-item">
+                  <@spring.message code='mess.store.Chinese.name'/><!--商铺中文名 -->： <div class="layui-inline">
+                            <input class="layui-input" name="nameChina" id="search-nameChina" autocomplete="off">
+                          </div>
+                  <@spring.message code='mess.store.English.name'/><!--商铺英文名 -->： <div class="layui-inline">
+                            <input class="layui-input" name="nameEng" id="search-nameEng" autocomplete="off">
+                          </div>
+                  <#if userType ?? && userType == -2>
+                    商场：  <div class="layui-inline">
+                          <select name="marketId" lay-filter="findfloor"  id="test-marketId">
+                            <option value="">请选择商场</option>
+                            <#if marketlist??>
+                                <#list marketlist as market>
+                                    <#if userType == -2>
+                                        <option value="${market.id}">${market.marketName}</option>
+                                    </#if>
+                                </#list>
+                            </#if>
+                          </select>
+                        </div>
+                   </#if>
+                 <@spring.message code='mess.store.floor'/><@spring.message code='mess.store.floor'/><!--楼层 -->：<div class="layui-inline">
+                          <select name="floor" id="test-floor">
+                            <option value="">-<@spring.message code='mess.store.enter.floor'/>-</option><!--请选择楼层 -->
+                            <#if userType ?? && userType != -2>
+                                <#if floorlist??>
+                                    <#list floorlist as floor>
+                                        <#if floor?number gt 0>
+                                            <option value="${floor}">${floor}<@spring.message code='mess.store.floor.layer'/></option><!--层 -->
+                                        <#else >
+                                            <option value="${floor}">${floor-1}<@spring.message code='mess.store.floor.layer'/></option><!--层-->
+                                        </#if>
+                                    </#list>
+                               </#if>
+                            <#elseif userType == -2>
+                            </#if>
+                          </select>
+                        </div>
+                业态：  <div class="layui-inline">
+                    <select name="bigFormatId" id="test-bigFormatId">
+                        <option value="">请选择一级业态</option>
+                        <#if bformatlist??>
+                            <#list bformatlist as bigFormat>
+                                <option value="${bigFormat.id}">${bigFormat.nameChina}</option>
+                            </#list>
+                        </#if>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                点位： <div class="layui-inline" style="margin-left: 43px;">
+                    <input class="layui-input" name="point" id="search-point" autocomplete="off">
+                </div>
+
+                <@spring.message code='mess.store.status'/><!--状态 -->：<div class="layui-inline" style="margin-left: 45px;">
+                    <select name="status" id="test-status">
+                        <option value="">-<@spring.message code='mess.store.enter.status'/></option>-<!--请选择状态 -->
+                        <option value="1"><@spring.message code='mess.store.opening'/></option><!--开业 -->
+                        <option value="0"><@spring.message code='mess.store.Close'/></option><!--闭业 -->
+                    </select>
+                </div>
+                <button class="layui-btn" data-type="reload"><!--搜索--><@spring.message code='mess.layui.search'/></button>
+                <button class="layui-btn" onclick="javascript:window.location.reload()"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+            </div>
+
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="add"><!--添加商铺--><@spring.message code='mess.store.add'/></button>
+				<#if userType != 2>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="batchoperation"><!--批量操作--><@spring.message code='mess.store.batch'/></button>
+				</#if>
+              </div>
+            </script>
+            
+            <script type="text/html" id="test-table-barDemo">
+			{{#  if(d.status == 1){ }}
+		 		<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="enable">禁用</a>
+			{{#  } else { }}
+		 		<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="disable">启用</a>
+			{{#  } }}
+			  <a class="layui-btn layui-btn-xs" lay-event="edit"><!--编辑 --><@spring.message code='mess.layui.editor'/></a>
+			  <#if userType??>
+		  	    <#if userType != 2>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><!--删除--><@spring.message code='mess.layui.delete'/></a>
+			    </#if>
+ 		      </#if>		
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form class="layui-form" hidden="" id="openofexportpage" lay-filter="exportform">
+	  		<div class="layui-form-item" style="margin-top: 20px;">
+		            <label class="layui-form-label"><!--导出方式--><@spring.message code='mess.store.Exportway'/></label>
+		            <div class="layui-input-block">
+	                  <input type="radio" name="type" value="0" title="<@spring.message code='mess.store.Exportall'/>" checked lay-filter="change-type-all"><!--全部导出-->
+	                  <input type="radio" name="type" value="1" title="<@spring.message code='mess.store.optional'/>" lay-filter="change-type-num"><!--自选-->
+	                </div>
+		    </div>
+	        <div class="layui-form-item" id="datanumDiv" style="display:none;">
+		            <label class="layui-form-label"><@spring.message code='mess.store.export.quantity'/></label><!--需导出数量-->
+		            <div class="layui-input-inline">
+		              <input type="number" name="datanum" id="datanum" placeholder="<@spring.message code='mess.store.enter.export.quantity'/>" autocomplete="off" class="layui-input">
+		            </div>
+		            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+		            <div class="layui-form-mid layui-word-aux" id="check-content"><@spring.message code='mess.store.enter.export.quantity'/></div><!--请输入所需数量-->
+		    </div>
+		    
+	</form>
+  </div>
+  
+  <div class="layui-form" hidden="" id="openofbatch">
+        <label class="layui-form-label"><!--操作选项--><@spring.message code='mess.store.enter.opera.option'/></label>
+  		<div class="layui-input-inline" id="radio_val">
+            <input type="radio" name="operation" value="0" id="0" title="<@spring.message code='mess.store.enter.opera.close'/>"><!--批量闭业-->
+            <input type="radio" name="operation" value="2" id="2" title="<@spring.message code='mess.store.enter.opera.open'/>"><!--批量开业-->
+            <input type="radio" name="operation" value="1" id="1" title="<@spring.message code='mess.store.enter.opera.dele'/>"><!--批量删除-->
+        </div>
+  </div>
+  
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form;
+	 	 
+	var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/store/getStoreList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+	    ,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIPS' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    }]
+	    ,title: "<@spring.message code='mess.store.export.name'/>"/* 商铺基本信息表 */
+	    ,cols: [[
+		  {type: 'checkbox', fixed: 'left'}
+	      ,{field:'id',/*序号 */title:"<@spring.message code='mess.layui.serial.number'/>", width:80,templet:'#zizeng',align:'center'}
+	      ,{field:'logoUrl',/*LOGO*/title:"<@spring.message code='mess.store.LOGO'/>", align:'center', width:100, templet: '#imgTpl'}
+	      ,{field:'nameChina',/*商铺中文名称 */title:"<@spring.message code='mess.store.Chinese.name'/>", width:150 ,align:'center'}
+	  	  ,{field:'nameEng',/*商铺英文名称 */title:"<@spring.message code='mess.store.English.name'/>", width:150,align:'center'}
+	      ,{field:'bFormat',/*一级业态*/title:"<@spring.message code='mess.store.bformat'/>", width:150,align:'center'}
+	      ,{field:'sFormat',/*二级业态 */title:"<@spring.message code='mess.store.sformat'/>", width:150,align:'center'}
+	      ,{field:'point',/*位置 */title:"<@spring.message code='mess.store.location'/>", width:250,align:'center'}
+	      ,{field:'status',/*状态 */title:"<@spring.message code='mess.store.status'/>", width:65 ,templet: '#statusTpl',align:'center'}
+	      ,{field:'finalmodiftime',/*商铺最后修改时间 */title:"<@spring.message code='mess.store.Last.modified'/>",align:'center'}
+	  	  ,{fixed:'right',/*操作 */title:"<@spring.message code='mess.layui.operation'/>",toolbar:'#test-table-barDemo',width:200,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+    });
+   
+    //头工具栏事件
+    table.on('toolbar(test-table-reload)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+	      case 'add':
+	    	var Toadd ="${rc.contextPath}/store/toStoreAddPage";
+	    	parent.layui.index.openTabsPage(Toadd,"<@spring.message code='mess.store.add'/>");//添加商铺
+	      break;
+	      case 'batchoperation':
+	        var data = checkStatus.data;
+	        if(data.length > 0){
+	        	var arr =[];
+		        $.each(data,function(i,d){
+		        	arr.push(d.id);
+		        });
+		        layer.open({
+		            type: 1,
+		            title: "<@spring.message code='mess.store.enter.opera.option'/>",//操作选项
+		            skin: 'layui-layer-rim',
+		            area: ['460px', '200px'],
+		            btn: ["<@spring.message code='mess.bformat.submit'/>","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+		            content: $("#openofbatch"),
+		            yes: function(index, layero){
+		            	 var tar= $('input[name="operation"]:checked').val();
+		            	 var type;
+		            	 if(tar ==1 ){
+		            		 type="<@spring.message code='mess.store.enter.opera.dele'/>";//批量删除
+		            	 }else if(tar ==0){
+		            		 type="<@spring.message code='mess.store.enter.opera.close'/>";//批量闭业
+		            	 }else if(tar ==2){
+		            		 type="<@spring.message code='mess.store.enter.opera.open'/>";//批量开业
+		            	 }
+		            	 layer.confirm(/*正在执行 */"<@spring.message code='mess.store.export.opera.confirm1'/>"+type+/*操作,当前共选择了 */"<@spring.message code='mess.store.export.opera.confirm2'/>"+data.length+/*条数据,确定执行吗？ */"<@spring.message code='mess.store.export.opera.confirm3'/>", function(index){
+		           	        window.location = "${rc.contextPath}/store/storeByBatchOperation?arr="+arr+"&tar="+tar;
+		           	        layer.close(index);
+		           	     });
+		            	 layer.close(index);
+		            },
+		            btn2: function(index, layero){}
+		        }); 
+		        form.render();
+	        }else{
+	        	layer.msg("<@spring.message code='mess.store.opera.msg'/>");//如需进行批量操作请先勾选商铺
+	        }
+	      break;
+	      case 'LAYTABLE_TIPS':
+	    	  layer.open({
+		            type: 1,
+		            title: "<@spring.message code='mess.store.enter.opera.option'/>",//操作选项
+		            skin: 'layui-layer-rim',
+		            area: ['500px', '240px'],
+		            btn: ["<@spring.message code='mess.store.optional.submit'/>","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+		            content: $("#openofexportpage"),
+		            yes: function(index, layero){
+		            	 var tar= $('input[name="type"]:checked').val();//0全部导出   1数量
+		            	 var count;
+		            	 if(tar ==0){
+		            		 count=0;
+		            	 }else if(tar ==1){
+		            		 var num =$("#datanum").val();
+			             	 var re = /^[1-9]\d*$/;//正整数
+			             	 if(!re.test(Number(num))){
+			             		 layer.msg("<@spring.message code='mess.store.export.msg'/>");//导出数量应为正整数
+			             		 return false;
+			             	 }
+		            		 count=num;
+		            	 }
+		            	 var nameChina =$("#search-nameChina").val();
+		            	 var nameEng =$("#search-nameEng").val();
+		            	 var floor =$("#test-floor").val();
+		            	 var marketId =$("#test-marketId").val();
+		            	 if(marketId==null){
+		            		 marketId='';
+		            	 }
+		            	 var status =$("#test-status").val();
+		            	 if(count!=null){
+		            		 window.location.href = "${rc.contextPath}/store/exportExcelOfStoreByCount?count="+count+"&nameChina="+nameChina+"&nameEng="+nameEng+"&floor="+floor+"&status="+status+"&marketId="+marketId;
+		            	 }
+		            	 layer.close(index);
+		            	 layer.msg('正在导出...请稍后！', {
+		            		 icon: 16
+		            		,shade: 0.1
+		            		,time: 600*1000
+		            	 });
+		            	 listenEnd();
+		            },
+		            btn2: function(index, layero){}
+		     });
+	      break;
+	 };
+    });
+    
+    $("#datanumDiv").hide();
+    //监听单选框切换
+    form.on('radio(change-type-all)', function (data) {
+    	 $("#datanumDiv").hide();
+  		 form.render();
+    });
+    form.on('radio(change-type-num)', function (data) {
+    	 $("#datanumDiv").show();
+    	 form.render();
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  var Toupdate ="${rc.contextPath}/store/toStoreUpdatePage?id="+data.id;
+    	  parent.layui.index.openTabsPage(Toupdate,"<@spring.message code='mess.store.update'/>");//修改商铺
+      } else if(obj.event === 'enable'||obj.event === 'disable'){
+    	  $.ajax({
+	  			type : "GET",
+	  			url : "${rc.contextPath}/store/changeStoreStatus?id="+data.id,
+	  			dataType : "json",
+	  			success : function(result) {
+	  				if (result!=null&&result.code=="0"){	
+	  					layer.msg("修改成功");
+	  				}else if (result==null){
+	  					layer.msg("修改失败");
+	  				}else{
+	  					layer.msg('当前用户没有此权限！',{icon:2});
+	  				}
+	  				tableinit.reload({
+	           	    	   where: {}
+	           	    	  ,page: {curr: 1}
+	           	    });
+	  				
+	  			},
+	  			error : function() {layer.msg("接口异常！",{icon:2});}
+	  	  });
+    	  
+    	  
+    	  
+      }else if(obj.event === 'product'){
+    	  window.location  = "${rc.contextPath}/stores/ToPdStoresproduct?id="+data.id;
+      }else if(obj.event === 'del'){
+    	  layer.confirm("<@spring.message code='mess.store.dele.confirm'/>"/*真的删除么,此操作将同时删除该商铺下的商铺活动*/, function(index){
+  	        window.location = "${rc.contextPath}/store/deleteStoreById?id="+data.id;
+  	        layer.close(index);
+  	      });
+      }
+    });
+    
+    //监听下拉框选中事件 根据商场id 查找楼层
+    form.on('select(findfloor)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainbfloorbymarketid(data,path);
+    	form.render('select');
+    });
+    
+     var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var nameChina = $('#search-nameChina');
+	   	        var nameEng = $('#search-nameEng');
+	   	        var floor = $('#test-floor');
+	   	        var status = $('#test-status');
+	   	        var marketId = $('#test-marketId');
+                var bigFormatId = $('#test-bigFormatId');
+                var point = $('#search-point');
+
+
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	nameChina: nameChina.val(),
+	   	        	nameEng:  nameEng.val(),
+	   	        	floor: floor.val(),
+	   	        	status: status.val(),
+	   	        	marketId: marketId.val(),
+                    bigFormat: bigFormatId.val(),
+                    point: point.val()
+		           }
+	   	        });
+   	      }
+     };
+     
+     //定时监听 
+     function listenEnd() {            
+         var loop = setInterval(function() {
+        	 if ($("#txtendflag").val() == "1") {
+                 clearInterval(loop);//停止定时任务
+                 layer.close(layer.index);//关闭加载中遮罩
+                 layer.msg("<@spring.message code='mess.store.enter.export.success'/>");
+             } else {
+                 getendflag();
+             }
+         }, 1000);//单位毫秒  注意：如果导出页面很慢时，建议循环时间段稍长一点
+     }
+     
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+  
+  function getendflag() {//请求session标记位             
+      $.ajax({
+            type : 'post',
+            url : '${rc.contextPath}/store/exportExceltar',
+            dataType : 'json',
+            success : function(data) {
+            	if(data!=null&&data.msg!=null){
+            		$("#txtendflag").val(data.msg);    
+            	}
+            },
+            error : function(error) {
+                console.log('获取标记失败' + error);
+            }
+     })  
+  }
+
+  </script>
+    <!-- <img src="{{d.logoUrl}}" style="height:50px;width:50px;"> -->
+    <script type="text/html" id="statusTpl">
+    {{#  if(d.status == 1){ }}
+		 <i class="layui-icon layui-icon-kaiye" style="font-size: 30px; color: #1E9FFF;"></i>
+	{{#  } else { }}
+		 <img src="${rc.contextPath}/images/close.png" style="height:30px;width:30px;">
+	{{#  } }}
+	</script>
+    
+    <script type="text/html" id="imgTpl">
+    {{#  if(d.logoUrl != null && d.logoUrl != ""){ }}
+		 <img src="{{d.logoUrl}}" style="height:50px;width:50px;">
+	{{#  } else { }}
+		 <img src"{{d.logoUrl}}" style="height:50px;width:50px;">
+	{{#  } }}
+	</script>
+	
+ 	<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

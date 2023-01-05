@@ -1,0 +1,112 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<div class="layui-form form-top" hidden="" id="openofbfpage" lay-filter="bformatform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!-- 中文名 --><@spring.message code='mess.bformat.Chinese.name'/></label>
+	            <div class="layui-input-inline" id="US-form-input">
+	              <input type="text" name="edit-nameChina" id ="edit-nameChina" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.bformat.enter.Chinese.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameChina"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!-- 英文名 --><@spring.message code='mess.bformat.English.name'/></label>
+	            <div class="layui-input-inline" id="US-form-input">
+	              <input type="text" name="edit-nameEng" id ="edit-nameEng" class="layui-input" lay-verify="required|nameEng" autocomplete="off" placeholder="<@spring.message code='mess.bformat.enter.English.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameFan"><!-- 60个字符以内--><@spring.message code='mess.bformat.60chart'/></div>
+        </div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" id="US-form-lable">繁体名</label>
+			<div class="layui-input-inline" id="US-form-input">
+				<input type="text" name="edit-nameFan" id ="edit-nameFan" class="layui-input" lay-verify="required|nameFan" autocomplete="off" placeholder="请输入业态繁体名">
+			</div>
+			<img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+			<div class="layui-form-mid layui-word-aux" id="check-nameFan"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+		</div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="upcheck">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			     </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div> 
+	    </#if>     
+	    <div class="layui-form-item">
+        	<div class="layui-upload" id="US-form-upload">
+	              <button type="button" class="layui-btn" id="test-upload-logo"><!-- 上传图片 --><@spring.message code='mess.sformat.uppic'/></button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" name="img-upload-logo" id="img-upload-logo" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 100px;"><span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.sformat.note'/></span></div>
+	                <p id="p-upload-logo"></p>
+	                <input type="hidden" name="logoload" id ="logoload">
+	                <input type="hidden" name="logo" id ="logo">
+	                <input type="hidden" name="logoUrl" id ="logoUrl">
+	              </div>
+	        </div>
+	    </div>
+  </div>
+
+
+  <div id="selectionMethod" class="layui-form" hidden="">
+	<div class="layui-form-item" id="compareofday">
+		<div class="sortlist" id="sortlists">
+
+
+		</div>
+	</div>
+  </div>
+  <script>
+  
+	//20字符以内
+	$('#edit-nameChina').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-nameChina').text("<@spring.message code='mess.bformat.beyond20chart'/>"/* 当前已超出20字符 */);
+			$('#check-nameChina').css("color","red");
+		}else{
+			$('#check-nameChina').text("<@spring.message code='mess.bformat.20chart'/>"/* 20个字符以内 */);
+			$('#check-nameChina').css("color","#999");
+		}
+	});
+	//60字符以内
+	$('#edit-nameEng').on("input propertychange", function () {
+		if($(this).val().length > 60){
+			$('#check-nameEng').text("<@spring.message code='mess.bformat.beyond60chart'/>"/* 当前已超出60字符*/);
+			$('#check-nameEng').css("color","red");
+		}else{
+			$('#check-nameEng').text("<@spring.message code='mess.bformat.60chart'/>"/* 60个字符以内 */);
+			$('#check-nameEng').css("color","#999");
+		}
+	});
+	//20字符以内
+	$('#edit-nameFan').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-nameFan').text("<@spring.message code='mess.bformat.beyond20chart'/>"/* 当前已超出20字符 */);
+			$('#check-nameFan').css("color","red");
+		}else{
+			$('#check-nameFan').text("<@spring.message code='mess.bformat.20chart'/>"/* 20个字符以内 */);
+			$('#check-nameFan').css("color","#999");
+		}
+	});
+  
+</script>
+</body>

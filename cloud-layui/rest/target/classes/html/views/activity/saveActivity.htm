@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>用户个人信息管理页面</title>
+	<link rel="stylesheet" href="${rc.contextPath}/js/elementUI/css/index.css">
+	<style>
+		html, body {width: 100%;height: 100%;margin: 0;}
+
+
+	</style>
+</head>
+<body>
+	<div id="app" style="height: 100%;display: none;">
+		<div class="content" style="margin-top: 15px;">
+			<el-card class="box-card" style="height: 100%;margin:15px;">
+				<div slot="header" class="clearfix">
+					<span>添加商品广告</span>
+				</div>
+				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+					<el-row>
+						<el-col :span="4" style="display:none;">
+							<el-form-item :inline="true"  label="全屏图片" prop="'fullImage'">
+								<el-input  id='fullImage'></el-input>
+							</el-form-item>
+							<el-form-item :inline="true"  label="全屏视频" prop="'fullView'">
+								<el-input  id='fullView'></el-input>
+							</el-form-item>
+							<el-form-item :inline="true"  label="二分屏图片" prop="'spuBinaryImage'">
+								<el-input  id='spuBinaryImage'></el-input>
+							</el-form-item>
+							<el-form-item :inline="true"  label="二分屏视频" prop="'spuBinaryView'">
+								<el-input  id='spuBinaryView'></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="4">
+							<el-form-item :inline="true"  label="所属商户" prop="merchantId">
+								<el-select v-model="ruleForm.merchantId" filterable placeholder="请选择所属商户" @change="merchantChange">
+									<el-option
+											v-for="item in merchantList"
+											:key="item.id"
+											:label="item.name"
+											:value="item.id">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="4">
+							<el-form-item :inline="true"  label="所属门店" prop="storeId">
+								<el-select v-model="ruleForm.storeId" filterable placeholder="请选择所属门店" @change="storeChange">
+									<el-option
+											v-for="item in storeList"
+											:key="item.id"
+											:label="item.name"
+											:value="item.id">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="4">
+							<el-form-item :inline="true"  label="所属库存" prop="nrcSkuId">
+								<el-select v-model="ruleForm.nrcSkuId" filterable placeholder="请选择所属库存" @change="skuChange">
+									<el-option
+											v-for="item in skuList"
+											:key="item.id"
+											:label="item.skuName"
+											:value="item.id">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="4" style="display:none;">
+							<el-form-item :inline="true"  label="图片url" prop="matterUrl">
+								<el-input  id='matterUrl'></el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-row>
+						<el-form-item :inline="true" label="全屏类型"  prop="fullScreenMatterType">
+							<el-select v-model="ruleForm.fullScreenMatterType" filterable placeholder="请选择广告类型" @change="fullScreenMatterTypeChange">
+								<el-option label="视频" value="VEDIO"></el-option>
+								<el-option label="图片" value="IMG"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-row>
+					<div class="ali" hidden>
+						<!-- 图片 -->
+						<div class="picFull" hidden>
+							<el-upload
+									action
+									:http-request="Uploadfile"
+									list-type="picture-card"
+									:class="{hide:hideUpload}"
+									:on-preview="handlePictureCardPreview"
+									:on-remove="handleRemove"
+									:before-upload="beforeAvatarUpload"
+									:on-change="changeimg"
+									:limit="1"
+							>
+								<i class="el-icon-plus"></i>
+							</el-upload>
+							<el-dialog :visible.sync="dialogVisible" append-to-body>
+								<img width="100%" :src="dialogImageUrl" alt />
+							</el-dialog>
+							<div style="width: 150px;position: relative;">
+								<el-progress
+										:text-inside="true"
+										:stroke-width="15"
+										:percentage="progress"
+										status="success"
+								></el-progress>
+							</div>
+						</div>
+						<div class="videoFull" hidden="">
+
+						</div>
+					</div>
+					<div class="ftp" hidden="">
+						<div class="picFull" hidden="">
+							<el-upload
+									action
+									:http-request="uploadImg"
+									list-type="picture-card"
+									:class="{hide:hideUpload}"
+									:on-preview="handlePictureCardPreview"
+									:on-remove="handleRemove"
+									:before-upload="beforeAvatarUpload"
+									:on-change="changeimg"
+									:limit="1">
+								<i class="el-icon-plus"></i>
+							</el-upload>
+							<el-dialog :visible.sync="dialogVisible" append-to-body>
+								<img width="100%" :src="dialogImageUrl" alt />
+							</el-dialog>
+							<div style="width: 150px;">
+								<el-progress
+										:text-inside="true"
+										:stroke-width="15"
+										:percentage="progress"
+										status="success"></el-progress>
+							</div>
+						</div>
+						<div class="videoFull" hidden="">
+						</div>
+					</div>
+					<el-row>
+						<el-form-item :inline="true" label="二分屏类型"  prop="binaryScreenMatterType">
+							<el-select v-model="ruleForm.binaryScreenMatterType" filterable placeholder="请选择二分屏类型" @change="binaryScreenMatterTypeChange">
+								<el-option label="视频" value="VEDIO"></el-option>
+								<el-option label="图片" value="IMG"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-row>
+					<div class="ali" hidden>
+						<!-- 图片 -->
+						<div class="picBinary" hidden>
+							<el-upload
+									action
+									:http-request="Uploadfile2"
+									list-type="picture-card"
+									:class="{hide:hideUpload2}"
+									:on-preview="handlePictureCardPreview2"
+									:on-remove="handleRemove2"
+									:before-upload="beforeAvatarUpload"
+									:on-change="changeimg2"
+									:limit="1"
+							>
+								<i class="el-icon-plus"></i>
+							</el-upload>
+							<el-dialog :visible.sync="dialogVisible2" append-to-body>
+								<img width="100%" :src="dialogImageUrl2" alt />
+							</el-dialog>
+							<div style="width: 150px;position: relative;">
+								<el-progress
+										:text-inside="true"
+										:stroke-width="15"
+										:percentage="progress2"
+										status="success"
+								></el-progress>
+							</div>
+						</div>
+						<div class="videoBinary" hidden="">
+							<!-- 上传视频 -->
+							<el-upload class="avatar-uploader"
+									   action
+									   :http-request="UploadVideofile2"
+									   v-bind:before-upload="beforeUploadVideo"
+									   v-bind:show-file-list="false">
+								<video v-if="videoForm.showVideoPath2 !='' && !videoFlag2"
+									   :src="videoForm.showVideoPath2"
+									   class="avatar video-avatar"
+									   controls="controls">
+									您的浏览器不支持视频播放
+								</video>
+								<i v-else-if="videoForm.showVideoPath2 =='' && !videoFlag2"
+								   class="el-icon-plus avatar-uploader-icon"></i>
+								<el-progress :width="178" v-if="videoFlag2 == true"
+											 type="circle"
+											 v-bind:percentage="videoUploadPercent2"
+											 style="margin-top:7px"></el-progress>
+							</el-upload>
+						</div>
+					</div>
+					<div class="ftp" hidden="">
+						<div class="picBinary" hidden="">
+							<el-upload
+									action
+									:http-request="uploadImg"
+									list-type="picture-card"
+									:class="{hide:hideUpload2}"
+									:on-preview="handlePictureCardPreview2"
+									:on-remove="handleRemove2"
+									:before-upload="beforeAvatarUpload"
+									:on-change="changeimg2"
+									:limit="1"
+							>
+								<i class="el-icon-plus"></i>
+							</el-upload>
+							<el-dialog :visible.sync="dialogVisible2" append-to-body>
+								<img width="100%" :src="dialogImageUrl2" alt />
+							</el-dialog>
+							<div style="width: 150px;">
+								<el-progress
+										:text-inside="true"
+										:stroke-width="15"
+										:percentage="progress2"
+										status="success"
+								></el-progress>
+							</div>
+						</div>
+						<div class="videoBinary" hidden="">
+							<!-- 上传视频 -->
+							<el-upload class="avatar-uploader"
+									   action
+									   :http-request="uploadvideo2"
+									   v-bind:before-upload="beforeUploadVideo"
+									   v-bind:show-file-list="false">
+								<video v-if="videoForm.showVideoPath2 !='' && !videoFlag2"
+									   :src="videoForm.showVideoPath2"
+									   class="avatar video-avatar"
+									   controls="controls">
+									您的浏览器不支持视频播放
+								</video>
+								<i v-else-if="videoForm.showVideoPath =='' && !videoFlag"
+								   class="el-icon-plus avatar-uploader-icon"></i>
+								<el-progress :width="178" v-if="videoFlag == true"
+											 type="circle"
+											 v-bind:percentage="videoUploadPercent2"
+											 style="margin-top:7px"></el-progress>
+							</el-upload>
+						</div>
+					</div>
+					<el-form-item>
+						<el-button type="primary"  v-loading.fullscreen.lock="fullscreenLoading" @click="submitForm('ruleForm')">立即创建</el-button>
+						<el-button @click="resetForm('ruleForm')">重置</el-button>
+					</el-form-item>
+				</el-form>
+		</div>
+	</div>
+</div>
+<div style="display: none;">
+	<canvas id="firstCanvas"></canvas>
+	<canvas id="secondCanvas"></canvas>
+</div>
+<!--cdn引入ElementUI组件必须先引入Vue-->
+<script src="${rc.contextPath}/js/elementUI/js/vue.js"></script>
+<script src="${rc.contextPath}/js/elementUI/js/index.js"></script>
+<script src="${rc.contextPath}/js/elementUI/js/axios.js"></script>
+<script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+	window.onload = function () {
+		$("#app").show();
+	}
+	var merchantId = null;
+	var skuId = null;
+	const vm = new Vue({ // 配置对象 options
+		// 配置选项(option)
+		el: '#app',  // element: 指定用vue来管理页面中的哪个标签区域
+		data() {
+			return {
+				//屏幕遮罩
+				fullscreenLoading: false,
+				//初始list
+				merchantList:[],
+				storeList:[],
+				skuList:[],
+				//上传配置
+				dialogImageUrl:'',
+				dialogImageUrl2:'',
+				limitCount:1,
+				dialogVisible:false,
+				dialogVisible2:false,
+				//图片进度条
+				progress: 0,
+				progressSeen: false,
+				progress2: 0,
+				hideUpload:false,
+				hideUpload2:false,
+				videoFlag: false,
+				videoFlag2: false,
+				//是否显示进度条
+				videoUploadPercent: 0,
+				videoUploadPercent2: 0,
+				//进度条的进度，
+				isShowUploadVideo: false,
+				isShowUploadVideo2: false,
+				//显示上传按钮
+				videoForm: {
+					showVideoPath: '',
+					showVideoPath2: '',
+				},
+				//表单元素
+				ruleForm: {
+					merchantId: '',
+					storeId: '',
+					nrcSkuId: '',
+					fullScreenMatterType:'',
+					binaryScreenMatterType:''
+				},
+				//表单验证
+				rules: {
+					merchantId: [
+						{ required: true, message: '请选择所属商户', trigger: 'change' }
+					],
+					storeId: [
+						{ required: true, message: '请选择所属门店', trigger: 'change' }
+					],
+					nrcSkuId: [
+						{ required: true, message: '请选择库存', trigger: 'change' }
+					]
+
+				}
+			};
+		},
+		mounted(){
+			// 仅在整个视图都被渲染之后才会运行的代码
+			// this.$nextTick(function () {
+			//		。。。
+			// })
+			//初始化下拉框的值
+			this.getOptions();
+		},
+		methods: {
+			//重置表单
+			resetForm(form) {
+				location.reload()
+			},
+			//提交表单
+			submitForm(formName) {
+				this.fullscreenLoading = true;
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						let formData = new FormData();
+						for(var key in this.ruleForm){
+							formData.append(key,this.ruleForm[key]);
+						}
+						formData.append("fullImage",$("#fullImage").val());
+						formData.append("fullView",$("#fullView").val());
+						formData.append("spuBinaryImage",$("#spuBinaryImage").val());
+						formData.append("spuBinaryView",$("#spuBinaryView").val());
+						var scale = 0.7;//截图绽放比例
+						var dataURLtoBlob=function (dataurl) {
+							var arr = dataurl.split(','),
+									mime = arr[0].match(/:(.*?);/)[1],
+									bstr = atob(arr[1]),
+									n = bstr.length,
+									u8arr = new Uint8Array(n);
+							while(n--) {
+								u8arr[n] = bstr.charCodeAt(n);
+							}
+							return new Blob([u8arr],{type:mime});
+						};
+						axios({
+							method: 'get',
+							url: "${rc.contextPath}/nrcSkuMatterData/confirm?skuId="+skuId,
+						}).then((response) => {
+							if (response.status == 200 && response.data.msg == "false") {
+								this.$message({
+									type: 'info',
+									message: '该库存已有素材'
+								});
+								this.fullscreenLoading = false;
+							}else{
+								axios.post("${rc.contextPath}/nrcSkuMatterData/saveSkuMatter", formData).then((res) => {
+									if (res.status == 200 && res.data == true) {
+										this.$message({
+											type: 'success',
+											message: '添加商品广告成功 '
+										});
+									}else{
+										this.$message({
+											type: 'info',
+											message: '添加商品广告失败'
+										});
+									}
+									this.fullscreenLoading = false;
+								})
+							}
+						})
+					} else {
+						this.fullscreenLoading = false;
+						console.log('error submit!!');
+						return false;
+					}
+				});
+			},
+			//初始化参数
+			getOptions(){
+				axios({
+					method: 'get',
+					url: "${rc.contextPath}/merchantData/getAllList",
+				}).then((response) => {
+					if (response.status == 200) {
+						this.merchantList = response.data;
+					}
+				})
+			},
+			//商户change
+			merchantChange(value){
+				merchantId = value;
+				//级联
+				axios({
+					method: 'POST',
+					url: "${rc.contextPath}/storeData/selectStoreByMerchantId?merchantId="+value,
+				}).then((response) => {
+					if (response.status == 200) {
+						this.storeList = response.data
+					}
+				})
+				//判断阿里和ftp
+				axios({
+					method: 'POST',
+					url: "${rc.contextPath}/merchantData/getUploadType?merchantId="+value,
+				}).then((response) => {
+					if (response.status == 200 && response.data =="FTP") {
+						$(".ali").hide();
+						$(".ftp").show();
+					}else{
+						$(".ftp").hide();
+						$(".ali").show();
+					}
+				})
+				var html = $(".is-ready").html()
+				if(html!= undefined){
+					$(".el-icon-delete").click();
+					this.progress = 0;
+					this.progress2 = 0;
+					$("#fullImage").val("")
+					$("#fullView").val("")
+					$("#spuBinaryImage").val("")
+					$("#spuBinaryView").val("")
+					this.videoForm.showVideoPath="";
+					this.videoForm.showVideoPath2="";
+				}
+			},
+			storeChange(value){
+				//级联
+				axios({
+					method: 'GET',
+					url: "${rc.contextPath}/nrcSkuData/querySkuByStoreIdV2?storeId="+value,
+				}).then((response) => {
+					console.log(response)
+					if (response.status == 200) {
+						this.skuList = response.data
+					}
+				})
+			},
+			skuChange(value){
+				skuId = value;
+			},
+			fullScreenMatterTypeChange(value){
+				if(value=="IMG"){
+					$(".videoFull").hide();
+					$(".picFull").show();
+				}else{
+					$(".picFull").hide();
+					$(".videoFull").show();
+				}
+			},
+			binaryScreenMatterTypeChange(value){
+				if(value=="IMG"){
+					$(".videoBinary").hide();
+					$(".picBinary").show();
+				}else{
+					$(".picBinary").hide();
+					$(".videoBinary").show();
+				}
+			},
+			dataURLtoBlob(dataurl) {
+				var arr = dataurl.split(','),
+						mime = arr[0].match(/:(.*?);/)[1],
+						bstr = atob(arr[1]),
+						n = bstr.length,
+						u8arr = new Uint8Array(n);
+				while(n--) {
+					u8arr[n] = bstr.charCodeAt(n);
+				}
+				return new Blob([u8arr],{type:mime});
+			},
+
+			//自己编写的函数用于生成文件名，防止上传的文件重名
+			getUUID() {
+				return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+					return (c === 'x' ? (Math.random() * 16 | 0) : ('r&0x3' | '0x8')).toString(16).replace(/&/, "1")
+				})
+			},
+			handleRemove(file, fileList) {
+				const that = this;
+				that.progress =0
+				this.hideUpload = fileList.length >= this.limitCount;
+			},
+			handlePictureCardPreview(file) {
+				this.dialogImageUrl = file.url;
+				this.dialogVisible = true;
+			},
+			changeimg(file, fileList) {
+				this.hideUpload = fileList.length >= this.limitCount;
+			},
+			handleRemove2(file, fileList) {
+				const that = this;
+				that.progress =0
+				this.hideUpload2 = fileList.length >= this.limitCount;
+			},
+			handlePictureCardPreview2(file) {
+				this.dialogImageUrl = file.url;
+				this.dialogVisible = true;
+			},
+			changeimg2(file, fileList) {
+				this.hideUpload2 = fileList.length >= this.limitCount;
+			},
+			beforeAvatarUpload(file) {
+				const isJPG = file.type === "image/jpeg";
+				const isPNG = file.type === "image/png";
+				const isLt2M = file.size / 1024 / 1024 < 5;
+				if (!(isJPG || isPNG)) {
+					this.$message.error("上传图片只能是 JPG或PNG 格式!");
+				}
+				if (!isLt2M) {
+					this.$message.error("上传图片大小不能超过 5MB!");
+				}
+				return (isJPG || isPNG) && isLt2M;
+			},
+			//上传图片
+			//阿里
+			Uploadfile(param) {
+				const that = this
+				let file = param.file; // 得到文件的内容
+				/* console.log(file); */
+				//填写获取签名的地址
+				const getPolicyApiUrl = '${rc.contextPath}/ali/oss/getSign?type='+'image'+ "&merchantId=" +merchantId; //获取oss签名的地址
+				// 获取oss签名
+				axios({
+					method: 'get',
+					url: getPolicyApiUrl,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Access-Control-Allow-Origin': '*',
+					},
+				}).then((response) => {
+					if (response.status == 200) {
+						let policyData = response.data;
+						/* console.log(policyData); */
+						/**
+						 ossUrl 换成自己的Bucket的外网地址，
+						 例如 https://human-resource-manage.oss-cn-shenzhen.aliyuncs.com
+						 */
+						let ossUrl = 'http://img.scanall-nrc.com';//填写自己OSS服务器的地址
+						let accessUrl = policyData.dir + this.getUUID() +"."+ file.name.substring(file.name.lastIndexOf('.') + 1);//设置上传的访问路径
+						let sendData = new FormData();// 上传文件的data参数
+						sendData.append('OSSAccessKeyId', policyData.accessid);
+						sendData.append('policy', policyData.policy);
+						sendData.append('Signature', policyData.signature);
+						sendData.append('keys', policyData.dir);
+						sendData.append('key', accessUrl);//上传的文件路径
+						sendData.append('success_action_status', 200); // 指定返回的状态码
+						sendData.append('type', 'image/jpeg');
+						sendData.append('file', file);
+						console.log(sendData);
+						axios.post(ossUrl, sendData,{
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.progress =complete
+							}}).then((res) => {
+							this.pictureUrl = ossUrl + '/' + accessUrl;//获得到的url需要将其存数据库中
+							$("#fullImage").val(this.pictureUrl)
+							this.$message({
+								type: 'success',
+								message: ' 上传成功'
+							});
+							/*  console.log('上传到阿里云的图片地址：' + ossUrl + '/' + accessUrl) */
+						})
+					}
+				})
+			},
+			//ftp
+			uploadImg(fileObj) {
+				const that = this
+				let formData = new FormData();
+				formData.set("file", fileObj.file);
+				axios
+						.post('${rc.contextPath}/uploadData/uploadpic?merchantId='+merchantId, formData, {
+							headers: {
+								"Content-type": "multipart/form-data"
+							},
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.progress =complete
+							}
+						}).then((res) => {
+					console.log(res.request.response)
+					var obj = eval ("(" + res.request.response + ")");
+					this.pictureUrl = obj.data;//获得到的url需要将其存数据库中
+					$("#fullImage").val(this.pictureUrl)
+					this.$message({
+						type: 'success',
+						message: ' 上传成功'
+					});
+				}).catch();
+			},
+			//上传视频
+			//阿里
+			UploadVideofile(param) {
+				const that = this
+				let file = param.file; // 得到文件的内容
+				console.log(file);
+				//填写获取签名的地址
+				const getPolicyApiUrl = '${rc.contextPath}/ali/oss/getSign?type='+'video'+ "&merchantId=" +merchantId; //获取oss签名的地址
+				// 获取oss签名
+				axios({
+					method: 'get',
+					url: getPolicyApiUrl,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Access-Control-Allow-Origin': '*',
+					},
+				}).then((response) => {
+					if (response.status == 200) {
+						let policyData = response.data;
+						/* console.log(policyData); */
+						/**
+						 ossUrl 换成自己的Bucket的外网地址，
+						 例如 https://human-resource-manage.oss-cn-shenzhen.aliyuncs.com
+						 */
+						let ossUrl = 'http://video.scanall-nrc.com';//填写自己OSS服务器的地址
+						let accessUrl = policyData.dir + this.getUUID() +"."+ file.name.substring(file.name.lastIndexOf('.') + 1);//设置上传的访问路径
+						let sendData = new FormData();// 上传文件的data参数
+						sendData.append('OSSAccessKeyId', policyData.accessid);
+						sendData.append('policy', policyData.policy);
+						sendData.append('Signature', policyData.signature);
+						sendData.append('keys', policyData.dir);
+						sendData.append('key', accessUrl);//上传的文件路径
+						sendData.append('success_action_status', 200); // 指定返回的状态码
+						sendData.append('type', 'image/jpeg');
+						sendData.append('file', file);
+						/*  console.log(sendData); */
+						axios.post(ossUrl, sendData,{
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								this.videoFlag = true;
+								that.videoUploadPercent =complete
+							}}).then((res) => {
+							this.isShowUploadVideo = true;
+							this.videoFlag = false;
+							this.videoForm.showVideoPath = ossUrl + '/' + accessUrl;//获得到的url需要将其存数据库中
+							$("#fullView").val(this.videoForm.showVideoPath)
+							this.$message({
+								type: 'success',
+								message: ' 上传成功'
+							});
+							/* console.log('上传到阿里云的图片地址：' + ossUrl + '/' + accessUrl) */
+						})
+					}
+				})
+			},
+			//ftp
+			uploadvideo(fileObj) {
+				const that = this
+				let formData = new FormData();
+				formData.set("file", fileObj.file);
+				this.videoFlag = true;
+				axios
+						.post('${rc.contextPath}/uploadData/uploadpic?merchantId='+merchantId, formData, {
+							headers: {
+								"Content-type": "multipart/form-data"
+							},
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.videoUploadPercent =complete-1;
+							}
+						}).then((res) => {
+					/* console.log(res.request.response) */
+					var obj = eval ("(" + res.request.response + ")");
+					this.isShowUploadVideo = true;
+					this.videoFlag = false;
+					this.videoForm.showVideoPath = obj.data;
+					$("#fullView").val(obj.data)
+					that.videoUploadPercent =100;
+					this.$message({
+						type: 'success',
+						message: ' 上传成功'
+					});
+					/* this.videoForm.showVideoPath = obj.data; */
+				}).catch();
+			},
+			//阿里
+			Uploadfile2(param) {
+				const that = this
+				let file = param.file; // 得到文件的内容
+				/* console.log(file); */
+				//填写获取签名的地址
+				const getPolicyApiUrl = '${rc.contextPath}/ali/oss/getSign?type='+'image'+ "&merchantId=" +merchantId; //获取oss签名的地址
+				// 获取oss签名
+				axios({
+					method: 'get',
+					url: getPolicyApiUrl,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Access-Control-Allow-Origin': '*',
+					},
+				}).then((response) => {
+					if (response.status == 200) {
+						let policyData = response.data;
+						/* console.log(policyData); */
+						/**
+						 ossUrl 换成自己的Bucket的外网地址，
+						 例如 https://human-resource-manage.oss-cn-shenzhen.aliyuncs.com
+						 */
+						let ossUrl = 'http://img.scanall-nrc.com';//填写自己OSS服务器的地址
+						let accessUrl = policyData.dir + this.getUUID() +"."+ file.name.substring(file.name.lastIndexOf('.') + 1);//设置上传的访问路径
+						let sendData = new FormData();// 上传文件的data参数
+						sendData.append('OSSAccessKeyId', policyData.accessid);
+						sendData.append('policy', policyData.policy);
+						sendData.append('Signature', policyData.signature);
+						sendData.append('keys', policyData.dir);
+						sendData.append('key', accessUrl);//上传的文件路径
+						sendData.append('success_action_status', 200); // 指定返回的状态码
+						sendData.append('type', 'image/jpeg');
+						sendData.append('file', file);
+						console.log(sendData);
+						axios.post(ossUrl, sendData,{
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.progress2 =complete
+							}}).then((res) => {
+							this.pictureUrl = ossUrl + '/' + accessUrl;//获得到的url需要将其存数据库中
+							$("#spuBinaryImage").val(this.pictureUrl)
+							this.$message({
+								type: 'success',
+								message: ' 上传成功'
+							});
+							/*  console.log('上传到阿里云的图片地址：' + ossUrl + '/' + accessUrl) */
+						})
+					}
+				})
+			},
+			//ftp
+			uploadImg2(fileObj) {
+				const that = this
+				let formData = new FormData();
+				formData.set("file", fileObj.file);
+				axios
+						.post('${rc.contextPath}/uploadData/uploadpic?merchantId='+merchantId, formData, {
+							headers: {
+								"Content-type": "multipart/form-data"
+							},
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.progress2 =complete
+							}
+						}).then((res) => {
+					console.log(res.request.response)
+					var obj = eval ("(" + res.request.response + ")");
+					this.pictureUrl = obj.data;//获得到的url需要将其存数据库中
+					$("#spuBinaryImage").val(this.pictureUrl)
+					this.$message({
+						type: 'success',
+						message: ' 上传成功'
+					});
+				}).catch();
+			},
+			//上传视频
+			//阿里
+			UploadVideofile2(param) {
+				const that = this
+				let file = param.file; // 得到文件的内容
+				console.log(file);
+				//填写获取签名的地址
+				const getPolicyApiUrl = '${rc.contextPath}/ali/oss/getSign?type='+'video'+ "&merchantId=" +merchantId; //获取oss签名的地址
+				// 获取oss签名
+				axios({
+					method: 'get',
+					url: getPolicyApiUrl,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Access-Control-Allow-Origin': '*',
+					},
+				}).then((response) => {
+					if (response.status == 200) {
+						let policyData = response.data;
+						/* console.log(policyData); */
+						/**
+						 ossUrl 换成自己的Bucket的外网地址，
+						 例如 https://human-resource-manage.oss-cn-shenzhen.aliyuncs.com
+						 */
+						let ossUrl = 'http://video.scanall-nrc.com';//填写自己OSS服务器的地址
+						let accessUrl = policyData.dir + this.getUUID() +"."+ file.name.substring(file.name.lastIndexOf('.') + 1);//设置上传的访问路径
+						let sendData = new FormData();// 上传文件的data参数
+						sendData.append('OSSAccessKeyId', policyData.accessid);
+						sendData.append('policy', policyData.policy);
+						sendData.append('Signature', policyData.signature);
+						sendData.append('keys', policyData.dir);
+						sendData.append('key', accessUrl);//上传的文件路径
+						sendData.append('success_action_status', 200); // 指定返回的状态码
+						sendData.append('type', 'image/jpeg');
+						sendData.append('file', file);
+						/*  console.log(sendData); */
+						axios.post(ossUrl, sendData,{
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								this.videoFlag2 = true;
+								that.videoUploadPercent2 =complete
+							}}).then((res) => {
+							this.isShowUploadVideo2 = true;
+							this.videoFlag2 = false;
+							this.videoForm.showVideoPath2 = ossUrl + '/' + accessUrl;//获得到的url需要将其存数据库中
+							$("#spuBinaryView").val(this.videoForm.showVideoPath2)
+							this.$message({
+								type: 'success',
+								message: ' 上传成功'
+							});
+						})
+					}
+				})
+			},
+			//ftp
+			uploadvideo2(fileObj) {
+				const that = this
+				let formData = new FormData();
+				formData.set("file", fileObj.file);
+				this.videoFlag2 = true;
+				axios
+						.post('${rc.contextPath}/uploadData/uploadpic?merchantId='+merchantId, formData, {
+							headers: {
+								"Content-type": "multipart/form-data"
+							},
+							onUploadProgress: progressEvent => {
+								let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+								that.videoUploadPercent2 =complete-1;
+							}
+						}).then((res) => {
+					/* console.log(res.request.response) */
+					var obj = eval ("(" + res.request.response + ")");
+					this.isShowUploadVideo2 = true;
+					this.videoFlag2 = false;
+					this.videoForm.showVideoPath2 = obj.data;
+					$("#spuBinaryView").val(obj.data)
+					that.videoUploadPercent2 =100;
+					this.$message({
+						type: 'success',
+						message: ' 上传成功'
+					});
+					/* this.videoForm.showVideoPath = obj.data; */
+				}).catch();
+			},
+			//上传前回调
+			beforeUploadVideo(file) {
+				var fileSize = file.size / 1024 / 1024 < 500;
+				if (['video/mp4','video/mov','video/quicktime'].indexOf(file.type) == -1) {
+					alert("请上传正确的视频格式");
+					return false;
+				}
+				if (!fileSize) {
+					alert("视频大小不能超过500MB");
+					return false;
+				}
+				this.isShowUploadVideo = false;
+				console.log(file)
+				/*var canvas = document.getElementById("firstCanvas");
+                let video = await _this.loadVideo(file);
+                canvas.width = video.videoWidth * scale;
+                canvas.height = video.videoHeight * scale;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width,canvas.height);
+                var imgsrc = canvas.toDataURL('image/jpeg',0.8);//第二个参数指图片质量
+                var poster=dataURLtoBlob(imgsrc);
+                console.log(poster)
+                var file1 = new File([poster], "full.jpg",  {type: 'image/jpeg'});
+                console.log(file1)*/
+			},
+		}
+	})
+</script>
+
+
+</body>
+</html>

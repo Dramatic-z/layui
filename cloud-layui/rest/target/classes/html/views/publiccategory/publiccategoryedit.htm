@@ -1,0 +1,136 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }  
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<div class="layui-form form-top" hidden="" id="openofformatpage" lay-filter="formatform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicC.name'/></label>
+	            <div class="layui-input-inline" id="US-form-input">
+	              <input type="text" name="edit-nameChina" id ="edit-nameChina" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.publicC.enter.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameChina"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.publicC.nameeng'/></label>
+	            <div class="layui-input-inline" id="US-form-input">
+	              <input type="text" name="edit-nameEng" id ="edit-nameEng" class="layui-input" lay-verify="required|nameEng" autocomplete="off" placeholder="<@spring.message code='mess.publicC.enter.nameeng'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameEng"><!-- 60个字符以内--><@spring.message code='mess.bformat.60chart'/></div>
+        </div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" id="US-form-lable">繁体名</label>
+			<div class="layui-input-inline" id="US-form-input">
+				<input type="text" name="edit-fanName" id ="edit-fanName" class="layui-input" lay-verify="required|fanName" autocomplete="off" placeholder="请输入繁体名">
+			</div>
+			<img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+			<div class="layui-form-mid layui-word-aux" id="check-fanName"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+		</div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="find-bformat">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			     </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    </#if>
+	    <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable"><!--状态 --><@spring.message code='mess.publicC.status'/></label>
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-status" id="edit-status">
+                <option value="1"><@spring.message code='mess.publicC.enable'/></option><!--启用 -->
+                <option value="0"><@spring.message code='mess.publicC.disable'/></option><!--不启用 -->
+               </select>
+             </div>
+        </div>
+        <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable"><!--前端显示 --><@spring.message code='mess.publicC.show'/></label>
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-show" id="edit-show">
+                <option value="Y" selected="selected"><@spring.message code='mess.publicC.yes'/></option><!--是 -->
+                <option value="N"><@spring.message code='mess.publicC.no'/></option><!--否-->
+               </select>
+             </div>
+        </div>
+	    <div class="layui-form-item">
+	    	<div class="layui-inline">
+	        	<div class="layui-upload" id="US-form-upload">
+		              <button type="button" class="layui-btn" id="test-upload-logo"><!-- 上传LOGO --><@spring.message code='mess.publicC.uplogo'/></button>
+		              <div class="layui-upload-list">
+		                <div style="float: left;"><img class="layui-upload-img" name="img-upload-logo" id="img-upload-logo" accept="image/*"></div>
+		                <div style="width: 300px;margin-left: 100px;"><span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.sformat.note'/></span></div>
+		                <p id="p-upload-logo"></p>
+		                <input type="hidden" name="logoload" id ="logoload">
+		                <input type="hidden" name="logo" id ="logo">
+		                <input type="hidden" name="logoUrl" id ="logoUrl">
+		              </div>
+		        </div>
+	        </div>
+	        <div class="layui-inline">
+	        	<div class="layui-upload" id="US-form-upload">
+		              <button type="button" class="layui-btn" id="test-upload-map"><!-- 上传地图LOGO --><@spring.message code='mess.publicC.upmaplogo'/></button>
+		              <div class="layui-upload-list">
+		                <div style="float: left;"><img class="layui-upload-img" name="img-upload-map" id="img-upload-map" accept="image/*"></div>
+		                <div style="width: 300px;margin-left: 100px;"><span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.sformat.note'/></span></div>
+		                <p id="p-upload-logo"></p>
+		                <input type="hidden" name="mapload" id ="mapload">
+		                <input type="hidden" name="map" id ="map">
+		                <input type="hidden" name="mapUrl" id ="mapUrl">
+		              </div>
+		        </div>
+	        </div>
+	    </div>
+  </div>
+<script>
+  
+	//20字符以内
+	$('#edit-nameChina').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-nameChina').text("<@spring.message code='mess.bformat.beyond20chart'/>"/* 当前已超出20字符 */);
+			$('#check-nameChina').css("color","red");
+		}else{
+			$('#check-nameChina').text("<@spring.message code='mess.bformat.20chart'/>"/* 20个字符以内 */);
+			$('#check-nameChina').css("color","#999");
+		}
+	});
+	//60字符以内
+	$('#edit-nameEng').on("input propertychange", function () {
+		if($(this).val().length > 60){
+			$('#check-nameEng').text("<@spring.message code='mess.bformat.beyond60chart'/>"/* 当前已超出60字符*/);
+			$('#check-nameEng').css("color","red");
+		}else{
+			$('#check-nameEng').text("<@spring.message code='mess.bformat.60chart'/>"/* 60个字符以内 */);
+			$('#check-nameEng').css("color","#999");
+		}
+	});
+
+	//20字符以内
+	$('#edit-fanName').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-fanName').text("<@spring.message code='mess.bformat.beyond20chart'/>"/* 当前已超出20字符 */);
+			$('#check-fanName').css("color","red");
+		}else{
+			$('#check-fanName').text("<@spring.message code='mess.bformat.20chart'/>"/* 20个字符以内 */);
+			$('#check-fanName').css("color","#999");
+		}
+	});
+  
+</script>
+</body>

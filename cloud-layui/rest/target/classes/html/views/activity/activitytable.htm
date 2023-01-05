@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><!-- 商场活动 --><@spring.message code='mess.activity.tab'/></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    #US-form-upload{
+    	margin-left:110px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	width: 160px;
+    }
+    #US-form-input{
+    	width: 340px;
+    }
+    #US-form-select{
+    	width: 340px;
+    }
+    #US-form-upload{
+    	margin-left:190px;
+    }
+  </style></#if>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!-- 商场活动基本信息 --><@spring.message code='mess.activity.tittle'/></div>
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	  <@spring.message code='mess.activity.china.name'/><!-- 活动中文名 -->： <div class="layui-inline">
+                <input class="layui-input" name="nameChina" id="search-nameChina" autocomplete="off">
+              </div>
+      <@spring.message code='mess.activity.eng.name'/><!-- 活动英文名 -->： <div class="layui-inline">
+                <input class="layui-input" name="nameEng" id="search-nameEng" autocomplete="off">
+              </div>
+      <#if userType ?? && userType == -2>
+		商场：  <div class="layui-inline">
+              <select name="marketId" lay-filter="findfloor" id="search-marketId">
+                <option value="">-请选择商场-</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<#if userType == -2>
+							<option value="${market.id}">${market.marketName}</option>
+						</#if>			
+					</#list>
+			    </#if>
+              </select>
+            </div>	
+	   </#if>	
+		    <button class="layui-btn" data-type="reload"><!-- 搜索--><@spring.message code='mess.layui.search'/></button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload" style="margin: 50px;"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="addactivity"><!-- 添加活动 --><@spring.message code='mess.activity.add'/></button>
+              </div>
+            </script>
+            
+            <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo"> 
+              <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>
+			  <#if userType??>
+		  	    <#if userType != 2>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>
+			    </#if>
+ 		      </#if>		
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#include '/views/activity/activityedit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate','excel'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer
+	 	,excel = layui.excel;
+	 	 
+  element.render();
+  form.render(null, 'activityform');
+   
+  var tabledata;
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/activity/queryActivityList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+    	,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    },'print']
+	    ,title: "<@spring.message code='mess.activity.export.name'/>" //商场活动信息表
+	    //,width:1200
+	    ,cols: [[
+		  /* {type: 'checkbox', fixed: 'left'}
+	      , */{field:'id',/*序号*/title:"<@spring.message code='mess.layui.serial.number'/>", width:80,templet:'#zizeng',align:'center'}
+	      ,{field:'imageUrl',/*图片*/title:"<@spring.message code='mess.activity.pic'/>", align:'center', width:100, templet: '#imgTpl'}
+	      ,{field:'nameChina',/*活动名*/title:"<@spring.message code='mess.activity.name'/>", width:200,align:'center'}
+	      ,{field:'nameEng',/*活动英文名*/title:"<@spring.message code='mess.activity.engname'/>", width:200,align:'center'}
+	      ,{field:'sTime',/*开始日期*/title:"<@spring.message code='mess.activity.start'/>", width:200,align:'center'}
+	  	  ,{field:'eTime',/*结束日期*/title:"<@spring.message code='mess.activity.end'/>", width:200,align:'center'}
+	      ,{field:'statu',/*状态*/title:"<@spring.message code='mess.activity.status'/>", width:80,align:'center'}
+	      ,{field:'finalmodiftime',/*序号*/title:"<@spring.message code='mess.activity.Last.modified'/>",align:'center'}
+	  	  ,{fixed: 'right',/*操作*/title:"<@spring.message code='mess.layui.operation'/>",toolbar:'#test-table-barDemo',width:140,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+	    ,done: function(res, curr, count){
+	    	 tabledata=res.data;
+	    }
+   });
+   
+   //logo图片上传
+   var uploadInst1 = upload.render({
+	     elem: '#test-upload-logo' //绑定元素
+	     ,url: '${rc.contextPath}/activity/dealActivityPic' //上传接口	
+	     ,acceptMime:'image/png,image/JPG,.jpg'
+	     ,exts:'jpg|png|JPG'
+   	     ,auto: false  //关闭自动上传 使得像素验证起效
+         ,size: 1024*1  //上传大小限制  最大值（单位kb）
+ 	 	 ,choose: function(obj){uploadimage_choose(obj,300,300,2000,2000,uploadInst1)}
+	     ,before: function(obj){uploadimage_before(obj,"#logoload","#logo","#img-upload-logo")} 
+	     ,done: function(res){uploadimage_done(res,"#logo","#logoload","#logoUrl")}
+	     ,error: function(){layer.msg("<@spring.message code='mess.bformat.upload.error'/>")}/* 上传异常 */
+   });
+   //双击查看原图
+   $("#img-upload-logo").dblclick(function(){doubleclickviewimage(this.src)});
+   
+   //头工具栏事件
+   table.on('toolbar(test-table-reload)', function(obj){
+   //var checkStatus = table.checkStatus(obj.config.id);
+     switch(obj.event){
+	      case 'addactivity':
+	    	  form.val("activityform", {
+     	    	   "edit-nameChina": null
+				   ,"edit-nameEng": null
+				   ,"edit-detailsChina": null
+				   ,"edit-detailsEng": null
+				   ,"edit-marketId": null
+				   ,"logoUrl": null
+				   ,"test-startTime":null
+				   ,"test-endTime":null
+			  });
+	    	$("#img-upload-logo").attr("src",null);
+	    	layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.activity.addform'/>",//添加操作
+	            skin: 'layui-layer-rim',
+	            <#if i18n_l ?? && i18n_l =='en_US'>
+	            area: ['900px', '750px'],
+	            <#else>
+	            area: ['700px', '600px'],
+	            </#if>
+	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+	            content: $('#openofactivitypage'),
+	            yes: function(index, layero){
+	            	 var nameChina =$("#edit-nameChina").val();
+	            	 var nameEng =$("#edit-nameEng").val();
+	            	 var detailsChina =$("#edit-detailsChina").val();
+	            	 var detailsEng =$("#edit-detailsEng").val();
+	            	 var market =$("#edit-marketId").val();
+	            	 var status =$("#edit-status").val();
+	            	 var logoUrl =$("#logoUrl").val();
+	            	 var startTime =$("#test-startTime").val();
+	            	 var endTime =$("#test-endTime").val();
+	            	 /* var data = $('form').serializeArray();
+	           		 console.log(data); */
+	            	 if(nameChina !=null&&nameChina!=''&&nameEng!=null&&nameEng!=''&&market!=''&&startTime!=null&&startTime!=''&&endTime!=null&&endTime!=''){
+	            		 if(nameChina.length<=20&&nameEng.length <= 60&&detailsChina.length<=200&&detailsEng.length<=1000){
+		                	 $.ajax({
+			                     url: '${rc.contextPath}/activity/addActivity',
+			                     type: "POST",
+			                     data:{nameChina:nameChina,nameEng:nameEng,imageUrl:logoUrl,marketId:market,detailsChina:detailsChina,detailsEng:detailsEng,startTime:startTime,endTime:endTime,status:status},
+			                     dataType: 'json',
+			                     success: function (result) {
+			                  	     if ("0" == result.code) {
+			                  		 	 layer.msg(result.msg);
+			                         }else{
+			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+			                         }
+			                  	     layer.close(index);
+			                  	     tableinit.reload({
+			                  	    	   where: {}
+			                  	    	  ,page: {curr: 1}
+			                  	     });
+			                     }
+			                 });
+	                	 }else{
+		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+		                 }
+	                 }else{
+	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	                 }
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	        }); 
+	        form.render();
+	  	  break;
+	      case 'LAYTABLE_TIP_EXPORT':
+	    	  if(tabledata!=null){
+	    	  var arr = new Array();
+	    	  //弹出loading
+	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+	    	  for (var i = 0; i < tabledata.length; i++) {
+	    		 var o = new Object();
+	    		 var el=tabledata[i];
+	    		 o.index=el.LAY_TABLE_INDEX+1;
+				 o.imageUrl=el.imageUrl;
+				 o.nameChina=el.nameChina;
+				 o.nameEng=el.nameEng;
+				 o.sTime=el.sTime;
+				 o.eTime=el.eTime;
+				 o.statu=el.statu;
+				 o.finalmodiftime=el.finalmodiftime;
+				 arr.push(o);
+			  }
+	    	  //数组头部新增表头
+	    	  arr.unshift({index:'序号',imageUrl:'图片',nameChina:'活动名',nameEng:'活动英文名',sTime:'开始日期',
+	    		  eTime:'结束日期',statu:'状态',finalmodiftime:'最后修改时间'});
+	    	  //设置样式的函数，传入设置的范围，表头样式
+              excel.setExportCellStyle(arr, 'A1:H1', {
+                  s: {
+                      fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                      alignment: {
+                          horizontal: 'center',
+                          vertical: 'center'
+                      },
+                      font: { sz: 12, bold: true }
+                  }
+              });
+              //设置样式的函数，传入设置的范围，单元格边框样式
+              excel.setExportCellStyle(arr, 'A1:H' + arr.length, {
+                  s: {
+                      border: {
+                          top: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, bottom: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, left: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, right: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }
+                      }
+                  }
+              });
+              var colConf = excel.makeColConfig({
+                  'B': 500,
+                  'C': 150,
+                  'D': 150,
+                  'E': 120,
+                  'F': 120,
+                  'H': 120
+              }, 100);
+	     	  //如果需要调整顺序，请执行梳理函数
+              //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+         	  //执行导出函数，系统会弹出弹框
+         	  excel.exportExcel({
+                    sheet1: arr
+              }, '商场活动信息表数据.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+              });
+              layer.close(index);
+	    	  }else{
+         		  layer.msg('当前暂无数据，请先查询。'); 
+         	  }
+	      break;
+	  };
+    });
+ 	
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  $.ajax({
+              url: '${rc.contextPath}/activity/toSelectActivityById',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	var upactivity = result.data;
+           	    	form.val("activityform", {
+           	    		"edit-id": upactivity.id
+           	    	   ,"edit-nameChina": upactivity.nameChina
+    				   ,"edit-nameEng": upactivity.nameEng
+    				   ,"edit-detailsChina": upactivity.detailsChina
+    				   ,"edit-detailsEng": upactivity.detailsEng
+    				   ,"edit-marketId": upactivity.marketId
+    				   ,"edit-status": upactivity.status
+    				   ,"logoUrl": upactivity.imageUrl
+    				   ,"test-startTime":upactivity.sTime
+    				   ,"test-endTime":upactivity.eTime
+    				});
+           	    	form.render();
+           	    	if(upactivity.imageUrl !=null && upactivity.imageUrl!=''){
+    					$("#img-upload-logo").attr("src",upactivity.imageUrl);
+    				}else{
+    					$("#img-upload-logo").attr("src",null);
+    				}
+	           	    layer.open({
+        	            type: 1,
+        	            title: "<@spring.message code='mess.activity.edit'/>",//编辑操作
+        	            skin: 'layui-layer-rim',
+        	            <#if i18n_l ?? && i18n_l =='en_US'>
+        	            area: ['900px', '750px'],
+        	            <#else>
+        	            area: ['700px', '600px'],
+        	            </#if>
+        	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+        	            content: $("#openofactivitypage"),
+        	            yes: function(index, layero){
+        	            	 var id =$("#edit-id").val();
+        	            	 var nameChina=$("#edit-nameChina").val();
+        	            	 var nameEng=$("#edit-nameEng").val();
+        	            	 var detailsChina =$("#edit-detailsChina").val();
+        	            	 var detailsEng =$("#edit-detailsEng").val();
+        	            	 var status =$("#edit-status").val();
+        	            	 var market=$("#edit-marketId").val();
+        	            	 var logoUrl=$("#logoUrl").val();
+        	            	 var startTime =$("#test-startTime").val();
+        	            	 var endTime =$("#test-endTime").val();
+        	            	 if(nameChina !=null&&nameChina!=''&&nameEng !=null && nameEng!=''&&market!=''&&startTime!=null&&endTime!=null){
+        	                	 if(nameChina.length<=20&&nameEng.length <= 60&&detailsChina.length<=200&&detailsEng.length<=1000){
+        		                	 $.ajax({
+        			                     url: '${rc.contextPath}/activity/updateActivity',
+        			                     type: "POST",
+        			                     data:{id:id,nameChina:nameChina,nameEng:nameEng,imageUrl:logoUrl,marketId:market,detailsChina:detailsChina,detailsEng:detailsEng,startTime:startTime,endTime:endTime,status:status},
+        			                     dataType: 'json',
+        			                     success: function (result) {
+        			                  	     if (result.data!=null) {
+        			                  		 	 layer.msg(result.msg);
+        			                  		 	 layer.close(index);
+        			                     	     tableinit.reload({
+        			                     	    	   where: {}
+        			                     	    	  ,page: {curr: 1}
+        			                     	     });
+        			                  		 }else{
+        			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+        			                        	 tableinit.reload({
+      			                     	    	   where: {}
+      			                     	    	  ,page: {curr: 1}
+      			                     	    	 });
+        			                         }
+        			                  	 }
+        			                 });
+        	                	 }else{
+        		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+        		                 }
+        	                 }else{
+        	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+        	                 }
+        	            },
+        	            btn2: function(index, layero){layer.close(index)}
+        	        });
+                  	form.render();
+                 }
+           	  }
+          });
+      }else if(obj.event === 'del'){
+    	  layer.confirm("<@spring.message code='mess.activity.dele.confirm'/>"/*真的删除么 */, function(index){
+  	        window.location = "${rc.contextPath}/activity/deleteActivityById?id="+data.id;
+  	        layer.close(index);
+  	      });
+      }
+    });
+    
+    //监听下拉框选中事件 根据商场id 查找楼层
+    form.on('select(findfloor)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainbformatofsfbymarketidoftable(data,path);
+    	form.render('select');
+    });
+    form.on('select(find-bformat)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainbformatofsfbymarketid(data,path);
+    	form.render('select');
+    });
+  
+     var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var nameChina = $('#search-nameChina');
+	   	        var nameEng = $('#search-nameEng');
+	   	        var marketId = $('#search-marketId');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	nameChina: nameChina.val(),
+	   	        	nameEng:  nameEng.val(),
+	   	        	marketId:  marketId.val()
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     //开始日期
+     var insStart = laydate.render({
+     	elem: '#test-startTime'
+      // ,min: 0
+       ,done: function(value, date){
+         //更新结束日期的最小日期
+         insEnd.config.min = lay.extend({}, date, {
+           month: date.month - 1
+         });
+         //自动弹出结束日期的选择器
+        insEnd.config.elem[0].focus();
+       }
+     });
+     
+     //结束日期
+     var insEnd = laydate.render({
+       elem: '#test-endTime'
+      // ,min: 0
+       ,done: function(value, date){
+         //更新开始日期的最大日期
+         insStart.config.max = lay.extend({}, date, {
+           month: date.month - 1
+         });
+       }
+     });
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+    <!-- <img src="{{d.logoUrl}}" style="height:50px;width:50px;"> -->
+    <script type="text/html" id="imgTpl">
+    {{#  if(d.imageUrl != null && d.imageUrl != ""){ }}
+		 <img src="{{d.imageUrl}}" style="height:50px;width:50px;">
+	{{#  } else { }}
+		 <img src"{{d.imageUrl}}" style="height:50px;width:50px;">
+	{{#  } }}
+	</script>
+	
+ 	<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

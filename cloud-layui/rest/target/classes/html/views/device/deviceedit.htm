@@ -1,0 +1,100 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    } 
+    .form-top{
+   	 margin-top: 20px;
+	} 
+    
+</style>
+<body>
+<div class="layui-form form-top" hidden="" id="openofdevicepage" lay-filter="deviceform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!-- 设备名 --><@spring.message code='mess.device.name'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-name" id ="edit-name" class="layui-input" lay-verify="required" autocomplete="off" placeholder="<@spring.message code='mess.device.enter.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameChina"><!-- 20个字符以内 --><@spring.message code='mess.device.20chart'/></div>
+        </div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	           <div class="layui-input-inline">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="findfloor">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			     </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div> 
+	    </#if>
+	    <div class="layui-form-item">
+			   <label class="layui-form-label" id="US-form-lable"><!-- 楼层--><@spring.message code='mess.device.floor'/></label>
+	           <div class="layui-input-inline">
+	             <select name="edit-floor" id="edit-floor" lay-filter="upcheck">
+	               <option value="">-<@spring.message code='mess.device.enter.floor'/>-</option><!--请选择楼层-->
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.device.oflocation'/><!--设备所处位置--></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-memo" id ="edit-memo" class="layui-input" lay-verify="required" autocomplete="off" placeholder="<@spring.message code='mess.device.enter.oflocation'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-memo"><!--20个字符以内--><@spring.message code='mess.device.tag'/></div>
+        </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><@spring.message code='mess.device.no'/><!--设备编号--></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-no" id ="edit-no" class="layui-input" lay-verify="number" autocomplete="off" placeholder="<@spring.message code='mess.device.enter.no'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-no"><!--编号为一位纯数字,如0或1--><@spring.message code='mess.device.no.note'/></div>
+        </div>   
+  </div>
+  <script>
+  
+	//20字符以内
+	$('#edit-name').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-nameChina').text("<@spring.message code='mess.device.beyond20'/>");//当前已超出20字符
+			$('#check-nameChina').css("color","red");
+		}else{
+			$('#check-nameChina').text("<@spring.message code='mess.device.20chart'/>");//20个字符以内
+			$('#check-nameChina').css("color","#999");
+		}
+	});
+	$('#edit-memo').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-memo').text("<@spring.message code='mess.device.beyond20'/>");//当前已超出20字符
+			$('#check-memo').css("color","red");
+		}else{
+			$('#check-memo').text("<@spring.message code='mess.device.20chart'/>");//20个字符以内
+			$('#check-memo').css("color","#999");
+		}
+	});
+	//编号仅限0-9的数字
+	$('#edit-no').on("input propertychange", function () {
+		var Exp = /^[0-9]\d{0}$/;
+		/* $(this).val().length > 61 */
+		if(!Exp.test($(this).val())){
+			$('#check-no').text("<@spring.message code='mess.device.no.note1'/>");//编号要求为0-9的纯数字！
+			$('#check-no').css("color","red");
+		}else{
+			$('#check-no').text("<@spring.message code='mess.device.no.note'/>");//编号为一位纯数字,如0或1
+			$('#check-no').css("color","#999");
+		}
+	});
+  
+</script>
+</body>

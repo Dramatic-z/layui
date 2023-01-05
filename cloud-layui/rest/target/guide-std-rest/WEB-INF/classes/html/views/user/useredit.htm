@@ -1,0 +1,154 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<div class="layui-form form-top" hidden="" id="openofUserpage" lay-filter="EditUserform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<input type="hidden" name="test_name" id ="test_name" value="true" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label"><!--用户名--><@spring.message code='mess.user.name'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-loginname" id ="edit-loginname" class="layui-input" autocomplete="off" placeholder="<@spring.message code='mess.user.enter.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-loginname"><!-- 20个字符以内 --><@spring.message code='mess.user.20chart'/></div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label"><!--密码--><@spring.message code='mess.user.password'/></label>
+	            <div class="layui-input-inline">
+	              <input type="password" name="edit-password" id ="edit-password" class="layui-input" autocomplete="new-password" placeholder="<@spring.message code='mess.user.enter.password'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameEng"><!-- 6-16个字符 --><@spring.message code='mess.user.616chart'/></div>
+        </div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			   <label class="layui-form-label">选择商场</label>
+	           <div class="layui-input-inline">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="findroles">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			     </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <#else >
+	    <input type="hidden" name="marketId" id ="edit-marketId" value="${marketId?c}" class="layui-input">
+	    </#if> 
+	    <#if userType ?? && userType == -2>
+	    <div class="layui-form-item" id="basticDiv" hidden="">
+	            <label class="layui-form-label">基础角色</label>
+	            <div class="layui-input-inline">
+	              <#if bRoleList??>
+	                    <#list bRoleList as role>
+	                         <input type="checkbox" name="checkRole" value="${role.id}" lay-skin="primary" title="${role.name}">
+	                    </#list>
+			      </#if>
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameEng">勾选所需要的角色</div>
+        </div>
+        <div class="layui-form-item" id="functionalDiv" hidden="">
+	            <label class="layui-form-label">功能角色</label>
+	            <div class="layui-input-inline" id="functional">
+	            </div>
+	    </div>
+        <#else >
+        <div class="layui-form-item">
+	            <label class="layui-form-label">功能角色</label>
+	            <div class="layui-input-inline" id="form-role-input">
+	              <#if tRoleList??>
+	                    <#list tRoleList as role>
+	                         <input type="checkbox" name="checkRole" value="${role.id}" lay-skin="primary" title="${role.name}">
+	                    </#list>
+			      </#if>    
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+        </div>
+        </#if>
+        
+        <div class="layui-form-item">
+	            <label class="layui-form-label"><!--状态--><@spring.message code='mess.user.status'/></label>
+	            <div class="layui-input-inline">
+	        	  <select name="edit-useEnable" lay-verify="" id="edit-useEnable">
+	                <option value="1" selected="selected"><@spring.message code='mess.user.enable'/></option><!--启用-->
+	                <option value="0"><@spring.message code='mess.user.noenable'/></option><!--不启用-->
+	              </select>
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+        </div> 
+	    <!-- <div class="layui-form-item">
+        	<div class="layui-upload" style="margin-left:110px;">
+	              <button type="button" class="layui-btn" id="test-upload-logo">上传图片</button>
+	              <span>注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果</span>
+	              <div class="layui-upload-list">
+	                <img class="layui-upload-img" name="img-upload-logo" id="img-upload-logo" accept="image/*">
+	                <p id="p-upload-logo"></p>
+	                <input type="hidden" name="logoload" id ="logoload">
+	                <input type="hidden" name="logo" id ="logo">
+	                <input type="hidden" name="logoUrl" id ="logoUrl">
+	              </div>
+	        </div>
+	    </div> -->
+  </div>
+  <script>
+  
+	//20字符以内
+	$('#edit-loginname').on("input propertychange", function () {
+		var loginname=$('#edit-loginname').val();
+		var id=$('#edit-id').val();
+		var url;
+		if(id!=null&&id!=""){
+			url='${rc.contextPath}/user/module/loginNameTest?loginname='+loginname+'&id='+id;
+		}else{
+			url='${rc.contextPath}/user/module/loginNameTest?loginname='+loginname;
+		}
+		//检查用户名是否重复
+		$.ajax({
+           url: url,
+           type: "POST",
+           dataType: 'json',
+           success: function (result) {
+        	   if ("1" == result.code) {
+            	   $("#test_name").val("false");
+            	   $('#check-loginname').text("<@spring.message code='mess.user.name.existing'/>");//用户名已存在,请重新输入
+       			   $('#check-loginname').css("color","red");
+               }else if ("0" == result.code) {
+            	   $("#test_name").val("true");
+                   $('#check-loginname').text("<@spring.message code='mess.user.20chart'/>");//20个字符以内
+       			   $('#check-loginname').css("color","#999");
+               }
+           }
+        });
+		if($(this).val().length > 21){
+			$('#check-loginname').text("<@spring.message code='mess.user.beyond20'/>");//当前已超出20字符
+			$('#check-loginname').css("color","red");
+		}else{
+			$('#check-loginname').text("<@spring.message code='mess.user.20chart'/>");//20个字符以内
+			$('#check-loginname').css("color","#999");
+		}
+	});
+	//60字符以内
+	$('#edit-password').on("input propertychange", function () {
+		if($(this).val().length > 16 || $(this).val().length < 6){
+			$('#check-password').text("<@spring.message code='mess.user.password.note'/>");//密码应为6到16位
+			$('#check-password').css("color","red");
+		}else{
+			$('#check-password').text("<@spring.message code='mess.user.password.note'/>");//密码应为6到16位
+			$('#check-password').css("color","#999");
+		}
+	});
+  
+</script>
+</body>

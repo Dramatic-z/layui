@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="guide-std-rest:war">
+    <output-path>$PROJECT_DIR$/cloud-layui/rest/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>guide-std-rest</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="guide-std-rest.war">
+      <element id="artifact" artifact-name="guide-std-rest:war exploded" />
+    </root>
+  </artifact>
+</component>

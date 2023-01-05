@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><!--基础设置 --><@spring.message code='mess.system.basis.tag'/></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <!-- 公共css文件 -->
+  <link rel="stylesheet" href="${rc.contextPath}/common/utiljs/common.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;} </style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .form-age-top{
+   	 margin-top: 10px;
+	}
+	#US-form-btn{
+    	width: 80px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	padding-top: 0px;
+    	text-align: left;
+    }
+    #US-form-btn{
+    	width: 120px;
+    }
+  </style></#if>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!--基础设置 --><@spring.message code='mess.system.basis.tag'/></div>
+          <div class="layui-card-body" pad15>
+            <form class="layui-form" wid100 lay-filter="setup-form" method="post" action="${rc.contextPath}/systemSetup/saveSystemSetup">
+		      <input type="hidden" name="id" id ="id">
+		      <input type="hidden" name="faceagestr" id ="faceagestr">
+		      <#if userType ?? && userType == -2>
+		      <div class="layui-form-item">
+					<label class="layui-form-label">选择商场</label>
+			        <div class="layui-input-inline">
+			           <select name="marketId" id="edit-marketId" lay-filter="find-setupbymid">
+			            <option value="">-请选择商场-</option>
+			            <#if marketlist??>
+							 <#list marketlist as market>
+								<option value="${market.id}">${market.marketName}</option>
+							 </#list>
+					    </#if>
+			           </select>
+			       </div>
+			  </div>
+			  </#if>
+			  <#if marketId ?? && marketId !=0>
+        	  <input type="hidden" name="marketId" id ="marketId" value="${marketId?c}">
+        	  </#if>
+			  <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--网站名称--><@spring.message code='mess.system.basis.net.name'/></label>
+                <div class="layui-input-block">
+                  <input type="text" name="sitename" value="<@spring.message code='mess.system.basis.net.input.value'/>" readonly="readonly" class="layui-input"><!-- 导览管理系统 -->
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--网站地址 --><@spring.message code='mess.system.basis.net.url'/></label>
+                <div class="layui-input-block">
+                  <input type="text" name="http"  value="http://*:****/cloud-guide-std/user/login" readonly="readonly" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--业态颜色--><@spring.message code='mess.system.basis.format.color'/></label>
+                <div class="layui-input-inline">
+                  <select name="edit-format" id="edit-format" lay-filter="up-color-format">
+		              <option value="">-<@spring.message code='mess.system.basis.enter.format'/>-</option><!--请选择业态 -->
+		              <#if bformatlist??>
+						 <#list bformatlist as format>
+						 	<#if userType ?? && userType != -2>
+								<#if format.marketId == marketId>
+								    <option value="${format.id}:${format.color!'-'}">${format.nameChina}</option>
+								</#if>	
+							<#elseif userType ?? && userType == -2>
+							</#if>			
+						 </#list>
+				      </#if>
+	              </select>
+	            </div>
+                <div class="layui-input-inline" style="width: 40px;left: -11px;">
+                  <div id="colorpicker-dome1" title="<@spring.message code='mess.system.basis.colorpicker.title'/>"></div><!--颜色选择器 -->
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--先选择业态然后挑选对应颜色,此颜色将适用于地图模块。--><@spring.message code='mess.system.basis.format.note'/></div>
+                <input value="" id="format_colors" type="hidden" name="extension">
+              </div>
+              
+              <!-- <div class="layui-form-item">
+                <label class="layui-form-label">缓存时间</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                  <input type="text" name="cache" lay-verify="number" value="0" class="layui-input">
+                </div>
+                <div class="layui-input-inline layui-input-company">分钟</div>
+                <div class="layui-form-mid layui-word-aux">开发阶段不做限制，线上环境设置为 30。</div>
+              </div> -->
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--最大视频上传 --><@spring.message code='mess.system.basis.big.video'/></label>
+                <div class="layui-input-inline" style="width: 80px;">
+                  <input type="text" name="maxVideo" id="maxVideo" lay-verify="number" class="layui-input">
+                </div>
+                <div class="layui-input-inline layui-input-company">MB</div>
+                <div class="layui-form-mid layui-word-aux"><!--提示：1 MB = 1024 KB ——适用于广告管理上传视频限制 --><@spring.message code='mess.system.basis.video.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--上传视频类型 --><@spring.message code='mess.system.basis.video.type'/></label>
+                <div class="layui-input-block">
+                  <input type="text" name="videoType" id="videoType" readonly="readonly" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--人脸视屏年龄段 --><@spring.message code='mess.system.basis.face.agegroup'/></label>
+                <div class="layui-input-inline" id="faceageListDiv" style="width: 600px;">
+                <#if userType ?? && userType != -2>
+                  <#if faceage??>
+					  <#list faceage as face>
+						  <input type="text" readonly="readonly" name="faceageele" value="${face!''}" style="width:80px;border-radius:30px;float:left;margin-left:10px;margin-top: 3px;" class="layui-input">
+					  </#list>
+				  </#if>
+                <#elseif userType ?? && userType == -2>
+				</#if> 
+                </div>
+                <div class="layui-input-inline" id="US-form-btn">
+                  <button class="layui-btn layui-btn-radius layui-btn-xs layui-btn-normal" style="margin-top: 8px;" type="button" lay-demo="upfaceAge"><!--修改年龄段 --><@spring.message code='mess.system.basis.face.upage'/></button>
+                </div>
+                <div class="layui-form-mid layui-word-aux"><@spring.message code='mess.system.basis.face.note'/></div><!--修改后需重新配置人脸视频所属年龄段。 -->
+              </div>
+              <div id="upfaceAgeDiv" hidden="">
+	            <div class="layui-form-item form-age-top">
+		            <label class="layui-form-label" id="US-form-lable"><!--填写所需年龄段 --><@spring.message code='mess.system.basis.face.form.note1'/></label>
+		            <div class="layui-input-inline" style="width: 60px;">
+		              <input type="number" name="begin-age" id ="begin-age" value="0" class="layui-input" autocomplete="off">
+		            </div>
+		            <div class="layui-form-mid">-</div>
+		            <div class="layui-input-inline" style="width: 60px;">
+		              <input type="number" name="end-age" id ="end-age" class="layui-input" autocomplete="off">
+		            </div>
+		            <div class="layui-input-inline">
+	                  <button class="layui-btn layui-btn-radius layui-btn-xs layui-btn-normal" style="margin-top: 8px;" type="button" id="obtainage"><!--添加此年龄段 --><@spring.message code='mess.system.basis.face.form.note2'/></button>
+	                </div>
+	            </div>
+	        	<div class="layui-form-item form-age-top">
+		            <label class="layui-form-label" id="US-form-lable"><!--年龄段--><@spring.message code='mess.system.basis.face.form.note3'/></label>
+		            <div class="layui-input-inline" id="addagegroup">
+		            </div>
+		            <div class="layui-input-inline">
+	                  <button class="layui-btn layui-btn-radius layui-btn-xs layui-btn-danger" style="margin-top: 8px;" hidden="" type="button" id="resetage"><!--全部清除 --><@spring.message code='mess.system.basis.face.form.clear'/></button>
+	                </div>
+	        	</div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="set_system"><!--确认保存--><@spring.message code='mess.system.basis.face.submit.save'/></button>
+                </div>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+  
+ <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','laydate','element','admin', 'upload','colorpicker','util'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,element = layui.element
+    ,layer = layui.layer
+    ,laydate = layui.laydate
+    ,form = layui.form
+    ,upload = layui.upload
+    ,colorpicker = layui.colorpicker
+    ,util = layui.util;
+    
+    $(function(){
+       var mid=$("#marketId").val();
+       if(mid != null && mid!=''){
+    	   var url='${rc.contextPath}/systemSetup/SelectSetUpByMarketId?MarketId='+mid;
+    	   $.ajax({
+               url: url,
+               type: "POST",
+               dataType: 'json',
+               success: function (result) {
+            	   if(result!=null&&result.code=="0"){
+  	          		 var setup = result.data
+  	       		   	 form.val('setup-form', {
+  	       		   		  "id": setup.id,
+  	           	          "videoType": setup.videoType,
+  	           	          "maxVideo": setup.maxVideo,
+  	           	     	  "faceagestr": setup.faceagestr
+  	           	     });
+  	          		 /* var list=setup.faceage;
+  	          		 if(list!=null){
+  	          			for (var i = 0; i < list.length; i++) {
+  							$("#faceagegroup").append("<span>"+list[i]+"岁"+"</span><br>");
+  						 }
+  	          		 } */
+  	          	   }
+            	}
+           });
+       }
+   	   
+  	  var ret=$("#returnMsg").val();
+  	  if(ret!=null&&ret!=''){
+   	  	layer.msg(ret);
+      } 
+   	});
+    
+    //业态颜色 
+    form.on('select(up-color-format)', function (data) {
+    	var val = data.value;
+    	var text = $("#edit-format").find("option:selected").text();
+    	if(val!=''){
+    		var strs=val.split(":");
+    	//	var color = val.substr(val.indexOf(":")+1,val.length);
+    	    var recolor = strs[1];
+    	    //初始色值
+            colorpicker.render({
+              elem: '#colorpicker-dome1'
+              ,color: recolor //设置初始色
+              ,predefine: true
+              ,colors: ['#F00','#0F0','#00F','rgb(255, 69, 0)','rgba(255, 69, 0, 0.5)']
+              ,change: function(color){
+              }
+              ,done: function(color){
+                  if(color == ''){
+                      color = 'null';
+                  }
+            	  $("#edit-format option[value='"+val+"']").remove();
+            	  var value=strs[0]+':'+color;
+            	  var html='<option value="'+value+'" >'+text+'</option>';
+            	  $("#edit-format").append(html);
+            	  $('#colorpicker-form-input').val(color);
+            	  $("#edit-format").val(value);
+            	  form.render('select');
+              }
+            });
+            
+    	}else{
+    		colorpicker.render({
+    		   elem: '#colorpicker-dome1'
+   			   ,predefine: true
+   			   ,colors: ['#F00','#0F0','#00F','rgb(255, 69, 0)','rgba(255, 69, 0, 0.5)']
+    		    // ,color: '#1c97f5'
+    		});
+    	}
+    	form.render();
+    });
+    
+    //颜色赋值
+    colorpicker.render({
+      elem: '#colorpicker-dome1'
+     ,predefine: true
+     ,colors: ['#F00','#0F0','#00F','rgb(255, 69, 0)','rgba(255, 69, 0, 0.5)']
+    // ,color: '#1c97f5'
+    });
+    
+    /* 选择商场时初始化数据显示 */
+  	form.on('select(find-setupbymid)', function (data) {
+    	var marketid = data.value
+    	$.ajax({
+            url: '${rc.contextPath}/systemSetup/initSetupBymid?marketid='+marketid,
+            type: "POST",
+            dataType: 'json',
+            success: function (result) {
+         	   if ("0" == result.code) {
+         	 	    var set = result.data;
+         	 	    if(data!=null){
+         	 	       $("#edit-format").empty();
+         	 	       $("#edit-format").append("<option value=''>-<@spring.message code='mess.system.basis.enter.format'/>-</option>");//请选择业态
+         	 	       for (var i = 0; i < set.length; i++) {
+         	 	    	 $("#edit-format").append("<option value="+set[i].id+':'+set[i].color+">"+set[i].nameChina+"</option>");
+					   }
+        	 	    }else{
+         	 	       $("#edit-format").empty();
+          	 	       $("#edit-format").append("<option value=''>-<@spring.message code='mess.system.basis.enter.otherMK'/>-</option>");//请选择其他商场
+					}
+         	   }
+            }
+        });
+    	$.ajax({
+            url: '${rc.contextPath}/systemSetup/SelectSetUpByMarketId?MarketId='+marketid,
+            type: "POST",
+            dataType: 'json',
+            success: function (result) {
+         	   if(result!=null&&result.code=="0"){
+	          		 var setup = result.data
+	       		   	 form.val('setup-form', {
+	       		   		  "id": setup.id,
+	           	          "videoType": setup.videoType,
+	           	          "maxVideo": setup.maxVideo,
+	           	       	  "faceagestr": setup.faceagestr
+	           	     });
+	          		 var agegroupstr=setup.faceagestr;
+	          		 console.log(agegroupstr);
+	          		 if(agegroupstr!=null&&agegroupstr!=''){
+	            		 $("#faceagestr").val(agegroupstr);
+	            		 $("#faceageListDiv").empty();
+	            		 var arr=agegroupstr.split(" | ");
+	            		 $.each(arr,function(index,age){
+	            			 $("#faceageListDiv").append('<input type="text" readonly="readonly" name="faceageele" value='+age+' style="width:80px;border-radius:30px;float:left;margin-left:10px;margin-top: 3px;" class="layui-input">');	
+		            	 });
+		             };
+         	   }
+         	}
+        });
+    	form.render();
+    });
+    
+    //按钮事件
+    util.event('lay-demo', {
+    	upfaceAge: function(){
+    	  var mid=$("#marketId").val();
+    	  var marketId =$("#test-marketId").val();
+    	  layer.open({
+	             type: 1,
+	             title: "<@spring.message code='mess.system.basis.face.upage'/>",//修改年龄段
+	             skin: 'layui-layer-rim',
+	             area: ['550px', '360px'],
+	             btn: ["<@spring.message code='mess.system.basis.js.ok'/>","<@spring.message code='mess.bformat.cancel'/>"],//确定,取消
+	             content: $('#upfaceAgeDiv'),
+	             yes: function(index, layero){
+	            	 var agegroupstr="";
+	            	 $("#addagegroup input[type='text']").each(function(){
+	            		 agegroupstr+=$(this).val()+" | ";
+	            	 });
+	            	 agegroupstr=agegroupstr.substring(0,agegroupstr.lastIndexOf(" | "));
+	            	 //分割字符串   改变页面元素显示
+	            	 if(agegroupstr!=null&&agegroupstr!=''){
+	            		 $("#faceagestr").val(agegroupstr);
+	            		 $("#faceageListDiv").empty();
+	            		 var arr=agegroupstr.split(" | ");
+	            		 $.each(arr,function(index,age){
+	            			 $("#faceageListDiv").append('<input type="text" readonly="readonly" name="faceageele" value='+age+' style="width:80px;border-radius:30px;float:left;margin-left:10px;margin-top: 3px;" class="layui-input">');	
+		            	 });
+		             };
+	            	// console.log(agegroupstr);
+	          //  	 agegroupstr=agegroupstr.replace(/-99/g,"以上");
+	          // 	 agegroupstr=agegroupstr.replace(/岁/g,"");
+	          //  	 agegroupstr=agegroupstr.replace(/\s*/g,"");
+	          //  	 
+	            	 layer.close(index);
+	             },
+	             btn2: function(index, layero){layer.close(index)}
+	     });
+       }
+    });
+    
+    //隐藏清除按钮
+  	$("#resetage").hide();
+    $("#obtainage").click(function(){
+    	var begin =$("#begin-age").val();
+    	var end =$("#end-age").val();
+    	if(begin!=null&&begin!=''&&end!=null&&end!=''){
+    		var re = /^[1-9]\d*$/;//正整数
+        	if(!re.test(Number(end))){
+        		layer.msg("<@spring.message code='mess.system.basis.msg1'/>");//请输入正整数
+        		return false;
+        	}
+        	if(Number(begin)>Number(end)){
+        		layer.msg("<@spring.message code='mess.system.basis.msg2'/>");//年龄段需由小到大排列
+        		return false;
+        	}
+        	$("#addagegroup").append("<input type='text' readonly='readonly' class='layui-input' value="+Number(begin)+"&nbsp;-&nbsp;"+Number(end)+"<@spring.message code='mess.system.basis.msg3'/>"+">");//岁
+        	$("#resetage").show();
+        	$("#begin-age").val(++end);
+        	$("#end-age").val('');
+        	form.render();
+    	}else{
+    		layer.msg("<@spring.message code='mess.system.basis.msg4'/>");//起始年龄不能为空
+    	}
+    });
+    $("#resetage").click(function(){
+    	$("#begin-age").val(0);
+    	$("#resetage").hide();
+    	$("#addagegroup").empty();
+    	form.render();
+    });
+    $('#begin-age').on("input propertychange", function () {
+    	var re = /^[0-9]\d*$/;//正整数
+    	if(Number($(this).val())<0){
+			$("#begin-age").val(0);
+		}else if(Number($(this).val())>98){
+			$("#begin-age").val(98);
+			layer.msg("<@spring.message code='mess.system.basis.msg5'/>");//开始年龄不能大于98
+		}
+	});
+    $('#end-age').on("input propertychange", function () {
+    	var re = /^[1-9]\d*$/;//正整数
+		if(Number($(this).val())>99){
+			$("#end-age").val(99);
+		}else if(!re.test(Number($(this).val()))){
+			layer.msg("<@spring.message code='mess.system.basis.msg6'/>");//请输入正整数
+		}
+	});
+    
+    
+    /* 自定义验证规则 */
+    form.verify({
+      nameChina: function(value){
+        if(value.length > 20){
+          return "<@spring.message code='mess.system.basis.msg7'/>";//商铺中文名不能超过20个字符
+        }
+      }
+      ,nameEng: function(value){
+        if(value.length > 60){
+          return "<@spring.message code='mess.system.basis.msg8'/>";//商铺英文名不能超过60个字符
+        }
+      }
+      ,keyword: function(value){
+          if(value.length > 20){
+              return "<@spring.message code='mess.system.basis.msg9'/>";//关键字不能超过20个字符
+            }
+          }
+      ,storech: function(value){
+          if(value.length > 200){
+            return "<@spring.message code='mess.system.basis.msg10'/>";//商铺中文描述不能超过200个字符
+          }
+      }
+      ,storeeng: function(value){
+          if(value.length > 500){
+        	return "<@spring.message code='mess.system.basis.msg11'/>";//商铺中文描述不能超过500个字符
+          }
+      }
+   }); 
+	
+    //监听提交事件
+    form.on("submit(set_system)",function(data){
+    	var colors ='';
+    	$("#edit-format option").each(function(){ //遍历全部option
+    		var val = $(this).val();
+    		if(val!=null&&val!=''){
+    			colors += val+','
+    		}
+        });
+	    $("#format_colors").val(colors);
+	    return true;
+    });
+    
+});
+  
+</script>
+</body>
+</html>

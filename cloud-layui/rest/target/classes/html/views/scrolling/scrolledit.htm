@@ -1,0 +1,119 @@
+<style type="text/css">
+	.layui-table-cell{
+		/*  height: auto!important; */
+		/* height: 50px;
+      white-space: normal; */
+	}
+	.layui-form-label {
+		width: 90px;
+	}
+	.form-top{
+		margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openScrollingPage" lay-filter="scrollingForm">
+	<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+	<div class="layui-form-item">
+		<label class="layui-form-label">标题</label>
+		<div class="layui-input-inline">
+			<input type="text" name="edit-tittle" id ="edit-tittle" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入标题">
+		</div>
+		<img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+		<div class="layui-form-mid layui-word-aux" id="check-point"><!--20个字符以内 --><@spring.message code='mess.point.20chart'/></div>
+	</div>
+	<#if userType ?? && userType == -2>
+	<div class="layui-form-item">
+		<label class="layui-form-label">选择商场</label>
+		<div class="layui-input-inline">
+			<select name="edit-marketId" id="edit-marketId" lay-filter="find-floor">
+				<option value="">-请选择商场-</option>
+				<#if marketlist??>
+				<#list marketlist as market>
+				<option value="${market.id}">${market.marketName}</option>
+			</#list>
+		</#if>
+		</select>
+		</div>
+		<img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+		</div>
+	</#if>
+
+<div class="layui-form-item">
+	<label class="layui-form-label">滚动内容中文</label>
+	<div class="layui-input-inline" style="width: 420px;">
+		<textarea type="text" name="edit-detailsChina" id ="edit-detailsChina" class="layui-textarea" lay-verify="required|detailsChina" autocomplete="off" placeholder="请输入中文滚动信息"></textarea>
+	</div>
+	<div class="layui-form-mid layui-word-aux" id="check-China">500个字符以内</div>
+</div>
+<div class="layui-form-item">
+	<label class="layui-form-label">滚动内容英文</label>
+	<div class="layui-input-inline" style="width: 420px;">
+		<textarea type="text" name="edit-detailsEng" id ="edit-detailsEng" class="layui-textarea" lay-verify="required|detailsEng" autocomplete="off" placeholder="请输入英文滚动信息"></textarea>
+	</div>
+	<div class="layui-form-mid layui-word-aux" id="check-Eng">2000个字符以内</div>
+</div>
+<div class="layui-form-item">
+	<label class="layui-form-label">滚动内容繁体</label>
+	<div class="layui-input-inline" style="width: 420px;">
+		<textarea type="text" name="edit-detailsFan" id ="edit-detailsFan" class="layui-textarea" lay-verify="required|detailsChina" autocomplete="off" placeholder="请输入繁体滚动信息"></textarea>
+	</div>
+	<div class="layui-form-mid layui-word-aux" id="check-Fan">500个字符以内</div>
+</div>
+
+<div class="layui-form-item">
+	<label class="layui-form-label"><@spring.message code='mess.point.status'/><!--状态--></label>
+	<div class="layui-input-inline" id="US-form-select">
+		<select name="edit-status" id="edit-status">
+			<option value="1" selected="selected"><@spring.message code='mess.point.enable'/></option><!--启用-->
+			<option value="0"><@spring.message code='mess.point.noenable'/></option><!--未启用-->
+		</select>
+	</div>
+</div>
+</form>
+<script>
+
+	//20字符以内
+	$('#edit-point').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-point').text("<@spring.message code='mess.point.beyond20'/>");//当前已超出20字符
+			$('#check-point').css("color","red");
+		}else{
+			$('#check-point').text("<@spring.message code='mess.point.20chart'/>");//20个字符以内
+			$('#check-point').css("color","#999");
+		}
+	});
+	//500字符以内 (活动详情)
+	$('#edit-detailsChina').on("input propertychange", function () {
+		if($(this).val().length > 500){
+			$('#check-China').text("当前已超出500字符");//当前已超出200字符
+			$('#check-China').css("color","red");
+		}else{
+			$('#check-China').text("500个字符以内");//200个字符以内
+			$('#check-China').css("color","#999");
+		}
+	});
+	//2000字符以内（活动详情英文）
+	$('#edit-detailsEng').on("input propertychange", function () {
+		if($(this).val().length > 2000){
+			$('#check-Eng').text("当前已超出2000字符");//当前已超出1000字符
+			$('#check-Eng').css("color","red");
+		}else{
+			$('#check-Eng').text("2000个字符以内");//1000个字符以内
+			$('#check-Eng').css("color","#999");
+		}
+	});
+	//500字符以内（活动详情繁体）
+	$('#edit-detailsFan').on("input propertychange", function () {
+		if($(this).val().length > 500){
+			$('#check-Fan').text("当前已超出500字符");//当前已超出1000字符
+			$('#check-Fan').css("color","red");
+		}else{
+			$('#check-Fan').text("500个字符以内");//1000个字符以内
+			$('#check-Fan').css("color","#999");
+		}
+	});
+
+
+</script>
+</body>

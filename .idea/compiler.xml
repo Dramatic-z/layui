@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="layui-rest" />
+        <module name="common-dal" />
+        <module name="common-logger" />
+        <module name="common-domain" />
+        <module name="layui-domain" />
+        <module name="layui-service" />
+        <module name="common-web" />
+        <module name="layui-dal" />
+        <module name="common-cache" />
+        <module name="common-core" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common-cache" target="1.8" />
+      <module name="common-core" target="1.8" />
+      <module name="common-dal" target="1.8" />
+      <module name="common-domain" target="1.8" />
+      <module name="common-logger" target="1.8" />
+      <module name="common-web" target="1.8" />
+      <module name="layui-dal" target="1.8" />
+      <module name="layui-domain" target="1.8" />
+      <module name="layui-rest" target="1.8" />
+      <module name="layui-service" target="1.8" />
+      <module name="nrc-layui-root" target="1.8" />
+      <module name="nrc-project-root" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

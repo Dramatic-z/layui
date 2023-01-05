@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+	<!-- include config defined in spring-boot-x.y.z.jar -->
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+	<springProperty scope="context" name="springAppName" source="spring.application.name" />
+	<springProperty scope="context" name="openAppBasepackage" source="open.app.basepackage" />
+
+	<property name="LOG_PATH" value="${nrc.logger.path:-/opt/logs}/${springAppName:-nrc-temp}" />
+	<property name="basepackage" value="${openAppBasepackage:-com.nrc.cloud.${module:-}}" />
+
+	<springProfile name="console">
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+		</root>
+	</springProfile>
+
+	<springProfile name="!console">
+
+		<include resource="META-INF/base-appender.xml" />
+
+		<root level="INFO">
+			<appender-ref ref="DEFAULT-APPENDER" />
+			<appender-ref ref="ERROR-APPENDER" />
+		</root>
+	</springProfile>
+
+</included>

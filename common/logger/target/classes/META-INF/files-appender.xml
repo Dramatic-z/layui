@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+
+	<appender name="DAL-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<file>${LOG_PATH}/dal.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/dal.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="INTEGRATION-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<file>${LOG_PATH}/integration.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/integration.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="SERVICE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<file>${LOG_PATH}/service.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/service.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="DEAMON-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<file>${LOG_PATH}/deamon.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/deamon.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="WEB-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<file>${LOG_PATH}/web.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/web.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="org.mybatis" level="info" additivity="false">
+		<appender-ref ref="DAL-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="java.sql" level="info" additivity="false">
+		<appender-ref ref="DAL-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.dao" level="info" additivity="false">
+		<appender-ref ref="DAL-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.dal" level="info" additivity="false">
+		<appender-ref ref="DAL-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.integration" level="info" additivity="false">
+		<appender-ref ref="INTEGRATION-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.service" level="info" additivity="false">
+		<appender-ref ref="SERVICE-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.domainservice" level="info" additivity="false">
+		<appender-ref ref="SERVICE-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.deamon" level="info" additivity="false">
+		<appender-ref ref="DEAMON-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.web" level="info" additivity="false">
+		<appender-ref ref="WEB-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+
+	<logger name="${basepackage:-}.controller" level="info" additivity="false">
+		<appender-ref ref="WEB-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</logger>
+</included>

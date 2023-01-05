@@ -1,0 +1,85 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	width: 120px;
+    	text-align: left;
+    }
+  </style></#if>
+<body>
+<form class="layui-form form-top" hidden="" id="openofstoreactyapplypage" lay-filter="storeactyapplyform">
+  		<input type="hidden" name="see-id" id ="see-id" value="" class="layui-input">
+  		
+  		<div class="layui-col-md6">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--商铺活动名--><@spring.message code='mess.apply.storeact.name'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="see-nameChina" readonly="readonly" id ="see-nameChina" class="layui-input">
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--英文名--><@spring.message code='mess.apply.storeact.engname'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="see-nameEng" readonly="readonly" id ="see-nameEng" class="layui-input">
+	            </div>
+	    </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--活动中文描述--><@spring.message code='mess.apply.storeact.describe'/></label>
+	            <div class="layui-input-inline">
+	              <textarea type="text" name="see-detailsChina" readonly id ="see-detailsChina" class="layui-textarea"></textarea>
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--起始日期--><@spring.message code='mess.apply.storeact.date'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="see-data" readonly="readonly" id ="see-data" class="layui-input">
+	            </div>
+	    </div>
+	    </div>
+	    
+	    <div class="layui-col-md6">
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--所属商铺--><@spring.message code='mess.apply.storeact.ofstore'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="see-storename" readonly="readonly" id ="see-storename" class="layui-input">
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--状态--><@spring.message code='mess.apply.storeact.status'/></label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="see-status" readonly="readonly" id ="see-status" class="layui-input">
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--活动英文描述--><@spring.message code='mess.apply.storeact.engdescribe'/></label>
+	            <div class="layui-input-inline">
+	              <textarea type="text" name="see-detailsEng" readonly ="see-detailsEng" class="layui-textarea"></textarea>
+	            </div>
+	    </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label"><!--LOGO--><@spring.message code='mess.apply.storeact.LOGO'/></label>
+	            <div class="layui-input-inline" id="US-form-lable">
+	              <img class="layui-upload-img" name="logoUrlofsat" id="logoUrlofsat" accept="image/*">
+	            </div>
+	    </div>
+	    </div>
+        
+</form>
+  <script>
+  
+	
+</script>
+</body>

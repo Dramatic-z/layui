@@ -1,0 +1,553 @@
+<#import "/spring.ftl" as spring />
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.index.homep.view1'/></title><!-- 报表总览 -->
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery.min.js"></script>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/js/I18n/echarts-all_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/js/I18n/echarts-all_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/js/echarts-all.js"></script>
+  </#if>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  
+</head>
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md4">
+            <div class="layui-card">
+            	<div class="layui-card-header"><@spring.message code='mess.index.homep.view2'/></div><!--设备在线状况 -->
+                <!--图表begin  设备在线量-->
+				<div id="" class="panel-collapse collapse in" align="center">
+					<div class="panel-body" style="width:500px;height: 360px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+  						<div id="mainOfOnline" style="width: 500px;height:360px;"></div>
+					</div>
+					<!-- <div style="position: absolute;left: 240px;bottom: 180px;">
+						<span style="font-size: 20px;text-align: center;color: #ff1a2d" id="Ontext"></span>
+					</div> -->
+				</div>
+		        <!--图表end-->
+            </div>
+          </div>
+          <div class="layui-col-md4">
+          	 <div class="layui-card">
+          	 	<div class="layui-card-header"><@spring.message code='mess.index.homep.view3'/></div><!--设备离线状况 -->
+            	<!--图表begin  设备离线量-->
+				<div id="" class="panel-collapse collapse in" align="center">
+					<div class="panel-body" style="width:500px;height: 360px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+  						<div id="mainOfOffline" style="width: 500px;height:360px;"></div>
+					</div>
+					<!-- <div style="position: absolute;left: 240px;bottom: 180px;">
+						<span style="font-size: 20px;text-align: center;color: #ff1a2d" id="OFFtext"></span>
+					</div> -->
+				</div>
+		        <!--图表end-->
+		     </div>   
+          </div>
+          <div class="layui-col-md4">
+	      	  <div class="layui-card">
+	      	  	<div class="layui-card-header"><@spring.message code='mess.index.homep.view4'/></div><!-- 设备总览比例 -->
+	        	<!--图表begin  设备离线量-->
+				<div id="" class="panel-collapse collapse in" align="center">
+					<div class="panel-body" style="width:500px;height: 360px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+	 					<div id="mainOfOverview" style="width: 500px;height:360px;"></div>
+					</div>
+					<!-- <div style="position: absolute;left: 220px;bottom: 180px;">
+						<span style="font-size: 20px;text-align: center;color: #ff1a2d" id="Viewtext"></span>
+					</div> -->
+				</div>
+		        <!--图表end-->
+		     </div>   
+	      </div>
+	      <div class="layui-col-md12">
+	      	  <div class="layui-row layui-col-space15">
+               <div class="layui-col-md6">
+		      	  <div class="layui-card">
+		      	  	<div class="layui-card-header"><@spring.message code='mess.index.homep.view5'/></div><!--设备当天访问量 -->
+		        	<!--图表begin  设备离线量-->
+					<div id="" class="panel-collapse collapse in" align="center">
+						<div class="panel-body" style="width:800px;height: 360px;">
+							<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+		 					<div id="mainOfTodayVisit" style="width: 800px;height:360px;"></div>
+						</div>
+						<div style="position: absolute;left: 230px;bottom: 230px;">
+							<span style="font-size: 20px;text-align: center;color: #ff1a2d"></span>
+						</div>
+					</div>
+			        <!--图表end-->
+			     </div>   
+		      </div> 
+		      <div class="layui-col-md6">
+		      	  <div class="layui-card">
+		      	  	<div class="layui-card-header"><@spring.message code='mess.index.homep.view6'/></div><!--设备访问量对比(上周与本周)-->
+		        	<!--图表begin  设备离线量-->
+					<div id="" class="panel-collapse collapse in" align="center">
+						<div class="panel-body" style="width:800px;height: 360px;">
+							<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+		 					<div id="mainOfContrast" style="width: 800px;height:360px;"></div>
+						</div>
+						<div style="position: absolute;left: 230px;bottom: 230px;">
+							<span style="font-size: 20px;text-align: center;color: #ff1a2d"></span>
+						</div>
+					</div>
+			        <!--图表end-->
+			     </div>   
+		      </div> 
+            </div>
+          </div>
+	    </div>
+    </div>
+  </div>
+  <script src="${rc.contextPath}/layuiadmin/layui/layui.js?t=1"></script>  
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'senior']);
+  
+  //基于准备好的dom，初始化echarts实例
+  var myChartOfOn = echarts.init(document.getElementById('mainOfOnline'));
+  var myChartOfOff= echarts.init(document.getElementById('mainOfOffline'));
+  var myChartView = echarts.init(document.getElementById('mainOfOverview'));
+  var myChartVisit = echarts.init(document.getElementById('mainOfTodayVisit'));
+  var myChartContrast = echarts.init(document.getElementById('mainOfContrast'));
+  
+  //默认无数据显示界面
+  var defaul = {title: {},tooltip: {},legend: {data:null},toolbox: {},calculable : true,series: [{name: '',type: 'pie',data:null}]};
+  
+  var DeviceNameOfON = [];
+  var DeviceNameOfOFF = [];
+  var AllView = [];
+  var Online = [];
+  var Offline = [];
+  var ViewData = [];
+  var o =0;
+  var f =0;
+  var ONText;
+  var OFFText;
+  var ViewText;
+  <#if jsonResult ??>
+  	function getDevicename(){
+		var jsonObj = eval(${jsonResult});
+		if(jsonObj!=null){
+			for (var i = 0; i < jsonObj.length; i++) {
+				DeviceNameOfON.push(jsonObj[i].name);
+				DeviceNameOfOFF.push(jsonObj[i].name);
+				var json={};
+				if(Number(jsonObj[i].status)==1){
+					json.name=jsonObj[i].name;
+					json.value=100;
+					Online.push(json);
+					o++;
+				}else if(Number(jsonObj[i].status)==0){
+					json.name=jsonObj[i].name;
+					json.value=100;
+					Offline.push(json);
+					f++;
+				}
+			}
+			var json={};
+			json.name='在线';
+			json.value=Number(o);
+			ViewData.push(json);
+			json={};
+			json.name='离线';
+			json.value=Number(f);
+			ViewData.push(json);
+			AllView.push('在线');
+			AllView.push('离线');
+		}
+		ONText ="在线"+o+"台";
+		OFFText="离线"+f+"台";
+		ViewText="在线占比"+Number(o/(o+f)*100).toFixed(0)+"%";
+		$("#Ontext").html(ONText);
+		$("#OFFtext").html(OFFText);
+		$("#Viewtext").html(ViewText);
+	}
+  	window.onload=getDevicename();
+  </#if>
+  
+  if(DeviceNameOfON!=null&&Online!=null){
+	// 指定图表的配置项和数据(设备在线)
+	var option1 = {
+	    tooltip: {
+	        trigger: 'item',
+	     	formatter: "{a} :{b} "
+	    },
+	    legend: {
+	        orient: 'horizontal',
+	        x: 'left',
+	        data:DeviceNameOfON
+	    },
+	    series: [{
+	            name:'在线',
+	            type:'pie',
+	            radius: ['35%', '55%'],
+	            avoidLabelOverlap: true,
+	            label: {
+	            	normal: {
+	                    show: false,
+	                    position: 'center'
+	                },
+	                emphasis: {
+	                    show: true,
+	                    textStyle: {
+	                        fontSize: '30',
+	                        fontWeight: 'bold'
+	                    }
+	                }
+	            },
+	            labelLine: {
+	                normal: {
+	                    show: false
+	                }
+	            },
+	            data:Online
+	        }]
+	};
+  }else{
+	var option1=defaul;
+  }
+	
+  if(DeviceNameOfOFF!=null&&Offline!=null){
+	// 指定图表的配置项和数据（离线）
+	var option2 = {
+	    tooltip: {
+	        trigger: 'item',
+	     // formatter: "{a} <br/>{b}: {c} ({d}%)"
+	        formatter: "{a} :{b} "
+	    },
+	    legend: {
+	        orient: 'horizontal',
+	        x: 'left',
+	        data:DeviceNameOfOFF
+	    },
+	    graphic: [{ //环形图中间添加文字
+            type: 'text', //通过不同top值可以设置上下显示
+            left: 'center',
+            top: '45%',
+            style: {
+            	text: OFFText,
+                textAlign: 'center',
+                fill: 'blue', //文字的颜色
+                width: 30,
+                height: 30,
+                fontSize: 20,
+                fontFamily: "Microsoft YaHei"
+            }
+        }],
+	    series: [{
+	            name:'离线',
+	            type:'pie',
+	            radius: ['35%', '55%'],
+	            avoidLabelOverlap: false,
+	            label: {
+	                normal: {
+	                    show: false,
+	                    position: 'center'
+	                },
+	                emphasis: {
+	                    show: true,
+	                    textStyle: {
+	                        fontSize: '30',
+	                        fontWeight: 'bold'
+	                    }
+	                }
+	            },
+	            labelLine: {
+	                normal: {
+	                    show: false
+	                }
+	            },
+	            data:Offline
+	        }]
+	}; 
+  }else{
+	var option2=defaul;
+  }
+	
+  if(AllView!=null&&ViewData!=null){
+	// 指定图表的配置项和数据(总览)
+	var option3 = {
+	    tooltip: {
+	        trigger: 'item',
+	     // formatter: "{a} <br/>{b}: {c} ({d}%)"
+	        formatter: "{a} :{d}% "
+	    },
+	    legend: {
+	        orient: 'horizontal',
+	        x: 'left',
+	        data:AllView
+	    },
+	    graphic: [{ //环形图中间添加文字
+            type: 'text', //通过不同top值可以设置上下显示
+            left: 'center',
+            top: '45%',
+            style: {
+            	text: ViewText,
+                textAlign: 'center',
+                fill: 'blue', //文字的颜色
+                width: 30,
+                height: 30,
+                fontSize: 20,
+                fontFamily: "Microsoft YaHei"
+            }
+        }],
+	    series: [{
+	            name:'比例',
+	            type:'pie',
+	            radius: ['35%', '55%'],
+	            avoidLabelOverlap: false,
+	            label: {
+	                normal: {
+	                    show: false,
+	                    position: 'center'
+	                },
+	                emphasis: {
+	                    show: true,
+	                    textStyle: {
+	                        fontSize: '30',
+	                        fontWeight: 'bold'
+	                    }
+	                }
+	            },
+	         	// 饼图直接显示数据   （方便导出图片时需要）
+	            itemStyle:{
+	          	  normal:{
+	  		           label:{ 
+	  		              show: true, 
+	  		              formatter: '{b} : {c}台	 ({d}%)'
+	  		              }, 
+	  		           labelLine :{show:true} 
+	  		         } 
+	  		    },
+	            labelLine: {
+	                normal: {
+	                    show: false
+	                }
+	            },
+	            data:ViewData
+	        }]
+	}; 
+  }else{
+	var option3=defaul;
+  }
+	
+  var DeviceNameOfVisit = [];
+  var TodayVs = [];
+	<#if jsonResultOfToday ??>
+	function getDeviceVisit(){
+		var jsonObj = eval(${jsonResultOfToday});
+		if(jsonObj!=null){
+			for (var i = 0; i < jsonObj.length; i++) {
+				DeviceNameOfVisit.push(jsonObj[i].operator);
+				var json={};
+				json.name=jsonObj[i].operator;
+				json.value=jsonObj[i].marketId;
+				TodayVs.push(json);
+			}
+		}
+	}
+  	window.onload=getDeviceVisit();
+	</#if>
+	
+  if(DeviceNameOfVisit!=null&&TodayVs!=null){
+	// 指定图表的配置项和数据
+	var option4 = {
+		tooltip: {
+	        trigger: 'item',
+	     	formatter: "{a} <br/>{b}: {c}次 ({d}%)"
+	    	//   formatter: "{a} :{d}% "
+	    },
+	    legend: {
+	        orient: 'vertical',
+	        x: 'left',
+	        data:DeviceNameOfVisit
+	    },
+	    series: [{
+	            name:'当天访问量',
+	            type:'pie',
+	            center: ['60%', '50%'],
+	            radius: ['0%', '70%'],
+	            avoidLabelOverlap: false,
+	            // 饼图直接显示数据   （方便导出图片时需要）
+	            itemStyle:{ 
+	          	  normal:{
+	  		           label:{ 
+	  		              show: true, 
+	  		              formatter: '{b} : {c}次 ({d}%)'
+	  		              }, 
+	  		           labelLine :{show:true} 
+	  		         } 
+	  		    },
+	            data:TodayVs
+	        }]
+	}; 
+  }else{
+	var option4=defaul;
+  }
+	
+    var nameoper = [];
+    var num = [];
+    var nameoperlast = [];
+    var numlast = [];
+   <#if jsonResultOfWeek ??> 
+    function getweek(){
+		var jsonObj = eval(${jsonResultOfWeek});
+		if(jsonObj!=null){
+			for (var i = 0; i < jsonObj.length; i++) {
+				nameoper.push(jsonObj[i].operator);
+				num.push(jsonObj[i].marketId);
+			}
+		}
+	}
+    function getlastweek(){
+		var jsonObj = eval(${jsonResultOflastWeek});
+		if(jsonObj!=null){
+			for (var i = 0; i < jsonObj.length; i++) {
+				nameoperlast.push(jsonObj[i].operator);
+				numlast.push(jsonObj[i].marketId);
+			}
+		}
+	}
+	window.onload=getlastweek();
+	window.onload=getweek();
+	</#if>
+	  
+  if(nameoper!=null&&nameoper.length!=0&&nameoperlast!=null&&nameoperlast.length!=0&&num!=null&&numlast!=null){
+	  var option5 = {
+	        title: {
+	            text: '访问次数对比图表',
+	          //  subtext: '访问次数前五十',
+	        },
+	        tooltip: {
+	        	trigger: 'axis',
+	        },
+	        legend: {
+	            data:['上周','本周'],
+	        },
+	        toolbox: {
+		        show : true,
+		        x: 'right',
+		        color : ['#1e90ff','#22bb22','#4b0082','#d2691e'],
+		        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+		        feature : {
+		            mark : {show: false},
+		            /* dataView: {
+		            	show: true,
+		            	title: "数据视图",
+		            	readOnly: true,
+		            	lang : ['数据视图', '关闭', '刷新'],
+		            },
+		            dataView : {show: true, readOnly: true}, */
+		            magicType : {
+		            	show: true,
+		            	type: ['line', 'bar']
+		            },
+		            /* saveAsImage : {
+		            	show: true,
+		            	title: "保存为图片",
+		            	type: "png",
+		            	lang: [
+		                    "点击保存"
+		                ]	
+		            }, */
+		            restore : {show: true},
+		        }
+		    },
+	        xAxis:[ {
+	            data:nameoper,
+	            axisLabel : {
+	            	rotate:30,
+	                show:true,
+	                interval: 0,
+	                grid: {
+	                	bottom:'35%'
+	                },
+	            } 
+			}],
+	        yAxis: {
+	            type: 'value',
+	            axisLabel : {
+	                formatter: '{value}次'
+	            }
+	        },
+	        grid: {
+	        	x: 80,//X数据距离左侧距离
+	            x2: 80,//
+	            y2: 100, //X轴数据距离底部距离
+	       },
+	       noDataText: '2222',
+	       series: [{
+	            name: '上周',
+	            type: 'bar',
+	            data:num,
+	            itemStyle: {
+	                normal: {
+	                    label: {
+	                        show: true, //开启显示
+	                        position: 'top', //在上方显示
+	                        textStyle: { //数值样式
+	                            color: 'black',
+	                            fontSize: 16
+	                        }
+	                    }
+	                }
+	            },
+	         // barWidth : 20,//柱图宽度
+	         	barMaxWidth : 40,
+	            markLine : {
+	                data : [
+	                    {type : 'average', name: '平均值'}
+	                ]
+	            },
+	        },{
+	            name: '本周',
+	            type: 'bar',
+	            data:numlast,
+	            itemStyle: {
+	                normal: {
+	                    label: {
+	                        show: true, //开启显示
+	                        position: 'top', //在上方显示
+	                        textStyle: { //数值样式
+	                            color: 'black',
+	                            fontSize: 16
+	                        }
+	                    }
+	                }
+	            },
+	         // barWidth : 20,//柱图宽度
+	         	barMaxWidth : 40,
+	            markLine : {
+	                data : [
+	                    {type : 'average', name: '平均值'}
+	                ]
+	            },
+	        }],
+	    };  
+  }else{
+	var option5=defaul;
+  }
+   
+   // 使用刚指定的配置项和数据显示图表。
+   myChartOfOn.setOption(option1);
+   myChartOfOff.setOption(option2);
+   myChartView.setOption(option3);
+   myChartVisit.setOption(option4);
+   myChartContrast.setOption(option5);
+   </script>
+</html>

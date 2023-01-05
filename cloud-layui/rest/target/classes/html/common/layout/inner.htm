@@ -1,0 +1,20 @@
+<#macro innerlayout title="开放平台">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>${title}</title>
+    <base target="_self">
+    <link rel="stylesheet" href="${rc.contextPath}/htdocs/css/bootstrap.min.css" media="screen">
+    <script src="${rc.contextPath}/htdocs/js/common.js"></script>
+</head>
+<body>
+	<div id="displayBox" style="display:none;width:100px;">
+		<img src="${rc.contextPath}/htdocs/img/blockUI/loading_small.gif" />
+	</div>
+	<div class="">
+         <#nested>
+	</div>
+</body>
+</html>
+</#macro>

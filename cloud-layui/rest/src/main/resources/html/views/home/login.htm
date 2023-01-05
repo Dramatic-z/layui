@@ -1,0 +1,219 @@
+<#import "/spring.ftl" as spring />
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.index.web.tittle'/><!-- 万物感知智慧空间导引系统软件 --></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <!-- 解决session跳转问题---> 
+  <script language="JavaScript">if (window != top) {top.location.href = location.href}</script>
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/login.css" media="all">
+  
+  <style type="text/css">
+  	#tittle{
+  		width:409px;
+		height:28px;
+		font-size:28px;
+		font-family:Source Han Sans CN;
+		font-weight:bold;
+		color:rgba(65,148,136,1);
+		text-align:center;
+		margin:85px 63px 0 58px;
+	}
+  
+  </style>
+  
+  
+</head>
+<body style="position:relative;background:url(${rc.contextPath}/images/loginwhite.png) no-repeat center center;">
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+    <div class="layadmin-user-login-main" style="margin-left:1200px;margin-top:156px;/* border: 1px solid #b6e2db; */width:534px;height:628.3px;">
+      <div class="layadmin-user-login-box layadmin-user-login-header" style="padding:0px;">
+        <h2 id="tittle"><@spring.message code='mess.index.web.tittle'/><!-- 万物感知智慧空间导引系统软件 --></h2>
+        <!-- <p>DNT 出品的后台管理系统</p> -->
+      </div>
+      <div class="layadmin-user-login-box layadmin-user-login-body layui-form" style="padding:0px;">
+        <div class="layui-form-item">
+		    <div class="layui-input-block" style="margin-top:65px;margin-left: 150px;">
+		    <#if i18n_l ?? && i18n_l == 'zh_CN'>
+		      <input type="radio" name="lOption" value="zh_CN" title="中文" lay-filter="change-CN" checked="">
+		    <#elseif i18n_l ?? && i18n_l != 'zh_CN'>
+		      <input type="radio" name="lOption" value="zh_CN" title="中文" lay-filter="change-CN">
+		    <#else >
+		      <input type="radio" name="lOption" value="zh_CN" title="中文" lay-filter="change-CN" checked="">
+		    </#if>
+		    <#if i18n_l ?? && i18n_l == 'en_US'>
+		      <input type="radio" name="lOption" value="en_US" title="English" lay-filter="change-US" checked="">
+		    <#else >
+		      <input type="radio" name="lOption" value="en_US" title="English" lay-filter="change-US">
+		    </#if>
+		    <#if i18n_l ?? && i18n_l == 'zh_HK'>
+		      <input type="radio" name="lOption" value="zh_HK" title="繁体" lay-filter="change-HK" checked="">
+		    <#else >
+		      <input type="radio" name="lOption" value="zh_HK" title="繁体" lay-filter="change-HK">
+		    </#if>
+		    </div>
+        </div>
+        <div class="layui-form-item" style="margin:51px 83px 20px 78px;">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+          <input type="text" name="userName" id="LAY-user-login-username" lay-verify="required" placeholder='<@spring.message code="mess.login.username"/>' class="layui-input">
+        </div>
+        <div class="layui-form-item" style="margin:0px 83px 20px 78px;">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+          <input type="password" name="password" id="LAY-user-login-password" lay-verify="required" placeholder="<@spring.message code='mess.login.password'/>" class="layui-input">
+        </div>
+        <div class="layui-form-item" id="vercode-div" hidden="" style="margin:0px 83px 0px 78px;">
+          <div class="layui-row">
+            <div class="layui-col-xs7">
+              <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
+              <input type="text" name="vercode" id="LAY-user-login-vercode"  placeholder="<@spring.message code='mess.login.Graphic.code'/>" class="layui-input">
+            </div>
+            <div class="layui-col-xs5">
+              <div style="margin-left: 10px;">
+                <canvas id="canvas" width="100" height="38"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item" style="margin:62px 83px 0px 78px;">
+          <button class="layui-btn layui-btn-fluid" lay-submit id="Login_submit" lay-filter="LAY-user-login-submit"><@spring.message code='mess.login.Log.into'/></button>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="layui-trans layadmin-user-login-footer">
+      <!-- <p>
+        <span><a href="${rc.contextPath}/user/login?l=zh_CN">中文</a></span>
+        <span><a href="${rc.contextPath}/user/login?l=en_US">English</a></span>
+      </p> -->
+    </div>
+    <!-- <div class="layui-trans layadmin-user-login-footer">
+      
+      <p>© 2018 <a href="http://www.layui.com/" target="_blank">layui.com</a></p>
+      <p>
+        <span><a href="http://www.layui.com/admin/#get" target="_blank">获取授权</a></span>
+        <span><a href="http://www.layui.com/admin/pro/" target="_blank">在线演示</a></span>
+        <span><a href="http://www.layui.com/admin/" target="_blank">前往官网</a></span>
+      </p>
+    </div> -->
+    
+    
+  </div>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 加载生成验证码模块 -->
+  <script src="${rc.contextPath}/common/utiljs/code.js"></script>
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'user'], function(){
+    var $ = layui.$
+    ,setter = layui.setter
+    ,admin = layui.admin
+    ,form = layui.form
+    ,router = layui.router()
+    ,search = router.search;
+      
+    form.render();
+    
+    var vTag;
+    var local = layui.data('local_config');
+    if(local!=null&&local.vercode == 'N'){
+    	vTag=local.vercode;
+    	$("#vercode-div").hide();
+    }else{
+    	vTag='Y';
+    	$("#vercode-div").show();
+    }
+	 
+	var show_num = [];
+    draw(show_num);
+    
+    $("#canvas").on('click',function(){
+        draw(show_num);
+    });
+    
+    //提交
+    form.on('submit(LAY-user-login-submit)', function(obj){
+    	var val = $("#LAY-user-login-vercode").val().toLowerCase();
+        var num = show_num.join("");
+        if(vTag=='N'){
+        	val=num;
+        }
+        if(val==''){/* val==''  val=='ssssss'*/
+        	layer.msg("<@spring.message code='mess.login.enter.Graphic'/>");//请输入验证码！
+        }else if(val == num){/* val == num 1 == 1*/
+        	//请求登入接口
+        	admin.req({
+              url: '${rc.contextPath}/user/test/logonuser'
+              ,data: obj.field
+          //  ,type: "POST"
+              ,done: function(res){
+            	 // console.log(res);
+            	  if ("0" == res.code) {
+            		  $("#Login_submit").attr('disabled',true);
+            		  //登入成功的提示与跳转
+            		  layui.data('local_config', {key: 'vercode',value: 'N'});
+                      layer.msg("<@spring.message code='mess.login.Login.successful'/>", {//登入成功
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        location.href = '${rc.contextPath}/user/loginIndex'; //后台主页
+                      });
+            	  }else if ("-1" == res.code){
+                 	 layer.msg(res.msg);
+                  }
+              }
+            });
+        }else{
+			layer.msg("<@spring.message code='mess.login.enter.Graphic.error'/>");//验证码错误！请重新输入！
+            $("#LAY-user-login-vercode").val('');
+            draw(show_num);
+        }
+    	
+    });
+    
+    //页面回车登录事件（trigger() 方法触发被选元素的指定事件类型。）
+    $(document).keydown(function (e) {
+    	if (e.keyCode === 13) {
+    		console.log("键盘回车事件监听提交");
+        	$("#Login_submit").trigger("click");
+        }
+    });
+    form.on('radio(change-US)', function (data) {
+    	var val=$('input[name="lOption"]:checked').val();
+    	window.location="${rc.contextPath}/user/login?l="+val;
+    });
+    form.on('radio(change-HK)', function (data) {
+    	var val=$('input[name="lOption"]:checked').val();
+    	window.location="${rc.contextPath}/user/login?l="+val;
+    });
+    form.on('radio(change-CN)', function (data) {
+    	var val=$('input[name="lOption"]:checked').val();
+    	window.location="${rc.contextPath}/user/login?l="+val;
+    });
+    
+	/* layer.msg('为了方便演示，用户名密码可随意输入', {
+        offset: '15px'
+        ,icon: 1
+    }); */
+  });
+  </script>
+ 
+</body>
+</html>

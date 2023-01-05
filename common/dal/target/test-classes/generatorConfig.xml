@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+	<context id="DB2Tables" targetRuntime="MyBatis3">
+
+		<property name="javaFileEncoding" value="UTF-8" />
+
+		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+			<property name="searchString" value="Example$" />
+			<property name="replaceString" value="Criteria" />
+		</plugin>
+
+		<plugin type="com.netfinworks.tool.mybatis.plugin.ColumnRemarkPlugin" />
+
+		<plugin type="com.netfinworks.tool.mybatis.plugin.DomainClassPlugin">
+			<property name="tableNames" value="*" /><!--需要生成Domain的表名,多个表用逗号分隔 -->
+			<property name="defaultPackage" value="com.netfinworks.open.omsg.domain" /><!--默认的包名 -->
+			<property name="generateConverter" value="true" />
+			<property name="outputDir" value="src\main\java" /><!--输出路径 -->
+			<property name="defaultExcludeFields" value="memo,gmtModify,gmtCreate"/><!--不需要生成到domain中的属性名-->
+			<property name="rootClass" value="BaseDomain" /><!--默认继承的父类 -->
+			<property name="imports"
+				value="com.netfinworks.open.common.domain.BaseDomain" />
+		</plugin>
+
+		<plugin
+			type="com.netfinworks.tool.mybatis.plugin.MapperPackageRenamePlugin">
+			<property name="searchString" value="Mapper$"></property>
+			<property name="replaceString" value="DAO"></property>
+		</plugin>
+
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+			<property name="addRemarkComments" value="true" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://10.65.216.64:3340/omsg" userId="omsguser"
+			password="omsguser" />
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<javaModelGenerator targetProject="src\main\java"
+			targetPackage="com.netfinworks.open.omsg.model">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetProject="src\main\resources\META-INF\sqlmap"
+			targetPackage="mysql">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator targetProject="src\main\java"
+			type="XMLMAPPER" targetPackage="com.netfinworks.open.omsg.dao">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<table schema="" tableName="t_open_question" domainObjectName="OpenQuestion"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="true" enableSelectByExample="true"
+			selectByExampleQueryId="false">
+			<columnOverride column="QUESTION_CONTENT" javaType="java.lang.String"
+				jdbcType="VARCHAR" />
+		</table>
+
+		<table schema="" tableName="t_open_answer" domainObjectName="OpenAnswer"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="true" enableSelectByExample="true"
+			selectByExampleQueryId="false">
+			<columnOverride column="ANSWER_CONTENT" javaType="java.lang.String"
+				jdbcType="VARCHAR" />
+		</table>
+
+		<table schema="" tableName="t_open_imsg" domainObjectName="OpenImsg"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="true" enableSelectByExample="true"
+			selectByExampleQueryId="false">
+			<columnOverride column="IMSG_CONTENT" javaType="java.lang.String"
+				jdbcType="VARCHAR" />
+		</table>
+
+		<table schema="" tableName="t_open_imsg_template"
+			domainObjectName="OpenImsgTemplate" enableCountByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="true"
+			enableSelectByExample="true" selectByExampleQueryId="false">
+			<columnOverride column="IMSG_TEMPLATE_CONTENT"
+				javaType="java.lang.String" jdbcType="VARCHAR" />
+		</table>
+
+	</context>
+</generatorConfiguration>

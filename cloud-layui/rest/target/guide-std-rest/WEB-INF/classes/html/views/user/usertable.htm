@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><!--用户管理--><@spring.message code='mess.user.tag'/></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    #form-role-input{
+    	width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!--用户基本信息--><@spring.message code='mess.user.tittle'/></div>
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+    	  <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	  <@spring.message code='mess.user.name'/><!--用户名-->： <div class="layui-inline">
+   	      		<input class="layui-input" name="loginname" id="search-loginname" autocomplete="off">
+            </div>
+      <#if userType ?? && userType == -2>
+		商场：  <div class="layui-inline">
+              <select name="marketId" lay-filter="findfloor" id="search-marketId">
+                <option value="">-请选择商场-</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<#if userType == -2>
+							<option value="${market.id}">${market.marketName}</option>
+						</#if>			
+					</#list>
+			    </#if>
+              </select>
+            </div>
+	   </#if>	
+		    <button class="layui-btn" data-type="reload"><!-- 搜索--><@spring.message code='mess.layui.search'/></button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload" style="margin: 50px;"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="adduser"><!--添加用户--><@spring.message code='mess.user.adduser'/></button>
+              </div>
+            </script>
+            
+            <#if userType ?? && userType == -2>
+            <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo"> 
+			  {{#  if(d.identity == -2){ }}
+				  <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>	
+				  <a class="layui-btn layui-btn-xs" lay-event="reset"><!-- 重置密码 --><@spring.message code='mess.user.reset.passwd'/></a>
+			 	  <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>	
+		 	  {{#  } else{ }}
+				  <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>
+			      <a class="layui-btn layui-btn-xs" lay-event="reset"><!-- 重置密码 --><@spring.message code='mess.user.reset.passwd'/></a>
+			  	  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>	
+			  {{#  } }}
+			</script>
+			<#else>
+			<script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo"> 
+			  {{#  if(d.identity == 1){ }}
+				  <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>	
+				  <a class="layui-btn layui-btn-xs" lay-event="reset"><!-- 重置密码 --><@spring.message code='mess.user.reset.passwd'/></a>
+			 	  <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>	
+		 	  {{#  } else{ }}
+				  <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>
+			      <a class="layui-btn layui-btn-xs" lay-event="reset"><!-- 重置密码 --><@spring.message code='mess.user.reset.passwd'/></a>
+			  	  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>	
+			  {{#  } }}
+			</script>
+			</#if>
+		  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#include '/views/user/useredit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate','excel'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer
+	 	,excel = layui.excel;
+	 	 
+  element.render();
+  form.render(null, 'activityform');
+    	
+  var tabledata;
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/user/module/queryUserList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+    	,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    },'print']
+	    ,title: "<@spring.message code='mess.user.tittle'/>" //用户信息表
+	    //,width:1200
+	    ,cols: [[
+		  {type: 'checkbox', fixed: 'left'}
+	      ,{field:'id',/*序号*/title:"<@spring.message code='mess.layui.serial.number'/>", width:80,templet:'#zizeng',align:'center'}
+	      ,{field:'loginname',/*用户名*/title:"<@spring.message code='mess.user.name'/>", width:200,align:'center'}
+	      ,{field:'identi',/*角色*/title:"<@spring.message code='mess.user.ident'/>",width:300,align:'center'}
+	      ,{field:'enable',/*状态*/title:"<@spring.message code='mess.user.status'/>",width:200,align:'center'}
+	      ,{field:'finalmodiftime',/*最后修改时间*/title:"<@spring.message code='mess.user.Last.modified'/>",align:'center'}
+	  	  ,{fixed: 'right',/*操作*/title:"<@spring.message code='mess.layui.operation'/>",toolbar:'#test-table-barDemo',width:240,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+	    ,done: function(res, curr, count){
+	    	 tabledata=res.data;
+	    }
+   });
+   
+   //头工具栏事件
+   table.on('toolbar(test-table-reload)', function(obj){
+   //var checkStatus = table.checkStatus(obj.config.id);
+     switch(obj.event){
+	      case 'adduser':
+	    	$('input:checkbox').each(function (index, domEle) {
+	    		  $(this).attr('checked',false); 
+	    	});
+	    	$("#basticDiv").hide();
+	    	$("#functionalDiv").hide();
+		 	$("#functional").empty();
+	    	form.val("EditUserform", {
+	    		    "edit-id":null
+     	    	   ,"edit-loginname": null
+				   ,"edit-password": null
+				   ,"edit-marketId": null
+			});
+	    	$("#edit-password").removeAttr("readonly");
+	    	layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.user.add'/>",//添加操作
+	            skin: 'layui-layer-rim',
+	            area: ['600px', '500px'],
+	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+	            content: $('#openofUserpage'),
+	            yes: function(index, layero){
+	            	 var loginname =$("#edit-loginname").val();
+	            	 var password =$("#edit-password").val();
+	            	 var market =$("#edit-marketId").val();
+	            	 var useEnable =$("#edit-useEnable").val();
+	            	 var tar =$("#test_name").val();
+	            	 var arr = [];
+	            	 $('input[type=checkbox]:checked').each(function() {
+	            		 arr.push($(this).val());
+	            	 });
+	            	 /* var data = $('form').serializeArray();
+	           		 console.log(data); */
+	           		 if(loginname !=null&&loginname!=''&&password!=null&&password!=''&&market!=''&&market!=null&&useEnable!=''){
+	            		 if(arr!=null&&arr!=''){
+	            			 if(loginname.length<=20&&6<=password.length<=16&&tar=="true"){
+			                	 $.ajax({
+				              		 url: '${rc.contextPath}/user/module/addUser',
+				                     type: "POST",
+				                     data:{loginname:loginname,password:password,marketId:market,useEnable:useEnable,arrs:arr},
+				              		 traditional:true,
+				                     dataType: 'json',
+				                     success: function (result) {
+				                  	     if ("0" == result.code) {
+				                  		 	 layer.msg(result.msg);
+				                         }else{
+				                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+				                         }
+				                  	     layer.close(index);
+				                  	     tableinit.reload({
+				                  	    	   where: {}
+				                  	    	  ,page: {curr: 1}
+				                  	     });
+				                     }
+				                 });
+		                	 }else{
+			                	 layer.msg("<@spring.message code='mess.user.char.noalwd'/>");//所填字符不符
+			                 }
+	            		 }else{
+	            			 layer.msg("请先勾选角色");
+	            		 }
+	                 }else{
+	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	                 }
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	        }); 
+	        form.render();
+	  	  break;
+	      case 'LAYTABLE_TIP_EXPORT':
+	    	  if(tabledata!=null){
+	    	  var arr = new Array();
+	    	  //弹出loading
+	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+	    	  for (var i = 0; i < tabledata.length; i++) {
+	    		 var o = new Object();
+	    		 var el=tabledata[i];
+	    		 o.index=el.LAY_TABLE_INDEX+1;
+				 o.loginname=el.loginname;
+				 o.identi=el.identi;
+				 o.enable=el.enable;
+				 o.finalmodiftime=el.finalmodiftime;
+				 arr.push(o);
+			  }
+	    	  //数组头部新增表头
+	    	  arr.unshift({index:'序号',loginname:'用户名',identi:'角色',enable:'状态',finalmodiftime:'最后修改时间'});
+	    	  //设置样式的函数，传入设置的范围，表头样式
+              excel.setExportCellStyle(arr, 'A1:E1', {
+                  s: {
+                      fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                      alignment: {
+                          horizontal: 'center',
+                          vertical: 'center'
+                      },
+                      font: { sz: 12, bold: true }
+                  }
+              });
+              //设置样式的函数，传入设置的范围，单元格边框样式
+              excel.setExportCellStyle(arr, 'A1:E' + arr.length, {
+                  s: {
+                      border: {
+                          top: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, bottom: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, left: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, right: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }
+                      }
+                  }
+              });
+              var colConf = excel.makeColConfig({
+                  'E': 120
+              }, 100);
+	     	  //如果需要调整顺序，请执行梳理函数
+              //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+         	  //执行导出函数，系统会弹出弹框
+         	  excel.exportExcel({
+                    sheet1: arr
+              }, '用户信息表数据.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+              });
+              layer.close(index);
+	    	  }else{
+         		  layer.msg('当前暂无数据，请先查询。'); 
+         	  }
+	      break;
+	  };
+    });
+ 	
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  $("#edit-password").attr({readonly:"true"});
+    	  $('input:checkbox').each(function (index, domEle) { 
+    		  $(this).attr('checked',false); 
+    	  });
+    	  $("#functionalDiv").hide();
+	 	  $("#functional").empty();
+	 	  $("#basticDiv").show();
+	 	  $.ajax({
+              url: '${rc.contextPath}/user/module/toSelectUserById',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	var upuser= result.data;
+           	    	form.val("EditUserform", {
+           	    		"edit-id": upuser.id
+           	    	   ,"edit-loginname": upuser.loginname
+     				   ,"edit-password": "******"
+     				   ,"edit-marketId": upuser.marketId
+     				   ,"marketId": upuser.marketId
+     				});
+           	    	if(upuser.roleLists!=null){
+           	    		for (var i = 0; i < upuser.roleLists.length; i++) {
+           	    			var role=upuser.roleLists[i];
+           	    			$("#functional").append('<input type="checkbox" name="checkRole" value="'+role.id+'" lay-skin="primary" title="'+role.name+'">');
+						}
+           	    		$("#functionalDiv").show();
+           	    	}
+           	    	if(upuser.roleList!=null){
+           	    		for (var i = 0; i < upuser.roleList.length; i++) {
+           	    			var idstr=upuser.roleList[i].id;
+           	    			$("input:checkbox[value='"+idstr+"']").attr('checked','true');
+						}
+           	    	}
+           	    	$("#test_name").val("true");
+                    $('#check-loginname').text("<@spring.message code='mess.user.20chart'/>");
+        			$('#check-loginname').css("color","#999");
+           	    	form.render();
+           	    	layer.open({
+        	            type: 1,
+        	            title: "<@spring.message code='mess.user.edit'/>",//编辑操作
+        	            skin: 'layui-layer-rim',
+        	            area: ['600px', '500px'],
+        	            btn: ["<@spring.message code='mess.layui.submit'/>","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+        	            content: $("#openofUserpage"),
+        	            yes: function(index, layero){
+        	            	 var id =$("#edit-id").val();
+        	            	 var loginname =$("#edit-loginname").val();
+        	            //	 var password =$("#edit-password").val();
+        	            	 var market =$("#edit-marketId").val();
+        	            	 var useEnable =$("#edit-useEnable").val();
+        	            	 var tar =$("#test_name").val();
+        	            	 var arr = [];
+        	            	 $('input[type=checkbox]:checked').each(function() {
+        	            		 arr.push($(this).val());
+       	            	     });
+        	            	 if(loginname !=null&&loginname!=''/* &&password!=null&&password!='' */&&market!=''&&market!=null&&useEnable!=''&&arr!=null){
+        	            		 if(arr!=null&&arr!=''){
+        	            			 if(loginname.length<=20/* &&6<=password.length<=16 */&&tar=="true"){
+            		                	 $.ajax({
+            			                     url: '${rc.contextPath}/user/module/updateUser',
+            			                     type: "POST",
+            			                     data:{id:id,loginname:loginname,/* password:password, */marketId:market,useEnable:useEnable,arrs:arr},
+            			                     traditional:true,
+            			                     dataType: 'json',
+            			                     success: function (result) {
+            			                  	     if (result.data!=null) {
+            			                  		   //$("#edit-password").removeAttr("readonly"); 
+            			                  		 	 layer.msg(result.msg);
+            			                  		 	 layer.close(index);
+            			                     	 }else{
+            			                  			// $("#edit-password").removeAttr("readonly"); 
+            			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+            			                         }
+            			                  	     tableinit.reload({
+      			                     	    	   where: {}
+      			                     	    	  ,page: {curr: 1}
+      			                     	    	 });
+            			                  	 }
+            			                 });
+            	                	 }else{
+            	                		 layer.msg("<@spring.message code='mess.user.char.noalwd'/>");//所填字符不符
+            		                 }
+        	            		 }else{
+        	            			 layer.msg("请先勾选角色");
+        	            		 }
+        	            	 }else{
+        	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+        	                 }
+        	            },
+        	            btn2: function(index, layero){layer.close(index)}
+        	        });
+                  	form.render();
+                 }
+           	  }
+          });
+      }else if(obj.event === 'del'){
+    	  layer.confirm("<@spring.message code='mess.user.dele.confirm'/>"/*真的删除么 */, function(index){
+  	        window.location = "${rc.contextPath}/user/module/deleteUserById?id="+data.id;
+  	        layer.close(index);
+  	      });
+      }else if(obj.event === 'reset'){
+    	  layer.confirm("<@spring.message code='mess.user.resetps.note'/>"/*重置后将变更为初始密码,初始密码为123456*/, function(index){
+    		  $.ajax({
+                  url: '${rc.contextPath}/user/module/resetUserPs?id='+data.id,
+                  type: "POST",
+                  dataType: 'json',
+                  success: function (result) {
+               	     if (result.data!=null) {
+               		 	 layer.msg(result.msg);
+               		 }else{
+               			 layer.msg("<@spring.message code='mess.user.resetps.error'/>");//密码重置失败
+                     }
+               	  	 layer.close(index);
+	               	 tableinit.reload({
+	         	    	   where: {}
+	         	    	  ,page: {curr: 1}
+	         	     });
+               	 }
+              });
+    		layer.close(index);
+  	      });
+      }
+    });
+    
+    //监听下拉框选中事件 
+    form.on('select(findroles)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainbrolesbymarketid(data,path);
+    	form.render();
+    });
+     var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var loginname = $('#search-loginname');
+	   	        var marketId = $('#search-marketId');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	loginname: loginname.val(),
+	   	        	marketId:  marketId.val()
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+    <!-- <img src="{{d.logoUrl}}" style="height:50px;width:50px;"> -->
+    <script type="text/html" id="imgTpl">
+    {{#  if(d.imageUrl != null && d.imageUrl != ""){ }}
+		 <img src="{{d.imageUrl}}" style="height:50px;width:50px;">
+	{{#  } else { }}
+		 <img src"{{d.imageUrl}}" style="height:50px;width:50px;">
+	{{#  } }}
+	</script>
+	
+ 	<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

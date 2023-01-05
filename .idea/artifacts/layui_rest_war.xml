@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="layui-rest:war">
+    <output-path>$PROJECT_DIR$/cloud-layui/rest/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>layui-rest</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="layui-rest.war">
+      <element id="artifact" artifact-name="layui-rest:war exploded" />
+    </root>
+  </artifact>
+</component>

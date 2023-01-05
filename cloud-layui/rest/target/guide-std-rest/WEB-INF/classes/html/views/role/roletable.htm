@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>角色管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    #US-form-upload{
+    	margin-left:120px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	/* width: 110px; */
+    }
+    #US-form-input{
+    	width: 190px;
+    }
+    #US-form-select{
+    	width: 190px;
+    }
+  </style></#if>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">角色管理基本信息</div>
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;">
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	     名称： <div class="layui-inline">
+                <input class="layui-input" name="name" id="search-name" autocomplete="off">
+          </div>
+       <#if userType ?? && userType == -2>
+		商场：  <div class="layui-inline">
+              <select name="marketId" lay-filter="findfloor" id="search-marketId">
+                <option value="">-请选择商场-</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<#if userType == -2>
+							<option value="${market.id}">${market.marketName}</option>
+						</#if>			
+					</#list>
+			    </#if>
+              </select>
+            </div>
+	   </#if>
+	        <button class="layui-btn" data-type="reload"><!-- 搜索--><@spring.message code='mess.layui.search'/></button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()" id="resetbtn"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="addRole">添加角色</button>
+              </div>
+            </script>
+            
+            <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo">
+			  <a class="layui-btn  layui-btn-xs" lay-event="authorization">授权</a>
+              <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>
+			  {{#  if(d.statu == '禁用'){ }}
+				 <a class="layui-btn  layui-btn-xs" lay-event="able">启用</a>
+			  {{#  } else if(d.statu == '启用'){ }}
+				 <a class="layui-btn  layui-btn-danger layui-btn-xs" lay-event="able">禁用</a>
+			  {{#  } }}
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#include '/views/role/authorization.htm'/>
+  <#include '/views/role/roleedit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate','tree', 'util','excel'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,tree = layui.tree
+	 	,util = layui.util
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer
+	 	,excel = layui.excel;
+	 	 
+  /* element.render();
+  form.render(null, 'storepointform'); */
+    
+  var tabledata;
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/role/queryRoleList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+    	,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    },'print']
+	    ,title: "角色信息表" //角色信息表
+	    ,cols: [[
+		   {field:'id',/*序号*/title:"<@spring.message code='mess.layui.serial.number'/>", width:80,templet:'#zizeng',align:'center'}
+		  ,{field:'name',/*铺位*/title:"角色名称", width:200,align:'center'}
+		  ,{field:'type',/*铺位*/title:"角色类型", width:200,align:'center'}
+		  ,{field:'creatname',/*楼层*/title:"创建者", width:200,align:'center'}
+		  ,{field:'memo',/*楼层*/title:"备注", width:200,align:'center'}
+	      ,{field:'statu',/*启用状态*/title:"状态", width:200,align:'center'}
+	      ,{field:'finalmodiftime',/*最后修改时间*/title:"最后修改时间",align:'center'}
+	  	  ,{fixed: 'right',/*操作*/title:"<@spring.message code='mess.layui.operation'/>",toolbar:'#test-table-barDemo',width:240,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+	    ,done: function(res, curr, count){
+	    	 tabledata=res.data;
+	    }
+   });
+   
+   //头工具栏事件
+   table.on('toolbar(test-table-reload)', function(obj){
+   //var checkStatus = table.checkStatus(obj.config.id);
+     switch(obj.event){
+	      case 'addRole':
+	    	form.val("roleform", {
+    	        "edit-name": null
+			   ,"edit-memo": null
+			});
+	    	$("#marketroleDiv").show();
+	    	$("#basticroleDiv").hide();
+	    	form.render();
+	    	layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.point.add'/>",//添加操作
+	            skin: 'layui-layer-rim',
+	            area: ['600px', '360px'],
+	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+	            content: $('#openofrolepage'),
+	            yes: function(index, layero){
+	            	 var name =$("#edit-name").val();
+	            	 var market =$("#edit-marketId").val();
+	            	 var memo =$("#edit-memo").val();
+	            	 var status =$("#edit-status").val();
+	            	 if(name!=null&&name!=''&&status!=''&&market!=''){
+	            		 if(name.length<=20&&memo.length<=20){
+		                	 $.ajax({
+			                     url: '${rc.contextPath}/role/addRole',
+			                     type: "POST",
+			                     data:{name:name,memo:memo,status:status,marketId:market},
+			                     dataType: 'json',
+			                     success: function (result) {
+			                    	 if("0" == result.code){
+			                    		 layer.msg(result.msg);
+			                    		 layer.close(index);
+			                    		 tableinit.reload({
+				                  	    	   where: {}
+				                  	    	  ,page: {curr: 1}
+				                  	     }); 
+			                    	 }else{
+			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+			                         }
+			                     }
+			                 });
+	                	 }else{
+		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+		                 }
+	                 }else{
+	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	                 }
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	        }); 
+	        form.render();
+	  	  break;
+	      case 'LAYTABLE_TIP_EXPORT':
+	    	  if(tabledata!=null){
+	    	  var arr = new Array();
+	    	  //弹出loading
+	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+	    	  for (var i = 0; i < tabledata.length; i++) {
+	    		 var o = new Object();
+	    		 var el=tabledata[i];
+	    		 o.index=el.LAY_TABLE_INDEX+1;
+				 o.name=el.name;
+				 o.type=el.type;
+				 o.creatname=el.creatname;
+				 o.memo=el.memo;
+				 o.statu=el.statu;
+				 o.finalmodiftime=el.finalmodiftime;
+				 arr.push(o);
+			  }
+	    	  //数组头部新增表头
+	    	  arr.unshift({index:'序号',name:'角色名称',type:'角色类型',creatname:'创建者',memo:'备注',
+	    		  statu:'状态',finalmodiftime:'最后修改时间'});
+	    	  //设置样式的函数，传入设置的范围，表头样式
+              excel.setExportCellStyle(arr, 'A1:G1', {
+                  s: {
+                      fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                      alignment: {
+                          horizontal: 'center',
+                          vertical: 'center'
+                      },
+                      font: { sz: 12, bold: true }
+                  }
+              });
+              //设置样式的函数，传入设置的范围，单元格边框样式
+              excel.setExportCellStyle(arr, 'A1:G' + arr.length, {
+                  s: {
+                      border: {
+                          top: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, bottom: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, left: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, right: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }
+                      }
+                  }
+              });
+              var colConf = excel.makeColConfig({
+                  'B': 120,
+                  'G': 120
+              }, 100);
+	     	  //如果需要调整顺序，请执行梳理函数
+              //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+         	  //执行导出函数，系统会弹出弹框
+         	  excel.exportExcel({
+                    sheet1: arr
+              }, '角色信息表数据.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+              });
+              layer.close(index);
+	    	  }else{
+         		  layer.msg('当前暂无数据，请先查询。'); 
+         	  }
+	      break;
+	  };
+    });
+ 	
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  $.ajax({
+              url: '${rc.contextPath}/role/toSelectRoleById',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	var uprole = result.data;
+           	    	form.val("roleform", {
+           	    		"edit-id": uprole.id
+           	    	   ,"edit-name": uprole.name
+         			   ,"edit-memo": uprole.memo
+         			   ,"edit-marketId": uprole.basicRole
+        			   ,"edit-status": uprole.status
+    				});
+           	    	if(uprole.basicRole==0){
+           	    		$("#marketroleDiv").hide();
+           	    		$("#basticroleDiv").show();
+           	    	}else{
+           	    		$("#marketroleDiv").show();
+           	    		$("#basticroleDiv").hide();
+           	    	}
+           	    	form.render();
+           	    	layer.open({
+        	            type: 1,
+        	            title: "<@spring.message code='mess.point.edit'/>",//编辑操作
+        	            skin: 'layui-layer-rim',
+        	            area: ['600px', '360px'],
+        	            btn: ["提交","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+        	            content: $("#openofrolepage"),
+        	            yes: function(index, layero){
+        	            	 var id =$("#edit-id").val();
+        	            	 var name =$("#edit-name").val();
+        	            	 var memo =$("#edit-memo").val();
+        	            	 var status =$("#edit-status").val();
+        	            	 if(name!=null&&name!=''&&status!=''&&market!=''){
+        	            		 if(name.length<=20&&memo.length<=20){
+        		                	 $.ajax({
+        			                     url: '${rc.contextPath}/role/updateRole',
+        			                     type: "POST",
+        			                     data:{id:id,name:name,memo:memo,status:status},
+        			                     dataType: 'json',
+        			                     success: function (result) {
+        			                    	 if("0" == result.code){
+        			                    		 layer.msg(result.msg);
+        			                    		 layer.close(index);
+    					                  	     tableinit.reload({
+    					                  	    	   where: {}
+    					                  	    	  ,page: {curr: 1}
+    					                  	     }); 
+        			                    	 }else{
+        			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+        			                         }
+        			                  	 }
+        			                 });
+        	                	 }else{
+        		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+        		                 }
+        	                 }else{
+        	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+        	                 }
+        	            },
+        	            btn2: function(index, layero){layer.close(index)}
+        	        });
+                  	form.render();
+                 }
+           	  }
+          });
+      }else if(obj.event === 'able'){
+    	  $.ajax({
+              url: '${rc.contextPath}/role/updateRoleStatus',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	layer.msg(result.msg);
+           		    tableinit.reload({
+             	    	 where: {}
+             	    	,page: {curr: 1}
+             	    });
+                 }
+           	  }
+          });
+      }else if(obj.event === 'authorization'){
+    	  $.ajax({
+              url: '${rc.contextPath}/role/obtainResourceByRoleId',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result != null) {
+           	     //资源tree组件
+           	 	 tree.render({
+           	 	  elem: '#resource'
+           	 	  ,data: result
+           	 	  ,id:'authid'
+           	 	  ,showCheckbox: true
+           	 	 });
+           	     form.render();
+	           	 layer.open({
+	 	            type: 1,
+	 	            title: "<@spring.message code='mess.point.edit'/>",//授权操作
+	 	            skin: 'layui-layer-rim',
+	 	            area: ['600px', '560px'],
+	 	            btn: ["保存","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+	 	            content: $("#resourcetree"),
+	 	            yes: function(index, layero){
+	 	            	var checkData = tree.getChecked('authid');
+	 	            	if(checkData!=null&&checkData!=''){
+	 	            		$.ajax({
+  			                     url: '${rc.contextPath}/role/authorization',
+  			                     type: "POST",
+  			                     data:{checkData:JSON.stringify(checkData),roleId:data.id},
+  			                     dataType: 'json',
+  			                     success: function (result) {
+  			                    	 if("0" == result.code){
+  			                    		 layer.msg(result.msg);
+  			                    		 layer.close(index);
+				                  	     tableinit.reload({
+				                  	    	   where: {}
+				                  	    	  ,page: {curr: 1}
+				                  	     }); 
+  			                    	 }else{
+  			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+  			                         }
+  			                  	 }
+  			                 });
+	   	                 }else{
+	   	                	layer.msg("当前勾选资源为空,请先勾选资源!");
+	   	                 }
+	 	            },
+	 	            btn2: function(index, layero){layer.close(index)}
+	 	        });
+           	   }else{
+           		  layer.msg("查询资源失败");
+           	   }
+           	 }
+          });
+      }
+    });
+    
+    var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var name = $('#search-name');
+	   	     	var marketId = $('#search-marketId');
+	   	  		
+	   	     	table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	name: name.val(),
+	   	        	markeId:marketId.val()
+	   	        	
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+  	<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+	
+</body>
+</html>

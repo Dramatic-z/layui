@@ -1,0 +1,125 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openofscreensaverpage" lay-filter="screensaverform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--广告名 --><@spring.message code='mess.defaultscreen.advname'/></label>
+	            <div class="layui-input-inline" id="US-form-input">
+	              <input type="text" name="edit-nameChina" id ="edit-nameChina" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.defaultscreen.enter.advname'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameChina"><!-- 20个字符以内 --><@spring.message code='mess.defaultscreen.20chart'/></div>
+        </div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			    <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	            <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="find-floor">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			       </#if>
+	             </select>
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div> 
+	    </#if>
+	    <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable"><!--状态 --><@spring.message code='mess.defaultscreen.status'/></label>
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-status" id="edit-status">
+                <option value="1" selected="selected"><@spring.message code='mess.defaultscreen.enable'/></option><!--启用 -->
+                <option value="0"><@spring.message code='mess.defaultscreen.noenable'/></option><!--未启用 -->
+               </select>
+             </div>
+        </div>
+	    <div class="layui-form-item">
+	           <label class="layui-form-label" id="US-form-lable"><!--起始时间 --><@spring.message code='mess.defaultscreen.advActive.date'/></label>
+	           	   <div class="layui-inline">
+	                    <input type="text" class="layui-input" name="edit-startTime" id="edit-startTime" autocomplete="off" placeholder="<@spring.message code='mess.defaultscreen.start'/>">
+	               </div>
+				   <i style="margin-right: 10px;">-</i>
+	               <div class="layui-inline">
+	                 <input type="text" class="layui-input" name="edit-endTime" id="edit-endTime" autocomplete="off" placeholder="<@spring.message code='mess.defaultscreen.end'/>">
+	               </div>
+               <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item">
+		      <label class="layui-form-label" id="US-form-lable"><!--类型 --><@spring.message code='mess.defaultscreen.type'/></label>
+		           <div class="layui-input-inline" id="edit-type">
+		     		 <input type="radio" name="type" value="1" title="<@spring.message code='mess.defaultscreen.pic'/>" checked="" lay-filter="change-type-pic">
+		     		 <input type="radio" name="type" value="0" title="<@spring.message code='mess.defaultscreen.video'/>"  lay-filter="change-type-vid">
+		    	   </div>
+		</div>
+		<div class="layui-form-item" id="logoTemplate">
+        	<div class="layui-upload" id="US-form-upload">
+	              <button type="button" class="layui-btn" id="test-upload-logo"><!--上传图片 --><@spring.message code='mess.defaultscreen.uppic'/></button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" name="img-upload-logo" id="img-upload-logo" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 100px;"><span>注：支持jpg,png类型上传<br>图片分辨率不能超过2000*2000,大小10M以下!<!--注：支持jpg,png类型上传<br>图片大小应为300*300以达到最佳展示效果 --><!--<@spring.message code='mess.defaultscreen.note1'/>--></span></div>
+	                <p id="p-upload-logo"></p>
+	                <input type="hidden" name="logoload" id ="logoload">
+	                <input type="hidden" name="logo" id ="logo">
+	                <input type="hidden" name="logoUrl" id ="logoUrl">
+	              </div>
+	        </div>
+	    </div>
+	    <div class="layui-form-item" id="videoTemplate" style="display:none;">
+        	<div class="layui-upload" id="US-form-upload">
+	              <button type="button" class="layui-btn" id="test-upload-video"><!--选择视频--><@spring.message code='mess.defaultscreen.upvideo'/></button>
+	              <i class="layui-icon layui-icon-upload" style="font-size:30px;color: #1E9FFF;margin-left:30px;" title="<@spring.message code='mess.defaultscreen.start.uppic'/>" id="uploadBtn"></i> 
+	              <!-- <button type="button" class="layui-btn" id="uploadBtn">Tip</button> -->
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><video src="" class="layui-upload-video" name="upload-video" id="upload-video" autoplay="autoplay"/></div>
+	                <div style="width: 300px;margin-left: 100px;"><span><!--注：选择视频后点击右侧上传按钮开始上传 --><@spring.message code='mess.defaultscreen.note2'/></span></div>
+	                <p id="p-upload-video"></p>
+	                <input type="hidden" name="videoUrl" id ="videoUrl">
+	              </div>
+	        </div>
+	        <div class="layui-form-mid layui-word-aux"  style="margin:100px 30px;" id="load_text"></div>
+	        <div class="layui-progress layui-progress-big" lay-showPercent="yes" style="margin-top: 80px;" lay-filter="progressBar">
+		      <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+		    </div>
+	    </div>
+	    
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-nameChina').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-nameChina').text("<@spring.message code='mess.defaultscreen.beyond20'/>");//当前已超出20字符
+			$('#check-nameChina').css("color","red");
+		}else{
+			$('#check-nameChina').text("<@spring.message code='mess.defaultscreen.20chart'/>");//20个字符以内
+			$('#check-nameChina').css("color","#999");
+		}
+	});
+	//60字符以内
+	$('#edit-nameEng').on("input propertychange", function () {
+		if($(this).val().length > 60){
+			$('#check-nameEng').text("<@spring.message code='mess.defaultscreen.beyond60'/>");//当前已超出60字符
+			$('#check-nameEng').css("color","red");
+		}else{
+			$('#check-nameEng').text("<@spring.message code='mess.defaultscreen.60chart'/>");//60个字符以内
+			$('#check-nameEng').css("color","#999");
+		}
+	});
+	
+  
+</script>
+</body>

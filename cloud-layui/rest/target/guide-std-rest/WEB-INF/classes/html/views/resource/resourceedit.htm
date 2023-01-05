@@ -1,0 +1,136 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openofresourcepage" lay-filter="resourceform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">名称</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-name" id ="edit-name" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入名称">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-name">20个字符以内</div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">英文名称</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-engName" id ="edit-engName" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入英文名称">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-engName">20个字符以内</div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">繁体名称</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-hkName" id ="edit-hkName" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入繁体名称">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-hkName">20个字符以内</div>
+        </div>
+	    <div class="layui-form-item" id="typeDiv">
+			   <label class="layui-form-label" id="US-form-lable">类型</label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="edit-type" id="edit-type">
+	               <option value="">-请选择类型-</option><!--请选择楼层 -->
+	               <option value="S_MENU">二级菜单</option>
+	               <option value="T_MENU">三级菜单</option>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div><!-- 此处应提示是否选择一级菜单 -->
+	    <div class="layui-form-item" id="urlDiv">
+	            <label class="layui-form-label" id="US-form-lable">访问地址</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-url" id ="edit-url" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入访问地址">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-url">100个字符以内</div>
+        </div>
+        <div class="layui-form-item" id="iconDiv">
+			   <label class="layui-form-label" id="US-form-lable">图标</label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <input type="text" name="edit-memo" id ="edit-memo" class="layui-input" autocomplete="off" placeholder="请输入iconfont矢量图标码">
+			   </div>
+	           <div class="layui-form-mid layui-word-aux" id="check-memo"></div>
+	    </div><!-- 此处应提示是否选择一级菜单 -->
+	    <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable">状态</label>
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-status" id="edit-status">
+                <option value="1" selected="selected">启用</option><!--启用-->
+                <option value="0">未启用</option><!--未启用-->
+               </select>
+             </div>
+        </div>
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-name').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-name').text("当前已超出20字符");//当前已超出20字符
+			$('#check-name').css("color","red");
+		}else{
+			$('#check-name').text("20个字符以内");//20个字符以内
+			$('#check-name').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-engName').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-engName').text("当前已超出20字符");//当前已超出20字符
+			$('#check-engName').css("color","red");
+		}else{
+			$('#check-engName').text("20个字符以内");//20个字符以内
+			$('#check-engName').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-hkName').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-hkName').text("当前已超出20字符");//当前已超出20字符
+			$('#check-hkName').css("color","red");
+		}else{
+			$('#check-hkName').text("20个字符以内");//20个字符以内
+			$('#check-hkName').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-url').on("input propertychange", function () {
+		if($(this).val().length > 100){
+			$('#check-url').text("当前已超出100字符");//当前已超出100字符
+			$('#check-url').css("color","red");
+		}else{
+			$('#check-url').text("100个字符以内");//100个字符以内
+			$('#check-url').css("color","#999");
+		}
+	});
+	
+	//50字符以内
+	$('#edit-memo').on("input propertychange", function () {
+		if($(this).val().length > 50){
+			$('#check-memo').text("当前已超出50字符");//当前已超出10字符
+			$('#check-memo').css("color","red");
+		}else{
+			$('#check-memo').text("50个字符以内");//10个字符以内
+			$('#check-memo').css("color","#999");
+		}
+	});
+	
+	
+</script>
+</body>

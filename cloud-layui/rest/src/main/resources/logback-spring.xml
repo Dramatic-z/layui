@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+
+	<property name="module" value="cloud-layui" />
+
+	<include resource="META-INF/nrc-logger-default.xml" />
+
+</configuration>

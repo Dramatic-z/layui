@@ -1,0 +1,330 @@
+<#import "/spring.ftl" as spring />
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.index.web.tittle'/></title><!-- 万物感知智慧空间导引系统软件 -->
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style type="text/css">
+  	.layui-icon-next:before {
+		content: "\e65b"
+	}
+  </style>
+</head>
+<body class="layui-layout-body">
+  <div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <!-- 头部区域 -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item layadmin-flexible" lay-unselect>
+            <a href="javascript:;" layadmin-event="flexible" title="<@spring.message code='mess.index.side.slip'/>"><!-- 侧边伸缩 -->
+              <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+            </a>
+          </li>
+           <li class="layui-nav-item" lay-unselect>
+            <!-- <a href="javascript:;" layadmin-event="refresh" title="刷新">
+              <i class="layui-icon layui-icon-refresh-3"></i>
+            </a> -->
+          </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" onclick="HelpCenter();">
+              <i class="layui-icon icon-bangzhuzhongxin" title="<@spring.message code='mess.index.help.center'/>"></i><!-- 帮助中心 -->
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="theme">
+              <i class="layui-icon layui-icon-theme"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="fullscreen">
+              <i class="layui-icon layui-icon-screen-full"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item" lay-unselect style="margin-right: 50px;">
+            <a href="javascript:;">
+              <cite><#if userName??>${userName}</#if></cite>
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a lay-href="${rc.contextPath}/systemSetup/toBasicInfoPage"><@spring.message code='mess.index.basic.information'/><!-- 基本资料 --></a></dd>
+              <dd><a lay-href="${rc.contextPath}/systemSetup/toUpPasswordPage"><@spring.message code='mess.index.change.password'/><!-- 修改密码 --></a></dd>
+              <hr>
+              <dd style="text-align: center;"><a id="logout" href="${rc.contextPath}/user/logout"><@spring.message code='mess.index.exit'/><!-- 退出 --></a></dd>
+            </dl>
+          </li>
+          <!-- <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+            <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+          </li> -->
+        </ul>
+      </div>
+      
+      <!-- 侧边菜单 -->
+      <div class="layui-side layui-side-menu">
+        <div class="layui-side-scroll">
+         <div class="layui-logo" > 
+            <span style="font-size: 13px;"><@spring.message code='mess.index.web.tittle'/></span><!-- 万物感知智慧空间导引系统软件 -->
+          </div>
+          <!-- 左侧边栏内容 -->
+          <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+           <li data-name="home" class="layui-nav-item layui-nav-itemed">
+              <a href="javascript:;" lay-direction="2">
+                <i class="layui-icon layui-icon-home"></i>
+                <cite><@spring.message code='mess.index.homepage'/></cite>
+              </a>
+              <dl class="layui-nav-child">
+               	<dd data-name="console" class="layui-this">
+                  <a  lay-href="${rc.contextPath}/install/tohomepage" id="homepage"><@spring.message code='mess.index.homepage'/></a>
+                </dd>
+              </dl>
+            </li>
+            <#if userType?? && userType != -1>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="业态" lay-direction="2">
+                <i class="layui-icon icon-fenleiguanli"></i>
+                <cite><@spring.message code='mess.index.format'/></cite><!--业态管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/bigFormat/toBigFormatListPage"><@spring.message code='mess.index.bformat'/></a></dd><!--一级业态 -->
+                <dd><a lay-href="${rc.contextPath}/smallFormat/toSmallFormatListPage"><@spring.message code='mess.index.sformat'/></a></dd><!--二级业态 -->
+              </dl>
+            </li>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="商铺" lay-direction="2">
+                <i class="layui-icon icon-shangpuguanli" style="font-size:16px;"></i>
+                <cite><@spring.message code='mess.index.store'/></cite><!--商铺管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd ><a lay-href="${rc.contextPath}/store/toStoreListPage"><@spring.message code='mess.index.store.info'/></a></dd><!--商铺信息 -->
+                <dd ><a lay-href="${rc.contextPath}/shopsActivity/toShopActivityListPage"><@spring.message code='mess.index.store.act'/></a></dd><!--商铺活动 -->
+                <!-- <dd>
+                  <a lay-href="${rc.contextPath}/busacAvtivity/toFoleruploadbusacpic">上传文件</a>
+                </dd>  -->
+              </dl>
+            </li>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="活动" lay-direction="2">
+                <i class="layui-icon icon-huodongguanli"></i>
+                <cite><@spring.message code='mess.index.activity'/></cite><!--活动管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/activity/toActivityListPage"><@spring.message code='mess.index.market.act'/></a></dd><!--商场活动 -->
+              </dl>
+            </li>
+            <#if userType?? && userType =-2 || userType = 1>
+            <li data-name="template" class="layui-nav-item">
+               <a href="javascript:;" lay-tips="广告" lay-direction="2">
+                 <i class="layui-icon icon-pingbaoyubizhicelve_tianqing"></i>
+                 <cite><@spring.message code='mess.index.adv'/></cite><!--广告管理 -->
+               </a>
+	           <dl class="layui-nav-child">
+	             <dd><a lay-href="${rc.contextPath}/screensaver/toScreenSaverListPage"><@spring.message code='mess.index.defu.adv'/></a></dd><!--默认广告 -->
+	             <dd><a lay-href="${rc.contextPath}/screensaver/toFaceScreenListPage"><@spring.message code='mess.index.face.adv'/></a></dd><!--人脸广告 -->
+	           </dl>
+	        </li>
+            </#if>
+            <#if userType?? && userType != -2>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="报表" lay-direction="2">
+                <i class="layui-icon icon-baobiaoguanli"></i>
+                <cite><@spring.message code='mess.index.report'/></cite><!--报表管理 -->
+              </a>
+              <dl class="layui-nav-child">
+              	 <!-- <dd><a lay-href="${rc.contextPath}/storeVisited/toReportOverviewChartPage">总览统计表</a></dd> -->
+                 <dd><a lay-href="${rc.contextPath}/storeVisited/toStoreVisitsOfBFormatTablePage"><@spring.message code='mess.index.report.bformat'/></a></dd><!--一级业态访问量统计表 -->
+                 <dd><a lay-href="${rc.contextPath}/storeVisited/toStoreVisitsOfSFormatTablePage"><@spring.message code='mess.index.report.sformat'/></a></dd><!--二级业态访问量统计表 -->
+           		 <dd><a lay-href="${rc.contextPath}/storeVisited/toStoreVisitsTablePage"><@spring.message code='mess.index.report.store'/></a></dd> <!--商铺访问量统计表 -->
+           		 <dd><a lay-href="${rc.contextPath}/pageVisited/toEachDeviceOfUseCountTablePage"><@spring.message code='mess.index.report.device'/></a></dd><!--设备访问量统计表 -->
+           		 <dd><a lay-href="${rc.contextPath}/pageVisited/toEachPageOfVisitCountTablePage"><@spring.message code='mess.index.report.pagev'/></a></dd><!--页面访问量统计表 -->
+           		 <dd><a lay-href="${rc.contextPath}/pageVisited/toEachPageOfStopTimeTablePage"><@spring.message code='mess.index.report.pageu'/></a></dd><!--页面使用量统计表 -->
+           	  </dl>
+            </li>
+            </#if>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="设备" lay-direction="2">
+                <i class="layui-icon icon-shebeiguanli"></i>
+                <cite><@spring.message code='mess.index.device'/></cite><!--设备管理 -->
+              </a>
+              <dl class="layui-nav-child">
+               <dd><a lay-href="${rc.contextPath}/device/toDeviceListPage"><@spring.message code='mess.index.device.info'/></a></dd><!--设备详情 -->
+              </dl>
+            </li>
+            <#if userType?? && userType =-2 || userType = 1>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="铺位" lay-direction="2">
+                <i class="layui-icon icon-dianwei"></i>
+                <cite><@spring.message code='mess.index.point'/></cite><!--铺位管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/storePoint/toStorePointListPage"><@spring.message code='mess.index.point'/></a></dd><!--铺位管理 -->
+              </dl>
+            </li>
+            </#if>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="申请记录" lay-direction="2">
+                <i class="layui-icon icon-shenqing"></i>
+                <cite><@spring.message code='mess.index.aply'/></cite><!--申请记录 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/apply/toVersionListPage"><@spring.message code='mess.index.aply'/></a></dd><!--申请记录 -->
+              </dl>
+            </li>
+            </#if>
+            <#if userType?? && userType =-2 || userType = -1 || userType == 1>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="商场" lay-direction="2">
+                <i class="layui-icon icon-icon-shop"></i>
+                <cite><@spring.message code='mess.index.market'/></cite><!--商场管理 -->
+              </a>
+              <dl class="layui-nav-child">
+              	<#if userType?? && userType != -1>
+              	<#if userType?? && userType == -2>
+                <dd><a lay-href="${rc.contextPath}/market/toMarketListPage"><@spring.message code='mess.index.market'/></a></dd><!--商场管理 -->
+                <dd><a lay-href="${rc.contextPath}/translate/toTranslateListPage">前端翻译</a></dd>
+                </#if>
+                <dd><a lay-href="${rc.contextPath}/publicFacility/toPublicFacilityListPage">公共设施</a></dd>
+                </#if>
+                <#if userType?? && userType != 1>
+                <dd data-name="version">
+                  <a href="javascript:;"><@spring.message code='mess.index.version'/></a><!--版本管理-->
+                  <dl class="layui-nav-child">
+                    <dd><a lay-href="${rc.contextPath}/version/toVersionListPage"><@spring.message code='mess.index.version.info'/></a></dd><!--版本详情 -->
+                	<dd><a lay-href="${rc.contextPath}/versionLog/toVersionLogListPage"><@spring.message code='mess.index.version.log'/></a></dd><!--版本日志-->
+                  </dl>
+                </dd></#if>
+              </dl>
+            </li>
+            <#if userType?? && userType != -1>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="日志" lay-direction="2">
+                <i class="layui-icon layui-icon-log"></i>
+                <cite><@spring.message code='mess.index.log'/></cite><!--日志管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/updateLog/toUpdateLogPage"><@spring.message code='mess.index.up.log'/></a></dd><!--更新日志 -->
+              </dl>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/operateLog/toOperateLogListPage"><@spring.message code='mess.index.user.log'/></a></dd><!--用户操作日志 -->
+              </dl>
+            </li></#if>
+            </#if>
+            <#if userType?? && userType =-2 || userType = 1>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="用户" lay-direction="2">
+                <i class="layui-icon layui-icon-user"></i>
+                <cite><@spring.message code='mess.index.user'/></cite><!--用户管理 -->
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a lay-href="${rc.contextPath}/user/module/toUserListPage"><@spring.message code='mess.index.user'/></a></dd><!--用户管理 -->
+                <dd><a lay-href="${rc.contextPath}/resource/toResourceListPage">资源管理</a></dd><!-- -->
+                <dd><a lay-href="${rc.contextPath}/role/toRoleListPage">角色管理</a></dd><!--/cloud-guide-std/role/toRoleListPage -->
+              </dl>
+            </li>
+            </#if>
+            <li data-name="template" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="系统" lay-direction="2">
+                <i class="layui-icon layui-icon-set"></i>
+                <cite><@spring.message code='mess.index.systerm'/></cite><!--系统设置 -->
+              </a>
+              <dl class="layui-nav-child">
+                <#if userType?? && userType =-2 || userType = 1>
+                <dd class="layui-nav-itemed">
+                  <a href="javascript:;"><@spring.message code='mess.index.systerm'/></a><!--系统设置-->
+                  <dl class="layui-nav-child">
+                    <dd><a lay-href="${rc.contextPath}/systemSetup/toSystemSetupPage"><@spring.message code='mess.index.systerm.basic'/></a></dd><!--基础设置 -->
+                    <!-- <dd><a lay-href="${rc.contextPath}/systemSetup/syncStorePoint">铺位同步</a></dd> -->
+                  </dl>
+                </dd>
+                </#if>
+                <dd class="layui-nav-itemed">
+                  <a href="javascript:;"><@spring.message code='mess.index.systerm.my'/></a><!--我的设置 -->
+                  <dl class="layui-nav-child">
+                    <dd><a lay-href="${rc.contextPath}/systemSetup/toBasicInfoPage"><@spring.message code='mess.index.systerm.data'/></a></dd><!--基本资料 -->
+                    <dd><a lay-href="${rc.contextPath}/systemSetup/toUpPasswordPage"><@spring.message code='mess.index.systerm.uppass'/></a></dd><!--修改密码 -->
+                  </dl>
+                </dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 页面标签 -->
+      <div class="layadmin-pagetabs" id="LAY_app_tabs">
+        <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-down">
+          <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+            <li class="layui-nav-item" lay-unselect>
+              <a href="javascript:;"></a>
+              <dl class="layui-nav-child layui-anim-fadein">
+                <dd layadmin-event="closeThisTabs"><a href="javascript:;"><@spring.message code='mess.index.Close.current.tab'/></a></dd><!-- 关闭当前标签页 -->
+                <dd layadmin-event="closeOtherTabs"><a href="javascript:;"><@spring.message code='mess.index.Close.other.tab'/></a></dd><!-- 关闭其它标签页 -->
+                <dd layadmin-event="closeAllTabs"><a href="javascript:;"><@spring.message code='mess.index.Close.all.tab'/></a></dd><!-- 关闭全部标签页 -->
+              </dl>
+            </li>
+          </ul>
+        </div>
+        <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+          <ul class="layui-tab-title" id="LAY_app_tabsheader">
+            <li lay-id="" lay-attr="" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+          </ul>
+        </div>
+      </div>
+      
+     <!-- 主体内容 -->
+      <div class="layui-body" id="LAY_app_body">
+        <div class="layadmin-tabsbody-item layui-show">
+          <iframe src="${rc.contextPath}/install/tohomepage" frameborder="0" class="layadmin-iframe"></iframe>
+        </div>
+      </div>
+      
+      <!-- 辅助元素，一般用于移动设备下遮罩 -->
+      <div class="layadmin-body-shade" layadmin-event="shade"></div>
+    </div>
+  </div>
+ 
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  
+  <script>
+layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','element','table','admin','layer'], function(){
+	  var $ = layui.$
+	  ,admin = layui.admin
+	  ,element = layui.element
+	  ,table = layui.table
+	  ,layer = layui.layer;
+	  
+	  element.render(); 
+	
+});
+	function HelpCenter(){
+		layer.open({
+	        type: 2,
+	        title:"<@spring.message code='mess.index.help.center'/>",
+	        area: ['1000px', '750px'],
+	        maxmin: true,
+	        content: "http://106.14.220.4/guide/EXCEL/Tourproducts.pdf"
+	    });
+	}; 
+  </script>
+</body>
+</html>

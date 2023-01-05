@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.report.sformat.chartTittle'/></title></title><!--二级业态访问量图表-->
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery.min.js"></script>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/js/I18n/echarts-all_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/js/I18n/echarts-all_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/js/echarts-all.js"></script>
+  </#if>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+ 	
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-card">
+          <div class="layui-card-header"><@spring.message code='mess.report.sformat.chartTittle'/><!-- 二级业态访问量图表 --></div>
+          <div class="layui-card-body" style="height:750px;">
+				<!--图表begin-->
+				<div id="collapseOne" class="panel-collapse collapse in" align="center">
+					<div class="panel-body" style="width:1650px;height: 800px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+  							<div id="main" style="width: 1500px;height:700px;"></div>
+					</div>
+				</div>
+		        <!--图表end-->
+		 </div>
+       </div>
+      </div>
+  </div>
+<script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>  
+</body>	
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'senior']);
+  
+  //基于准备好的dom，初始化echarts实例
+  var myChart = echarts.init(document.getElementById('main'));
+  
+  var sformatname = [];
+  var visitnum = [];
+  
+  <#if jsonResult ??>
+  	function getsformatname(){
+		var jsonObj = eval(${jsonResult});
+		if(jsonObj!=null){
+			for (var i = 0; i < jsonObj.length; i++) {
+				sformatname.push(jsonObj[i].name);
+			}
+		}
+	}
+	function getvisitnum(){
+		var jsonObj = eval(${jsonResult});
+		if(jsonObj!=null){
+		for (var i = 0; i < jsonObj.length; i++) {
+			visitnum.push(jsonObj[i].value);
+			}
+		}
+    }
+	
+	window.onload=getsformatname();
+	window.onload=getvisitnum();
+	
+	// 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '二级业态访问量图表',
+          //  subtext: '访问次数前五十',
+        },
+        tooltip: {
+        	trigger: 'axis',
+        },
+        legend: {
+            data:['二级业态访问量'],
+        },
+        toolbox: {
+	        show : true,
+	        x: 'right',
+	        color : ['#1e90ff','#22bb22','#4b0082','#d2691e'],
+	        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+	        feature : {
+	            mark : {show: false},
+	            dataView: {
+	            	show: true,
+	            	title: "数据视图",
+	            	readOnly: true,
+	            	lang : ['数据视图', '关闭', '刷新'],
+	            },
+	            dataView : {show: true, readOnly: true},
+	            magicType : {
+	            	show: true,
+	            	type: ['line', 'bar']
+	            },
+	            saveAsImage : {
+	            	show: true,
+	            	title: "保存为图片",
+	            	type: "png",
+	            	lang: [
+	                    "点击保存"
+	                ]	
+	            },
+	            restore : {show: true},
+	        }
+	    },
+        xAxis:[ {
+            data:sformatname,
+            axisLabel : {
+            	rotate:30,
+                show:true,
+                interval: 0,
+                grid: {
+                	bottom:'35%'
+                },
+            } 
+		}],
+        yAxis: {
+            type: 'value',
+            axisLabel : {
+                formatter: '{value}次'
+            }
+        },
+        grid: {
+        	x: 80,//X数据距离左侧距离
+            x2: 100,//
+            y2: 150, //X轴数据距离底部距离
+       },
+       series: [{
+            name: '二级业态访问量',
+            type: 'bar',
+            data:visitnum,
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 16
+                        }
+                    }
+                }
+            },
+         // barWidth : 20,//柱图宽度
+         	barMaxWidth : 60,
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            },
+        }],
+    };
+    <#else>
+ 	 var option = {
+	      title: {},
+	      tooltip: {},
+	      legend: {data:null},
+	      toolbox: {},
+		  calculable : true,
+	      series: [{
+	          name: '',
+	          type: 'pie',
+	          data:null
+	      }],
+	  };
+    </#if>
+   
+   // 使用刚指定的配置项和数据显示图表。
+   myChart.setOption(option);
+   </script>
+</html>

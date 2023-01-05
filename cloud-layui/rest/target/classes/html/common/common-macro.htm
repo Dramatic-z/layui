@@ -1,0 +1,74 @@
+<#macro pagination formName>
+<div class="btn-center" style="text-align: center;">
+<#if pageData??>
+<nav>
+	<ul class="pagination pagination-sm">
+		<#if pageData.pageNum &gt; 1>
+			<li style="display:inline-block;"><a href="javascript:go2Page(${pageData.pageNum}-1)">&laquo;</a></li>
+		<#else>
+			<li class="disabled" style="display:inline-block;"><a href="#">&laquo;</a></li>
+		</#if>
+		<#list pageData.navigatepageNums as navipage>
+		    <#if navipage==pageData.pageNum>
+		    	<li class="active" style="display:inline-block;"><a href="#">${navipage} <span class="sr-only"></span></a></li>
+		    <#else>
+		    	<li style="display:inline-block;"><a href="javascript:go2Page(${navipage});">${navipage}</a></li>
+		    </#if>
+		</#list>
+		<#if pageData.pageNum &lt; pageData.pages>
+			<li style="display:inline-block;"><a id="next" href="javascript:go2Page(${pageData.pageNum}+1);" >&raquo;</a></li>
+		<#else>
+			<li class="disabled" style="display:inline-block;"><a href="#">&raquo;</a></li>
+		</#if>
+	</ul>
+</nav>
+<script type="text/javascript">
+function go2Page(pageNum){
+	var form = $("form[name='${formName}']");
+	var input1 = $("<input type='hidden' name='pageNum' />");
+	input1.attr('value',pageNum);
+	form.append(input1);
+	var input2 = $("<input type='hidden' name='pageSize' />");
+	input2.attr('value',${pageData.pageSize});
+	form.append(input2);
+    form.submit();
+}
+</script>
+
+</#if>
+</div>
+</#macro>
+
+<#macro message errorMsg="" returnMsg="">
+	<#if errorMsg?? && errorMsg !="">
+	<div class="alert alert-warning">
+				<a href="#" class="close" data-dismiss="alert">
+				&times;
+				</a>
+				<strong>错误:</strong>${errorMsg}
+			</div>
+	</#if>
+	<#if returnMsg?? && returnMsg !="">
+	<div id="myAlert" class="alert alert-success">
+				<a href="#" class="close" data-dismiss="alert">&times;</a>
+				<strong>信息：</strong>${returnMsg}
+			</div>
+	</#if>
+</#macro>
+
+<#macro select enum name value="" required="false">
+<select class="group01_text form-control" id="${name}" name="${name}">
+	<#if required?? && required=="false">
+	<option value="">全部</option>
+	</#if>
+   <#list JDKEnumUtil.getEnumList('${enum}') as enumData>
+		<option value="${enumData.code}" <#if enumData.code='${value}'>selected="selected"</#if>>${enumData.message}</option>
+    </#list>
+</select>
+</#macro>
+
+<#macro radio enum name value="">
+   <#list enums['${enum}']?values as enumData>
+		<input type="radio" <#if enumData.code='${value}'>checked</#if> required name="${name}" value="${enumData.code}"><span>${enumData.message}</span>
+    </#list>
+</#macro>

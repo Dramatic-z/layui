@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><!--基本信息 --><@spring.message code='mess.system.info.tag'/></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <!-- 公共css文件 -->
+  <link rel="stylesheet" href="${rc.contextPath}/common/utiljs/common.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	width: 90px;
+    }
+    #remarks{
+    	margin-left: 10px;
+    }
+    #US-form-btn{
+    	width: 120px;
+    	margin-left: 120px;
+    }
+  </style></#if>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!--设置我的资料 --><@spring.message code='mess.system.info.name'/></div>
+          <div class="layui-card-body" pad15>
+            <form class="layui-form" lay-filter="user_info" method="post" action="${rc.contextPath}/systemSetup/updateInfo">
+            <#if id??>
+        	<input type="hidden" name="id" id ="id" value="${id?c}">
+        	</#if>
+            <#if returnMsg??>
+        	<input type="hidden" name="returnMsg" id ="returnMsg" value="${returnMsg}">
+       		</#if>
+             <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--我的角色 --><@spring.message code='mess.system.info.myident'/></label>
+                <div class="layui-input-inline">
+                  <select name="identity" lay-verify="" id="identity">
+                    <option value="-2" disabled><@spring.message code='mess.system.info.chadmin'/></option><!--超级管理员 -->
+                    <option value="1" disabled><@spring.message code='mess.system.info.aadmin'/></option><!--管理员-->
+                    <option value="2" disabled><@spring.message code='mess.system.info.operate'/></option><!--操作人员 -->
+                    <option value="3" disabled><@spring.message code='mess.system.info.report'/></option><!--报表人员 -->
+                    <option value="-1" disabled><@spring.message code='mess.system.info.version'/></option><!--版本人员 -->
+                  </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--当前角色不可更改为其它角色 --><@spring.message code='mess.system.info.ident.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!-- 用户名 --><@spring.message code='mess.system.info.username'/></label>
+                <div class="layui-input-inline">
+                  <input type="text" name="loginname" id="loginname" lay-verify="tloginname" readonly class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--不可修改。一般用于后台登入名 --><@spring.message code='mess.system.info.username.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--昵称 --><@spring.message code='mess.system.info.nkname'/></label>
+                <div class="layui-input-inline">
+                  <input type="text" name="nickname" id="nickname" lay-verify="tnickname" autocomplete="off" placeholder="<@spring.message code='mess.system.info.enter.nkname'/>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--设置昵称即用户登录后会显示昵称而不是用户名,(登录时仍需使用用户名登录,(可选填)) --><@spring.message code='mess.system.info.nkname.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--性别 --><@spring.message code='mess.system.info.sex'/></label>
+                <div class="layui-input-inline">
+                  <input type="radio" name="sex" value="男" title="<@spring.message code='mess.system.info.sex.man'/>" checked>
+                  <input type="radio" name="sex" value="女" title="<@spring.message code='mess.system.info.sex.girl'/>">
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--性别初始为男性 --><@spring.message code='mess.system.info.sex.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--手机 --><@spring.message code='mess.system.info.phone'/></label>
+                <div class="layui-input-inline">
+                  <input type="text" name="phone" id="phone" value="" lay-verify="tphone" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--用户手机号(可选填) --><@spring.message code='mess.system.info.phone.note'/></div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" id="US-form-lable"><!--邮箱 --><@spring.message code='mess.system.info.email'/></label>
+                <div class="layui-input-inline">
+                  <input type="text" name="mail" id="mail" value="" lay-verify="temail" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux"><!--用户邮箱(可选填) --><@spring.message code='mess.system.info.email.note'/></div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label"><!--备注 --><@spring.message code='mess.system.info.note'/></label>
+                <div class="layui-input-block">
+                  <textarea name="remarks" id="remarks" placeholder="<@spring.message code='mess.system.info.enter.note'/>" lay-verify="tremarks" class="layui-textarea"></textarea>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block" id="US-form-btn">
+                  <button class="layui-btn" lay-submit="" lay-filter="setmyinfo"><!--确认修改 --><@spring.message code='mess.system.info.submit'/></button>
+                </div>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+  
+ <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','laydate','element','admin', 'upload'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,element = layui.element
+    ,layer = layui.layer
+    ,laydate = layui.laydate
+    ,form = layui.form
+    ,upload = layui.upload;
+    
+    
+    $(function(){
+  	   $.ajax({
+             url: '${rc.contextPath}/systemSetup/SelectInfoByUserid',
+             type: "POST",
+             dataType: 'json',
+             success: function (result) {
+          	   if(result!=null&&result.code=="0"){
+	          		 var user = result.data
+	       		   	 form.val('user_info', {
+	           	          "identity": user.identity,
+	           	          "loginname": user.loginname,
+	           	          "nickname": user.nickname,
+	           	          "sex": user.sex,
+	           	          "phone": user.phone,
+	           	          "mail": user.mail,
+	           	          "remarks": user.remarks,
+	           	     });
+          	   }
+          	}
+         });
+     	  var ret=$("#returnMsg").val();
+     	  if(ret!=null&&ret!=''){
+      	  layer.msg(ret);
+        } 
+  	});
+    
+    
+    /* 自定义验证规则 */
+    form.verify({
+      tloginname: function(value){
+        if(value.length > 20){
+          return "<@spring.message code='mess.system.info.verify.note1'/>";//用户名不能超过20个字符
+        }
+      }
+      ,tnickname: function(value){
+        if(value.length > 20){
+          return "<@spring.message code='mess.system.info.verify.note2'/>";//昵称不能超过20个字符
+        }
+      }
+      ,tphone: function(value){
+          if(value.length > 15){
+            return "<@spring.message code='mess.system.info.verify.note3'/>";//手机号不能超过15个字符
+          }
+      }
+      ,temail: function(value){
+          if(value.length > 30){
+            return "<@spring.message code='mess.system.info.verify.note4'/>";//邮箱不能超过30个字符
+          }
+      }
+      ,tremarks: function(value){
+          if(value.length > 500){
+            return "<@spring.message code='mess.system.info.verify.note5'/>";//备注不能超过500个字符
+          }
+      }
+   }); 
+     
+});
+  
+</script>
+
+</body>
+</html>

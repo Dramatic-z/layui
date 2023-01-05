@@ -1,0 +1,99 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openoftranslatepage" lay-filter="translateform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+		<#if userType ?? && userType != -2>
+			<input type="hidden" name="edit-marketId" id ="edit-marketId" value="" class="layui-input">
+		</#if>
+  		<#if userType ?? && userType == -2>
+        <div class="layui-form-item">
+			    <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	            <div class="layui-input-inline" id="US-form-select">b
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="find-floor">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			       </#if>
+	             </select>
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    </#if>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">中文</label>
+	            <div class="layui-input-inline" id="layui-in">
+	              <input type="text" name="edit-chinaese" id ="edit-chinaese" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入名称">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-chinaese">20个字符以内</div>
+        </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">英文</label>
+	            <div class="layui-input-inline" id="layui-in">
+	              <input type="text" name="edit-english" id ="edit-english" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入区域">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-english">100个字符以内</div>
+        </div>
+	    <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">繁体</label>
+	            <div class="layui-input-inline" id="layui-in">
+	              <input type="text" name="edit-traditional" id ="edit-traditional" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入点位">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-traditional">20个字符以内</div>
+        </div>
+	    
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-name').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-name').text("当前已超出20字符");//当前已超出20字符
+			$('#check-name').css("color","red");
+		}else{
+			$('#check-name').text("20个字符以内");//20个字符以内
+			$('#check-name').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-area').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-area').text("当前已超出20字符");//当前已超出20字符
+			$('#check-area').css("color","red");
+		}else{
+			$('#check-area').text("20个字符以内");//20个字符以内
+			$('#check-area').css("color","#999");
+		}
+	});
+	
+	//10字符以内
+	$('#edit-point').on("input propertychange", function () {
+		if($(this).val().length > 10){
+			$('#check-point').text("当前已超出10字符");//当前已超出10字符
+			$('#check-point').css("color","red");
+		}else{
+			$('#check-point').text("10个字符以内");//10个字符以内
+			$('#check-point').css("color","#999");
+		}
+	});
+	
+	
+</script>
+</body>

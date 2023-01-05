@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.publicF.tag'/></title><!-- 公共设施 -->
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    #US-form-upload{
+    	margin-left:120px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	/* width: 110px; */
+    }
+    #US-form-input{
+    	width: 190px;
+    }
+    #US-form-select{
+    	width: 190px;
+    }
+  </style></#if>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><@spring.message code='mess.publicF.tittle'/></div><!-- 公共设施基本信息 -->
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	 <@spring.message code='mess.publicF.name'/>： <div class="layui-inline">
+                <input class="layui-input" name="name" id="search-name" autocomplete="off">
+          </div>
+      <#if userType ?? && userType == -2>
+		商场：  <div class="layui-inline">
+              <select name="marketId" lay-filter="findfloor" id="search-marketId">
+                <option value="">-请选择商场-</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<#if userType == -2>
+							<option value="${market.id}">${market.marketName}</option>
+						</#if>			
+					</#list>
+			    </#if>
+              </select>
+            </div>	
+	   </#if>
+	   <@spring.message code='mess.point.floor'/><!--楼层 -->：<div class="layui-inline">
+              <select name="floor" id="search-floor">
+                <option value="">-<@spring.message code='mess.point.enter.floor'/>-</option><!--请选择楼层 -->
+                <#if userType ?? && userType != -2>
+	                <#if floorlist??>
+						<#list floorlist as floor>
+							<#if floor?number gt 0>
+								<option value="${floor}">${floor}<@spring.message code='mess.point.enter.floors'/></option><!--层 -->
+							<#else >
+								<option value="${floor}">${floor-1}<@spring.message code='mess.point.enter.floors'/></option><!--层 -->
+							</#if>
+						</#list>
+				   </#if>
+				<#elseif userType == -2>
+				</#if>
+              </select>
+	        </div>	
+		    <button class="layui-btn" data-type="reload"><!-- 搜索--><@spring.message code='mess.layui.search'/></button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table> 
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="addPublicFacity"><@spring.message code='mess.publicF.addPF'/></button>
+              </div>
+            </script>
+            
+            <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo"> 
+              <a class="layui-btn layui-btn-xs" lay-event="edit"><!-- 编辑 --><@spring.message code='mess.layui.editor'/></a>
+			  <#if userType??>
+		  	    <#if userType == -2>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><!-- 删除 --><@spring.message code='mess.layui.delete'/></a>
+			    </#if>
+ 		      </#if>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#include '/views/publicfacility/publicfacilityedit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate','excel'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer
+	 	,excel = layui.excel;
+	 	 
+  /* element.render();
+  form.render(null, 'storepointform'); */
+   
+  var tabledata;
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/publicFacility/queryPublicFacilityList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+    	,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    },'print']
+	    ,title: "<@spring.message code='mess.publicF.table.name'/>" //公共设施信息表
+	    ,cols: [[
+		  {field:'id',/*序号*/title:"<@spring.message code='mess.layui.serial.number'/>", width:80,templet:'#zizeng',align:'center'}
+		  ,{field:'sceneUrl',/*现场图*/title:"<@spring.message code='mess.publicF.sceneUrl'/>", align:'center', width:100, templet: '#imgTpl'}
+		  ,{field:'name',/*名称*/title:"<@spring.message code='mess.publicF.name'/>", width:180,align:'center'}
+		  ,{field:'catype',/*分类*/title:"<@spring.message code='mess.publicF.caname'/>", width:180,align:'center'}
+		  ,{field:'area',/*区域*/title:"<@spring.message code='mess.publicF.area'/>", width:180,align:'center'}
+	      ,{field:'floorstr',/*楼层*/title:"<@spring.message code='mess.publicF.floor'/>", width:120,align:'center'}
+	      ,{field:'point',/*点位*/title:"<@spring.message code='mess.publicF.point'/>", width:180,align:'center'}
+	  //  ,{field:'marketname',/*序号*/title:'所属商场', width:200,align:'center'}
+	      ,{field:'statu',/*状态*/title:"<@spring.message code='mess.publicF.status'/>", width:120,align:'center'}
+	      ,{field:'finalmodiftime',/*最后修改时间*/title:"<@spring.message code='mess.bformat.Last.modified'/>",align:'center'}
+	  	  ,{fixed: 'right',/*操作*/title:"<@spring.message code='mess.layui.operation'/>",toolbar:'#test-table-barDemo',width:140,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+	    ,done: function(res, curr, count){
+	    	 tabledata=res.data;
+	    }
+   });
+   
+  //logo图片上传
+  var uploadInst1 = upload.render({
+	     elem: '#test-upload-logo' //绑定元素
+	     ,url: '${rc.contextPath}/publicFacility/dealPublicFacPic' //上传接口	
+	     ,acceptMime:'image/png,.jpg'
+	     ,exts:'jpg|png'
+  	     ,auto: false  //关闭自动上传 使得像素验证起效
+         ,size: 1024*1  //上传大小限制  最大值（单位kb）
+	 	 ,choose: function(obj){uploadimage_choose(obj,300,300,1000,1000,uploadInst1)}
+	     ,before: function(obj){uploadimage_before(obj,"#logoload","#logo","#img-upload-logo")} 
+	     ,done: function(res){uploadimage_done(res,"#logo","#logoload","#logoUrl")}
+	     ,error: function(){layer.msg("<@spring.message code='mess.bformat.upload.error'/>")}/* 上传异常 */
+  });
+  //双击查看原图
+  $("#img-upload-logo").dblclick(function(){doubleclickviewimage(this.src)});
+  
+   //头工具栏事件
+   table.on('toolbar(test-table-reload)', function(obj){
+   //var checkStatus = table.checkStatus(obj.config.id);
+     switch(obj.event){
+	      case 'addPublicFacity':
+	    	form.val("publicfacform", {
+     	    	"edit-point": null
+     	    	,"edit-name": null
+   	    	    ,"logoUrl": null
+   	    	    ,"edit-marketId": null
+   	    	 	,"edit-categoryId": null
+			    ,"edit-floor": null
+			    ,"edit-area": null
+			    ,"edit-point": null
+			    ,"edit-passedfloor": null
+			    ,"reachFloor": null
+			});
+	    	//解决提示语初始化的问题。
+   	    	$('.layui-word-aux').css("color","#999");
+	    	//初始化隐藏
+   	    	$("#public_passedfloor").hide();
+   	    	$("#public_direction").hide();
+   	    	$("#public_ESreach_1").hide();
+   	    	$("#public_ESreach_2").hide();
+	    	layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.point.add'/>",//添加操作
+	            skin: 'layui-layer-rim',
+	            area: ['640px', '720px'],
+	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+	            content: $('#openofpublicfacpage'),
+	            yes: function(index, layero){
+	            	 var name =$("#edit-name").val();
+	            	 var market =$("#edit-marketId").val();
+	            	 var categoryId =$("#edit-categoryId").val();
+	         	 	 var floor =$("#edit-floor").val();
+	            	 var area =$("#edit-area").val();
+	            	 var point =$("#edit-point").val();
+	            	 var passedfloor;
+	            	 if(!($('#public_passedfloor').is(':hidden'))){
+	            		 passedfloor=$("#edit-passedfloor").val();
+	            		 if(passedfloor==null||passedfloor==""){
+	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+	            			 return false;
+	            		 }
+	            		 if(passedfloor.length>90){
+	            			 layer.msg("<@spring.message code='mess.publicF.pass.overlength'/>");/* 经停楼层所填字符超出上限。 */
+	            			 return false;
+	            		 }
+	            	 }
+	            	 var direction;
+	            	 if(!($('#public_direction').is(':hidden'))){
+	            		 direction=$("#edit-direction").val();
+	            		 if(direction==null||direction==""){
+	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+	            			 return false;
+	            		 }
+	            	 }
+	            	 var esupfloor;
+	            	 var esdownfloor;
+	            	 if(direction=='up'){
+	            		 esupfloor=$("#reachFloor").val();
+	            		 if(esupfloor==null||esupfloor==""){
+	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+	            			 return false;
+	            		 }
+	            		 if(esupfloor.length>10){
+	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+	            			 return false;
+	            		 }
+	            	 }else if(direction=='down'){
+	            		 esdownfloor=$("#reachFloor").val();
+	            		 if(esdownfloor==null||esdownfloor==""){
+	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+	            			 return false;
+	            		 }
+	            		 if(esdownfloor.length>10){
+	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+	            			 return false;
+	            		 }
+	            	 }else if(direction=='all'){
+	            		 esupfloor=$("#reachFloor_1").val();
+	            		 esdownfloor=$("#reachFloor_2").val();
+	            		 if(esupfloor==null||esupfloor==""||esdownfloor==null||esdownfloor==""){
+	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+	            			 return false;
+	            		 }
+	            		 if(esupfloor.length>10||esdownfloor.length>10){
+	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+	            			 return false;
+	            		 }
+	            	 }
+	            	 var showLogo =$("#edit-showLogo").val();
+	            	 var status =$("#edit-status").val();
+	            	 var logoUrl =$("#logoUrl").val();
+	            	 if(name!=null&&name!=''&&floor!=''&&point!=null&&point!=''&&market!=''&&categoryId!=''){
+	            		 if(name.length<=20&&area.length<=20&&point.length<=10){
+		                	 $.ajax({
+					             url: '${rc.contextPath}/publicFacility/addPublicFacility',
+			                     type: "POST",
+			                     data:{name:name,area:area,point:point,marketId:market,floor:floor,sceneUrl:logoUrl,status:status,
+			                    	 categoryId:categoryId,passedfloor:passedfloor,direction:direction,esupfloor:esupfloor,
+			                    	 esdownfloor:esdownfloor,showLogo:showLogo},
+			                     dataType: 'json',
+			                     success: function (result) {
+			                    	 if ("0" == result.code) {
+			                  		 	 layer.msg(result.msg);
+			                         }else{
+			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+			                         }
+			                  	     layer.close(index);
+			                  	     tableinit.reload({
+			                  	    	   where: {}
+			                  	    	  ,page: {curr: 1}
+			                  	     });
+			                     }
+			                 });
+	                	 }else{
+		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+		                 }
+	                 }else{
+	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	                 }
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	        }); 
+	        form.render();
+	  	  break;
+	      case 'LAYTABLE_TIP_EXPORT':
+	    	  if(tabledata!=null){
+	    	  var arr = new Array();
+	    	  //弹出loading
+	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+	    	  for (var i = 0; i < tabledata.length; i++) {
+	    		 var o = new Object();
+	    		 var el=tabledata[i];
+	    		 o.index=el.LAY_TABLE_INDEX+1;
+				 o.sceneUrl=el.sceneUrl;
+				 o.name=el.name;
+				 o.catype=el.catype;
+				 o.area=el.area;
+				 o.floorstr=el.floorstr;
+				 o.point=el.point;
+				 o.statu=el.statu;
+				 o.finalmodiftime=el.finalmodiftime;
+				 arr.push(o);
+			  }
+	    	  //数组头部新增表头
+	    	  arr.unshift({index:'序号',sceneUrl:'现场图',name:'名称',catype:'分类',area:'区域'
+	    		  ,floorstr:'楼层',point:'点位',statu:'状态',finalmodiftime:'最后修改时间'});
+	    	  //设置样式的函数，传入设置的范围，表头样式
+              excel.setExportCellStyle(arr, 'A1:I1', {
+                  s: {
+                      fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                      alignment: {
+                          horizontal: 'center',
+                          vertical: 'center'
+                      },
+                      font: { sz: 12, bold: true }
+                  }
+              });
+              //设置样式的函数，传入设置的范围，单元格边框样式
+              excel.setExportCellStyle(arr, 'A1:I' + arr.length, {
+                  s: {
+                      border: {
+                          top: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, bottom: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, left: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }, right: {
+                              style: 'thin', color: { rgb: "000000" }
+                          }
+                      }
+                  }
+              });
+              var colConf = excel.makeColConfig({
+                  'B': 500,
+                  'C': 150,
+                  'I': 120
+              }, 100);
+	     	  //如果需要调整顺序，请执行梳理函数
+              //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+         	  //执行导出函数，系统会弹出弹框
+         	  excel.exportExcel({
+                    sheet1: arr
+              }, '公共设施信息表数据.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+              });
+              layer.close(index);
+	    	  }else{
+         		  layer.msg('当前暂无数据，请先查询。'); 
+         	  }
+	      break;
+	  };
+    });
+ 	
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'edit'){
+    	  $.ajax({
+              url: '${rc.contextPath}/publicFacility/toSelectPublicFacilityById',
+              type: "POST",
+              data:{id:data.id},
+              dataType: 'json',
+              success: function (result) {
+           	     if(result.data != null) {
+           	    	var uppublicf = result.data;
+           	    	$.ajax({
+	           	         url: '${rc.contextPath}/market/selectFloorAndBigfByMarketId?marketId='+uppublicf.marketId,
+	           	         type: "POST",
+	           	         dataType: 'json',
+	           	         async: false,
+	           	         success: function (result) {
+	           	      	    if (result!=null&&"0" == result.code&&result.data!=null) {
+	           	      	  	 	$("#edit-floor").empty();
+	           	          	 	var floors = result.data.floors;
+		           	          	if(floors!=null){
+	        						$("#edit-floor").append("<option value=''>-请选择楼层-</option>");//请选择楼层
+	        						for(var i=0;i<floors.length;i++){
+	        							var fl=floors[i];
+	        							if(fl>0){
+	        								$("#edit-floor").append("<option value="+fl+">"+fl+"层"+"</option>");//层
+	        							}else{
+	        								var flt=fl-1;
+	        								$("#edit-floor").append("<option value="+fl+">"+flt+"层"+"</option>");//层
+	        							}
+	        						};	
+	        					}else{
+	        						$("#edit-floor").append("<option value=''>-请选择其他商场-</option>");//请选择其他商场
+	        					}
+	           	      	 	}else{
+	           	      	 		$("#edit-floor").empty();
+	           	      	 	}
+	           	         }
+	           	    });
+           	    	$.ajax({
+	           	         url: '${rc.contextPath}/market/selectPublicCategoryByMId?marketId='+uppublicf.marketId,
+	           	         type: "POST",
+	           	         dataType: 'json',
+	           	         async: false,
+	           	         success: function (result) {
+	           	        	if ("0" == result.code) {
+	           	         	 	var data = result.data
+	           	         	 	if(data!=null){
+	           	         	 		$("#edit-categoryId").empty();
+	           	         	 		$("#edit-categoryId").append("<option value=''>-<@spring.message code='mess.publicF.enter.cate'/>-</option>");/* 请选择分类 */
+	           						for (var i=0;i<data.length;i++){
+	           	                    	$("#edit-categoryId").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+	           	                    }
+	           	         	 	}else{
+	           	         	 		$("#edit-categoryId").empty();
+	           	         	 		$("#edit-categoryId").append("<option value=''>-<@spring.message code='mess.publicF.enter.market'/>-</option>");/* 请先选择商场 */
+	           	         	 	}
+	           	     	 	}else{
+	           	     	 		$("#edit-categoryId").empty();
+	           	     	 		$("#edit-categoryId").append("<option value=''>-<@spring.message code='mess.publicF.enter.market'/>-</option>");/* 请先选择商场 */
+	           	     	 	}
+	           	         }
+	           	    });
+           	    	
+           	   		//初始化隐藏
+           	    	$("#public_passedfloor").hide();
+           	    	$("#public_direction").hide();
+           	    	$("#public_ESreach_1").hide();
+           	    	$("#public_ESreach_2").hide();
+           	    	form.val("publicfacform", {
+           	    		"edit-id": uppublicf.id
+           	    	   ,"edit-name": uppublicf.name
+           	    	   ,"edit-marketId": uppublicf.marketId
+           	    	   ,"edit-categoryId": uppublicf.categoryId
+           	    	   ,"edit-floor": uppublicf.floor
+           	    	   ,"edit-area": uppublicf.area
+           	    	   ,"edit-point": uppublicf.point
+           	    	   ,"edit-passedfloor": uppublicf.passedfloor
+           	    	   ,"edit-direction": uppublicf.direction
+           	    	   ,"edit-showLogo": uppublicf.showLogo
+           	    	   ,"edit-status": uppublicf.status
+           	    	   ,"logoUrl": uppublicf.sceneUrl
+          			   ,"reachFloor_1": uppublicf.esupfloor
+          			   ,"reachFloor_2": uppublicf.esdownfloor
+           	    	});
+           	    	if(uppublicf.esupfloor!=null&&uppublicf.esupfloor!=''){
+           	    		$("#reachFloor").val(uppublicf.esupfloor);
+        	    	}
+           	    	if(uppublicf.esdownfloor!=null&&uppublicf.esdownfloor!=''){
+           	    		$("#reachFloor").val(uppublicf.esdownfloor);
+           	    	}
+           	    	if(uppublicf.isoperate==1){
+           	    	//扶梯
+           	    		$('#public_direction').show();
+           	    		$('#public_passedfloor').hide();
+           	    		if(uppublicf.direction !='all'){
+           	    			$('#public_ESreach_1').show();
+               	    	}else if(uppublicf.direction =='all'){
+               	    		$('#public_ESreach_2').show();
+           	    		}
+           	    	}else if(uppublicf.isoperate==0){
+           	    	//直梯
+           	    		$('#public_passedfloor').show();
+           	    		$('#public_direction').hide();
+           	    		$('#public_ESreach_1').hide();
+           	    		$('#public_ESreach_2').hide();
+           	    	}
+           	    	
+           	    	//解决提示语初始化的问题。
+           	    	$('.layui-word-aux').css("color","#999");
+           	    	form.render();
+           	    	if(uppublicf.sceneUrl !=null && uppublicf.sceneUrl!=''){
+    					$("#img-upload-logo").attr("src",uppublicf.sceneUrl);
+    				}else{
+    					$("#img-upload-logo").attr("src",null);
+    				}
+           	    	layer.open({
+        	            type: 1,
+        	            title: "<@spring.message code='mess.point.edit'/>",//编辑操作
+        	            skin: 'layui-layer-rim',
+        	            area: ['600px', '720px'],
+        	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//保存,取消
+        	            content: $("#openofpublicfacpage"),
+        	            yes: function(index, layero){
+        	            	 var id =$("#edit-id").val();
+        	            	 var name =$("#edit-name").val();
+        	            	 var market =$("#edit-marketId").val();
+        	            	 var categoryId =$("#edit-categoryId").val();
+        	         	 	 var floor =$("#edit-floor").val();
+        	            	 var area =$("#edit-area").val();
+        	            	 var point =$("#edit-point").val();
+        	            	 var passedfloor;
+        	            	 if(!($('#public_passedfloor').is(':hidden'))){
+        	            		 passedfloor=$("#edit-passedfloor").val();
+        	            		 if(passedfloor==null||passedfloor==""){
+        	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+        	            			 return false;
+        	            		 }
+        	            		 if(passedfloor.length>50){
+        	            			 layer.msg("<@spring.message code='mess.publicF.pass.overlength'/>");/* 经停楼层所填字符超出上限。 */
+        	            			 return false;
+        	            		 }
+        	            	 }
+        	            	 var direction;
+        	            	 if(!($('#public_direction').is(':hidden'))){
+        	            		 direction=$("#edit-direction").val();
+        	            		 if(direction==null||direction==""){
+        	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+        	            			 return false;
+        	            		 }
+        	            	 }
+        	            	 var esupfloor;
+        	            	 var esdownfloor;
+        	            	 if(direction=='up'){
+        	            		 esupfloor=$("#reachFloor").val();
+        	            		 if(esupfloor==null||esupfloor==""){
+        	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+        	            			 return false;
+        	            		 }
+        	            		 if(esupfloor.length>10){
+        	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+        	            			 return false;
+        	            		 }
+        	            	 }else if(direction=='down'){
+        	            		 esdownfloor=$("#reachFloor").val();
+        	            		 if(esdownfloor==null||esdownfloor==""){
+        	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+        	            			 return false;
+        	            		 }
+        	            		 if(esdownfloor.length>10){
+        	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+        	            			 return false;
+        	            		 }
+        	            	 }else if(direction=='all'){
+        	            		 esupfloor=$("#reachFloor_1").val();
+        	            		 esdownfloor=$("#reachFloor_2").val();
+        	            		 if(esupfloor==null||esupfloor==""||esdownfloor==null||esdownfloor==""){
+        	            			 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");
+        	            			 return false;
+        	            		 }
+        	            		 if(esupfloor.length>10||esdownfloor.length>10){
+        	            			 layer.msg("<@spring.message code='mess.publicF.arrive.overlength'/>");/* 到达楼层所填字符超出上限。 */
+        	            			 return false;
+        	            		 }
+        	            	 }
+        	            	 var showLogo =$("#edit-showLogo").val();
+        	            	 var status =$("#edit-status").val();
+        	            	 var logoUrl =$("#logoUrl").val();
+        	            	 if(name!=null&&name!=''&&floor!=''&&point!=null&&point!=''&&market!=''&&categoryId!=''){
+        	            		 if(name.length<=20&&area.length<=20&&point.length<=10){
+        		                	 $.ajax({
+        			                     url: '${rc.contextPath}/publicFacility/updatePublicFacility',
+        			                     type: "POST",
+        			                     data:{id:id,name:name,area:area,point:point,marketId:market,floor:floor,sceneUrl:logoUrl,status:status,
+        			                    	 categoryId:categoryId,passedfloor:passedfloor,direction:direction,esupfloor:esupfloor,
+        			                    	 esdownfloor:esdownfloor,showLogo:showLogo},
+        			                     dataType: 'json',
+        			                     success: function (result) {
+        			                    	 if("0" == result.code){
+        			                    		 layer.msg(result.msg);
+        			                    		 layer.close(index);
+    					                  	     tableinit.reload({
+    					                  	    	   where: {}
+    					                  	    	  ,page: {curr: 1}
+    					                  	     }); 
+        			                    	 }else{
+        			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+        			                         }
+        			                  	 }
+        			                 });
+        	                	 }else{
+        		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+        		                 }
+        	                 }else{
+        	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+        	                 }
+        	            },
+        	            btn2: function(index, layero){layer.close(index)}
+        	        });
+                  	form.render();
+                 }
+           	  }
+          });
+      }else if(obj.event === 'del'){
+    	  layer.confirm("<@spring.message code='mess.publicF.realdelete'/>",/* 真的删除么 */function(index){
+    	        window.location = "${rc.contextPath}/publicFacility/deletePFacilityById?id="+data.id;
+    	        layer.close(index);
+    	  });
+     }
+    });
+    
+    //监听下拉框选中事件 根据商场id 查找楼层
+    form.on('select(findfloor)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainfloorofdevicetablebymarketid(data,path);
+    	form.render('select');
+    });
+    form.on('select(find-floor)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainfloorofdeviceeditbymarketid(data,path);
+    	obtainbPublicCategorybymarketid(data,path);
+    	form.render('select');
+    });
+    form.on('select(upCategory)', function (data) {
+    	var tar =false;
+    	var str =null;
+    	$.ajax({
+            url: '${rc.contextPath}/publicCategory/isStairs',
+            type: "POST",
+            data:{id:data.value},
+            async: false,
+            dataType: 'text',
+            success: function (result) {
+            	if(result!=null){
+            		if(result=="true_0"){
+            			str=0;
+            		}else if(result=="true_1"){
+            			str=1;
+            		}
+            		tar=true;
+        		}
+           	 }
+        });
+    	if(tar){
+    		if(str == 0){
+        		$('#public_passedfloor').show();
+        		$('#public_direction').hide();
+        		$('#edit-direction').val("");
+        		$('#public_ESreach_1').hide();
+        		$('#reachFloor').val("");
+        		$('#public_ESreach_2').hide();
+        		$('#reachFloor_1').val("");
+        		$('#reachFloor_2').val("");
+        	}else if(str == 1){
+        		$('#public_direction').show();
+        		$('#public_ESreach_1').show();
+        		$('#public_passedfloor').hide();
+        		$('#edit-passedfloor').val("");
+        	}else{
+        		$('#public_passedfloor').hide();
+        		$('#edit-passedfloor').val("");
+        		$('#public_direction').hide();
+        		$('#edit-direction').val("");
+        		$('#public_ESreach_1').hide();
+        		$('#reachFloor').val("");
+        		$('#public_ESreach_2').hide();
+        		$('#reachFloor_1').val("");
+        		$('#reachFloor_2').val("");
+        	}
+    	}
+    	form.render('select');
+    });
+    form.on('select(upway)', function (data) {
+    	console.log(data.value);
+    	if(data.value == 'up'){
+    		$('#public_ESreach_1').show();
+    		$('#public_ESreach_2').hide();
+    		$('#reachFloor_1').val("");
+    		$('#reachFloor_2').val("");
+    	}else if(data.value == 'down'){
+    		$('#public_ESreach_1').show();
+    		$('#public_ESreach_2').hide();
+    		$('#reachFloor_1').val("");
+    		$('#reachFloor_2').val("");
+    	}else if(data.value == 'all'){
+    		$('#public_ESreach_1').hide();
+    		$('#reachFloor').val("");
+    		$('#public_ESreach_2').show();
+    	}
+    	form.render('select');
+    });
+  
+     var $ = layui.$, active = {
+   	      reload: function(){
+	   	        var name = $('#search-name');
+	   	        var marketId = $('#search-marketId');
+	   	        var floor = $('#search-floor');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	name: name.val(),
+	   	        	marketId:  marketId.val(),
+	   	        	floor:	floor.val()
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+  
+    <script type="text/html" id="imgTpl">
+    {{#  if(d.sceneUrl != null && d.sceneUrl != ""){ }}
+		 <img src="{{d.sceneUrl}}" style="height:50px;width:50px;">
+	{{#  } else { }}
+		 <img src"{{d.sceneUrl}}" style="height:50px;width:50px;">
+	{{#  } }}
+	</script>
+	
+    <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

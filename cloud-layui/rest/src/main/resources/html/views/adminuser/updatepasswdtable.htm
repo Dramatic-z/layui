@@ -1,0 +1,145 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>角色详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+   <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">角色详情</div>
+              
+           <div class="layui-card-body">
+           
+            <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+   	  活动名： <div class="layui-inline">
+                <input class="layui-input" name="name" id="test-table-demoReload-name" autocomplete="off">
+              </div>
+              <!-- 日期查询条件---开始时间-结束时间 -->
+            	<div class="layui-inline">
+                    <input type="text" class="layui-input" name="start" id="test-table-demoReload-start" placeholder="开始日期">
+                  </div>
+                  -
+                  <div class="layui-inline">
+                    <input type="text" class="layui-input" name="end" id="test-table-demoReload-end" placeholder="结束日期">
+                  </div>
+              
+       			<button class="layui-btn" data-type="reload">搜索</button>
+            </div>
+           <!-- <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table> --> 
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table> 
+            
+            
+             
+            <script type="text/html" id="test-table-reload-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <script>
+  
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table', 'laydate'], function(){
+    var admin = layui.admin
+    var table = layui.table;
+    var laydate = layui.laydate;
+  
+    table.render({
+      elem: '#test-table-reload'
+      // ,url: layui.setter.base + 'json/table/demo.js'    layui.setter.base + 
+      ,url:'${rc.contextPath}/user/getPdUser'
+     // ,toolbar: '#test-table-reload-toolbarDemo'
+      ,title: '用户数据表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'序号', width:80, fixed: 'left', unresize: true,sort: true}
+        ,{field:'loginname', title:'登录名', width:200, }
+        ,{field:'password', title:'密码', width:200, }
+        ,{field:'idname', title:'角色', width:250, }
+        ,{field:'market', title:'所属商场', sort: true}
+       
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-reload-barDemo', width:150}
+      ]]
+      ,page: true
+    });
+    
+   
+    
+    //监听行工具事件
+    table.on('tool(test-table-reload)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('真的删除么', function(index){
+        //	alert(data.id);
+      //  window.location = "${rc.contextPath}/activity/deleteActivity?id="+data.id;
+         // obj.del();
+          layer.close(index);
+        });
+       
+      } else if(obj.event === 'edit'){
+    	 // window.location = "${rc.contextPath}/activity/toupdatepage?id="+data.id;	
+      }
+    });
+   
+    var $ = layui.$, active = {
+  	      reload: function(){
+  	       
+  	      //  var id=demoReload.val();
+  	        //执行重载
+  	        table.reload('test-table-reload', {
+  	          page: {
+  	            curr: 1 //重新从第 1 页开始
+  	        	}
+  	          ,where: {
+  	         //   key: {
+  	        	// id:1,
+  	              
+  	       //     }
+  	          }
+  	        });
+  	      }
+  	    };
+   
+  $('.test-table-reload-btn .layui-btn').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  
+  });
+  </script>
+ 
+</body>
+</html>

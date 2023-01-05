@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- 二选一 -->
+	<!-- 第一种: 只打印default.log和error.log -->
+	<include resource="META-INF/nrc-logger-base.xml" />
+
+	<!-- 第二种: 按模块分文件打印日志，需要指定module -->
+	<!--
+	<property name="module" value="osms" /> 
+	<include resource="META-INF/nrc-logger-default.xml" />
+	-->
+
+</configuration>

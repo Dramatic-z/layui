@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+
+	<include resource="META-INF/nrc-logger-base.xml" />
+
+	<springProfile name="!console">
+		<include resource="META-INF/files-appender.xml" />
+	</springProfile>
+
+</included>

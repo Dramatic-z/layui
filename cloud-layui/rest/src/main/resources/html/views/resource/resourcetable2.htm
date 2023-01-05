@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>资源管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 height: 50px;
+     white-space: normal;
+    }
+    #US-form-upload{
+    	margin-left:120px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	/* width: 110px; */
+    }
+    #US-form-input{
+    	width: 190px;
+    }
+    #US-form-select{
+    	width: 190px;
+    }
+  </style></#if>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid" style="margin-left: 140px;margin-top:40px;">
+          <div class="layui-card-header">资源管理</div>
+          <button id="addBtn" class="layui-btn">添加一级菜单</button>
+          <div>
+               <div id="resource" class="demo-tree-more"></div>
+          </div>
+
+  </div>
+  
+  <#include '/views/resource/resourceedit.htm'/>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','form','tree', 'util'], function(){
+	 	 var $ = layui.$
+	 	,element = layui.element
+	 	,form = layui.form
+	 	,tree = layui.tree
+	 	,util = layui.util
+	 	,layer = layui.layer
+	 	//模拟数据
+		,data = ${Resourcejson};
+		
+		
+	//资源tree组件
+	tree.render({
+	  elem: '#resource'
+	  ,data: data
+	  ,id:'id'
+	  ,isJump:true
+	  ,showCheckbox: false //是否显示复选框
+	  ,edit: ['add', 'update']
+	  ,operate: function(obj){
+		 var type = obj.type; //得到操作类型：add、update、del
+		 var data = obj.data; //得到当前节点的数据
+		 
+	  // var elem = obj.elem; //得到当前节点元素
+         var id = data.id; //得到节点索引
+       //console.log("得到操作类型："+type)
+       //console.log("节点数据："+JSON.stringify(data));
+         var pid = data.pid;
+         var reg = /(^[1-9]+\d*$)|(^0$)/;//非负整数
+         var isAdd = data.isAdd;
+         var Fid=data.id;
+       
+         //节点操作
+         if(type === 'add'){
+        	form.val("resourceform", {
+     	        "edit-name": null
+ 			   ,"edit-engName": null
+ 			   ,"edit-hkName": null
+ 			   ,"edit-type": null
+ 			   ,"edit-url": null
+ 			   ,"edit-memo": null
+ 			});
+       // 	$("#role").attr("disabled","disabled");
+       		$("#typeDiv").show();
+            $("#iconDiv").hide();
+            $("#urlDiv").show();
+ 	    	form.render();
+ 	    	layer.open({
+ 	            type: 1,
+ 	            title: "<@spring.message code='mess.point.add'/>",//添加操作
+ 	            skin: 'layui-layer-rim',
+ 	            area: ['600px', '560px'],
+ 	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+ 	            content: $('#openofresourcepage'),
+ 	            yes: function(index, layero){
+ 	            	 var name =$("#edit-name").val();
+ 	            	 var engName =$("#edit-engName").val();
+ 	            	 var hkName =$("#edit-hkName").val();
+ 	            	 var type =$("#edit-type").val();
+ 	            	 var url =$("#edit-url").val();
+ 	            	 var status =$("#edit-status").val();
+ 	            	 if(name!=null&&name!=''&&engName!=null&&engName!=''&&hkName!=null&&hkName!=''&&type!=''&&url!=null&&url!=''&&status!=''){
+ 	            		 if(name.length<=20&&engName.length<=20&&hkName.length<=20&&url.length<=100){
+ 		                	 $.ajax({
+ 			                     url: '${rc.contextPath}/resource/addResource',
+ 			                     type: "POST",
+ 			                     data:{name:name,engName:engName,hkName:hkName,type:type,url:url,status:status,parentId:Fid},
+ 			                     dataType: 'json',
+ 			                     success: function (result) {
+ 			                    	 if("0" == result.code){
+ 			                    		 layer.msg(result.msg);
+ 			                    		 layer.close(index);
+ 			                    		 location.reload();
+ 			                    	 }else{
+ 			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+ 			                         }
+ 			                     }
+ 			                 });
+ 	                	 }else{
+ 		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+ 		                 }
+ 	                 }else{
+ 	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+ 	                 }
+ 	            },
+ 	            btn2: function(index, layero){layer.close(index);location.reload();},
+	 	        cancel: function(index, layero){
+		            	location.reload();
+	           	}
+ 	        }); 
+ 	        form.render();
+		 }else if(type === 'update'){
+			 $.ajax({
+	              url: '${rc.contextPath}/resource/toSelectResourceById',
+	              type: "POST",
+	              data:{id:id},
+	              dataType: 'json',
+	              success: function (result) {
+	           	     if(result.data != null) {
+	           	    	var upresource = result.data;
+	           	    	if(upresource.type=="F_MENU"){
+	           	    		$("#typeDiv").hide();
+	           	     		$("#iconDiv").show();
+	           	     		$("#urlDiv").hide();
+	           	    	}else{
+	           	    		$("#typeDiv").show();
+	           	    		$("#iconDiv").hide();
+	           	    		$("#urlDiv").show();
+	           	    	}
+	           	    	form.val("resourceform", {
+	           	    		"edit-id": upresource.id
+	           	    	   ,"edit-name": upresource.name
+	        			   ,"edit-engName": upresource.engName
+	        			   ,"edit-hkName": upresource.hkName
+	        			   ,"edit-type": upresource.type
+	        			   ,"edit-url": upresource.url
+	        			   ,"edit-status": upresource.status
+	        			   ,"edit-memo": upresource.memo
+	    				});
+	           	    	form.render();
+	           	    	layer.open({
+	        	            type: 1,
+	        	            title: "<@spring.message code='mess.point.edit'/>",//编辑操作
+	        	            skin: 'layui-layer-rim',
+	        	            area: ['600px', '560px'],
+	        	            btn: ["保存","<@spring.message code='mess.bformat.cancel'/>"],//提交,取消
+	        	            content: $("#openofresourcepage"),
+	        	            yes: function(index, layero){
+	        	            	 var id =$("#edit-id").val();
+	        	            	 var name =$("#edit-name").val();
+	        	            	 var engName =$("#edit-engName").val();
+	        	            	 var hkName =$("#edit-hkName").val();
+	        	            	 if(upresource.type=="F_MENU"){
+	        	            		 var type ="F_MENU";
+	        	            		 var url ="-";
+	        	            		 var memo =$("#edit-memo").val();
+	        	            	 }else{
+	        	            		 var type =$("#edit-type").val();
+	        	            		 var url =$("#edit-url").val();
+	        	            		 var memo ='-';
+		        	             }
+	        	            	 var status =$("#edit-status").val();
+	        	            	 if(name!=null&&name!=''&&engName!=null&&engName!=''&&hkName!=null&&hkName!=''&&type!=''&&url!=null&&url!=''&&status!=''){
+	        	            		 if(name.length<=20&&engName.length<=20&&hkName.length<=20&&url.length<=200&&memo.length<=50){
+	        		                	 $.ajax({
+	        			                     url: '${rc.contextPath}/resource/updateResource',
+	        			                     type: "POST",
+	        			                     data:{id:id,name:name,engName:engName,hkName:hkName,memo:memo,type:type,url:url,status:status},
+	        			                     dataType: 'json',
+	        			                     success: function (result) {
+	        			                    	 if("0" == result.code){
+	        			                    		 layer.msg(result.msg);
+	        			                    		 layer.close(index);
+	        			                    		 location.reload();
+	        			                    	 }else{
+	        			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+	        			                         }
+	        			                  	 }
+	        			                 });
+	        	                	 }else{
+	        		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+	        		                 }
+	        	                 }else{
+	        	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	        	                 }
+	        	            },
+	        	            btn2: function(index, layero){layer.close(index);location.reload();},
+	        	            cancel: function(index, layero){
+	        	            	location.reload();
+        	            	}
+	        	        });
+	                  	form.render();
+	                 }
+	           	  }
+	          });
+		    	
+		 }    
+	    }
+	 });
+   
+	//添加一级
+    $("#addBtn").click(function(){
+    	form.val("resourceform", {
+    		"edit-name": null
+		   ,"edit-engName": null
+		   ,"edit-hkName": null
+		   ,"edit-url": null
+		});
+    	$("#typeDiv").hide();
+    	$("#iconDiv").show();
+    	$("#urlDiv").hide();
+    	form.render();
+    	layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.point.add'/>",//添加操作
+	            skin: 'layui-layer-rim',
+	            area: ['600px', '500px'],
+	            btn: ["<@spring.message code='mess.bformat.addform'/>","<@spring.message code='mess.bformat.cancel'/>"],//添加,取消
+	            content: $('#openofresourcepage'),
+	            yes: function(index, layero){
+	            	 var name =$("#edit-name").val();
+	            	 var engName =$("#edit-engName").val();
+	            	 var hkName =$("#edit-hkName").val();
+	            	 var type="F_MENU";
+	            	 var memo =$("#edit-memo").val();
+	            	 var status =$("#edit-status").val();
+	            	 if(name!=null&&name!=''&&engName!=null&&engName!=''&&hkName!=null&&hkName!=''&&type!=''&&status!=''){
+	            		 if(name.length<=20&&engName.length<=20&&hkName.length<=20&&memo.length<=50){
+		                	 $.ajax({
+			                     url: '${rc.contextPath}/resource/addResource',
+			                     type: "POST",
+			                     data:{name:name,engName:engName,hkName:hkName,type:type,memo:memo,status:status,parentId:0},
+			                     dataType: 'json',
+			                     success: function (result) {
+			                    	 if("0" == result.code){
+			                    		 layer.msg(result.msg);
+			                    		 layer.close(index);
+			                    		 location.reload();
+			                    	 }else{
+			                        	 layer.msg("<@spring.message code='mess.bformat.saveerror'/>");//保存失败
+			                         }
+			                     }
+			                 });
+	                	 }else{
+		                	 layer.msg("<@spring.message code='mess.bformat.charttolong'/>");//所填字符超出上限。
+		                 }
+	                 }else{
+	                	 layer.msg("<@spring.message code='mess.bformat.mustbenotempty'/>");//必填项不可为空
+	                 }
+	            },
+	            btn2: function(index, layero){
+	            	$("#iconDiv").hide();
+	            	$("#typeDiv").show();
+	            },
+	            cancel: function(index, layero){
+	            	$("#iconDiv").hide();
+	            	$("#typeDiv").show();
+            	}
+	     });
+    	
+     }); 
+	
+	
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+  
+    <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

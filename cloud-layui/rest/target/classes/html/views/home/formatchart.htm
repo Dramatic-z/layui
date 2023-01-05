@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>图表</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery.min.js"></script>
+  	
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+       <div class="layui-card">
+          <div class="layui-card-header">图表</div>
+         	 <div style="text-align:right">
+				<!-- <input style="" onclick="javascript:back()" type="button" class="layui-btn" value="返回" /> -->
+			 </div>
+			 <div class="layui-card-body" style="height:750px;">
+			 	 <!--图表begin-->
+				 <div id="collapseOne" class="panel-collapse collapse in" align="center">
+						<div class="panel-body" style="width:1600px;height: 800px;">
+							<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+  							<div id="main" style="width: 1000px;height:600px;"></div>
+						</div>
+				 </div>
+				 <!--图表end-->
+			 </div>
+			 
+			 
+			 
+			 
+        </div>
+     </div>
+</div>
+
+<script src="${rc.contextPath}/js/dist/echarts-all.js"></script>
+
+</body>	
+  <script>
+
+  //基于准备好的dom，初始化echarts实例
+  var myChart = echarts.init(document.getElementById('main'));
+
+  // 指定图表的配置项和数据
+  var option = {
+      title: {
+          text: '图表',
+          subtext: '',
+          x:'center'
+      },
+      tooltip: {
+      	trigger: 'item',
+      	formatter: "{a} <br/>{b} : {c} ({d}%)"
+      },
+      legend: {
+      	 orient : 'vertical',
+         x : 'left',
+      //   data:formatname
+         data:['Chrome','Firefox','Safari','IE9+','IE8-']
+      },
+      toolbox: {
+	        show : true,
+	        x: 'right',  
+	        color : ['#1e90ff','#22bb22','#4b0082','#d2691e'],
+	        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+	        feature : {
+	        	mark : {show: true},
+	            dataView : {show: true, readOnly: false},
+	            magicType : {
+	            	show: true,
+	            	type: ['pie'],
+	           // 	type: ['pie', 'funnel'],
+	            	option: {
+	                     funnel: {
+	                         x: '25%',
+	                         width: '50%',
+	                         funnelAlign: 'left'
+	                         ,max: 10000
+	                     }
+	                 }
+	            },
+	            calculable : true,
+	            saveAsImage : {
+	            	show: true,
+	            	title: "保存为图片",
+	            	type: "png",
+	            	lang: [
+	                    "点击保存"
+	                ]	
+	            },
+	            restore : {show: true},
+	        }
+	    },
+	    calculable : false,
+     // credits: { enabled: false },
+      series : (function (){
+        var series = [];
+        for (var i = 0; i < 30; i++) {
+            series.push({
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                itemStyle : {normal : {
+                    label : {show : i > 28},
+                    labelLine : {show : i > 28, length:20}
+                }},
+                radius : [i * 4 + 40, i * 4 + 43],
+                data:[
+                    {value: i * 128 + 80,  name:'Chrome'},
+                    {value: i * 64  + 160,  name:'Firefox'},
+                    {value: i * 32  + 320,  name:'Safari'},
+                    {value: i * 16  + 640,  name:'IE9+'},
+                    {value: i * 8  + 1280, name:'IE8-'}
+                ]
+            })
+        }
+        series[0].markPoint = {
+            symbol:'emptyCircle',
+            symbolSize:series[0].radius[0],
+            effect:{show:true,scaleSize:12,color:'rgba(250,225,50,0.8)',shadowBlur:10,period:30},
+            data:[{x:'50%',y:'50%'}]
+        };
+        return series;
+    })()
+      
+  };
+	 // 使用刚指定的配置项和数据显示图表。
+	 myChart.setOption(option);
+	
+	 setTimeout(function (){
+		    var _ZR = myChart.getZrender();
+		    //var TextShape = require('zrender/shape/Text');
+		    /* console.log(_ZR);
+		    console.log(zrender);
+		    for(var name in zrender){
+		        console.log(name + ':' + zrender[name]);
+		    }
+		    console.log(zrender.shape);
+		    console.log(zrender.tool.color);
+		    var TextShape = zrender.shape.Text;
+		     */
+		    // 补充千层饼
+		    /* _ZR.addShape(new TextShape({
+		        style : {
+		            x : _ZR.getWidth() / 2,
+		            y : _ZR.getHeight() / 2,
+		            color: '#666',
+		            text : '恶梦的过去',
+		            textAlign : 'center'
+		        }
+		    })); */
+		    /* _ZR.addShape(new TextShape({
+		        style : {
+		            x : _ZR.getWidth() / 2 + 200,
+		            y : _ZR.getHeight() / 2,
+		            brushType:'fill',
+		            color: 'orange',
+		            text : '美好的未来',
+		            textAlign : 'left',
+		            textFont:'normal 20px 微软雅黑'
+		        }
+		    })); */
+		    _ZR.refresh();
+	}, 2000);
+	//返回
+	function back(){
+		window.location="${rc.contextPath}/storeVisited/toFormatReport";
+	}
+   </script>
+</html>
+
+
+

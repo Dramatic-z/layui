@@ -1,0 +1,91 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openofmarketpage" lay-filter="marketform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label">商场中文名</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-marketName" id ="edit-marketName" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入商场中文名">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-marketName">20个字符以内</div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label">商场英文名</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-marketNameeng" id ="edit-marketNameeng" class="layui-input" lay-verify="required|nameEng" autocomplete="off" placeholder="请输入商场英文名">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-marketNameeng">20个字符以内</div>
+        </div>
+        <div class="layui-form-item">
+	            <label class="layui-form-label">城市</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-city" id ="edit-city" class="layui-input" lay-verify="required|city" autocomplete="off" placeholder="请输入商场所在城市">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-city">10个字符以内</div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">楼层</label>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="number" name="floor_min" id="floor_min" placeholder="开始楼层" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid">-</div>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="number" name="floor_max" id="floor_max" placeholder="结束楼层" autocomplete="off" class="layui-input">
+              </div>
+              <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+              <div class="layui-form-mid layui-word-aux" id="check-marketName">输入楼层范围,例如输入（-1 - 6）代表-2层到6层（0代表-1层）</div>
+            </div>
+            
+        </div>
+	    
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-marketName').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-marketName').text("当前已超出20字符");
+			$('#check-marketName').css("color","red");
+		}else{
+			$('#check-marketName').text("20个字符以内");
+			$('#check-marketName').css("color","#999");
+		}
+	});
+	$('#edit-marketNameeng').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-marketNameeng').text("当前已超出20字符");
+			$('#check-marketNameeng').css("color","red");
+		}else{
+			$('#check-marketNameeng').text("20个字符以内");
+			$('#check-marketNameeng').css("color","#999");
+		}
+	});
+	$('#edit-city').on("input propertychange", function () {
+		if($(this).val().length >10){
+			$('#check-city').text("当前已超出10字符");
+			$('#check-city').css("color","red");
+		}else{
+			$('#check-city').text("10个字符以内");
+			$('#check-city').css("color","#999");
+		}
+	});
+	
+	
+</script>
+</body>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><!--商铺访问量报表 --><@spring.message code='mess.report.store.tag'/></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <style type="text/css">
+    .form-top{
+   	 margin-top: 20px;
+   	 margin-left: 20px;
+	}
+	#US-form-mid{
+    	width: 12px;
+    }
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	width: 135px;
+    }
+    #US-form-mid{
+    	width: 24px;
+    }
+  </style></#if>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+   <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header"><!--商铺访问量报表 --><@spring.message code='mess.report.store.tittle'/></div>
+           <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;">
+            <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+            	  <!-- 日期查询条件---开始时间-结束时间 -->
+   	 			  <div class="layui-inline">
+	                  <label class="layui-form-label" id="US-form-lable"><!--选择日期 --><@spring.message code='mess.report.store.selectdate'/></label>
+	              </div>
+            	  <div class="layui-inline">
+                    <input type="text" class="layui-input" value="${startTime!''}" name="startTime" id="time-start" placeholder="<@spring.message code='mess.report.start'/>">
+                  </div>
+                  -
+                  <div class="layui-inline">
+                    <input type="text" class="layui-input" value="${endTime!''}" name="endTime" id="time-end" placeholder="<@spring.message code='mess.report.end'/>">
+                  </div>
+              	<button class="layui-btn" data-type="reload"><!-- 搜索--><@spring.message code='mess.layui.search'/></button>
+              	<button class="layui-btn" onclick="javascript:window.location.reload()"><!--重置--><@spring.message code='mess.layui.reset'/></button>
+              	<button class="layui-btn" id="tochart"><!--查看图表--><@spring.message code='mess.layui.Check.chart'/></button>
+              	<button class="layui-btn layui-btn-normal" id="tocontrastchart"><!--查看对比图表 --><@spring.message code='mess.layui.View.comparison.chart'/></button>
+       		</div>
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table> 
+            <form id="SelectionMethod" class="layui-form form-top" hidden="">
+	            <div class="layui-form-item">
+				      <label class="layui-form-label" id="US-form-lable"><!--比较方式--><@spring.message code='mess.report.compare.way'/></label>
+			          <div class="layui-input-inline" id="edit-type">
+			     		 <input type="radio" name="type" value="1" title="<@spring.message code='mess.report.compare.mouth'/>"  checked="" lay-filter="change-type-month">
+			     		 <input type="radio" name="type" value="0" title="<@spring.message code='mess.report.compare.day'/>"  lay-filter="change-type-day">
+			    	  </div>
+				</div>
+	        	<div class="layui-form-item" id="compareofmouth">
+		           	  <label class="layui-form-label" id="US-form-lable"><!--按月份 --><@spring.message code='mess.report.accord.mouth'/></label>
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="begin-month" placeholder="<@spring.message code='mess.report.enter.mouth'/>">
+	                  </div>
+	                  <div class="layui-input-inline" id="US-form-mid">
+	                    <div class="layui-form-mid"><!--与 --><@spring.message code='mess.report.accord.with'/></div>
+	                  </div>
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="end-month" placeholder="<@spring.message code='mess.report.enter.mouth'/>">
+	                  </div>
+	                  <div class="layui-input-inline" style="width: 135px;">
+	                    <div class="layui-form-mid"><!--相比较 --><@spring.message code='mess.report.compare'/></div>
+	                  </div>
+	        	</div>
+	        	<div class="layui-form-item" id="compareofday">
+		           	  <label class="layui-form-label" id="US-form-lable"><!--按日期 --><@spring.message code='mess.report.accord.data'/></label>
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" name="sTimeof1" id="sTimeof1" autocomplete="off" placeholder="<@spring.message code='mess.report.enter.data'/>">
+	          		  </div>
+	                  <div class="layui-input-inline" id="US-form-mid">
+	                    <div class="layui-form-mid"><!--与 --><@spring.message code='mess.report.accord.with'/></div>
+	                  </div>
+		              <div class="layui-input-inline">
+		                 <input type="text" class="layui-input" name="eTimeof2" id="eTimeof2" autocomplete="off" placeholder="<@spring.message code='mess.report.enter.data'/>">
+		              </div>
+	                  <div class="layui-input-inline" style="width: 135px;">
+	                    <div class="layui-form-mid"><!--相比较 --><@spring.message code='mess.report.compare'/></div>
+	                  </div>
+	        	</div>
+	        </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table', 'laydate','excel'], function(){
+    var admin = layui.admin
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var form = layui.form;
+    var $ = layui.$;
+    var excel = layui.excel;
+  
+    var excoptcount;
+    var tabledata;
+    table.render({
+      elem: '#test-table-reload'
+      ,url:'${rc.contextPath}/storeVisited/storeVisitsTablePage'
+      ,toolbar: '#test-table-reload-toolbarDemo'
+   	  ,defaultToolbar: ['filter',{
+         	title: '导出' //标题
+             ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+             ,icon: 'layui-icon-export' //图标类名
+ 	    },'print']
+      ,title: "<@spring.message code='mess.report.store.tittle'/>" //商铺访问量报表
+      ,cols: [[
+         {field:'id',/*序号*/title:"<@spring.message code='mess.layui.serial.number'/>", width:150, fixed: 'left',templet:'#zizeng',align:'center'}
+        ,{field:'operator',/*商铺名称*/title:"<@spring.message code='mess.report.store.name'/>", width:200,align:'center'}
+        ,{field:'deviceId',/*访问次数(单位:次)*/title:"<@spring.message code='mess.report.store.visits'/>", width:220,align:'center'}
+        ,{field:'memo',/*访问次数百分比*/title:"<@spring.message code='mess.report.store.percent'/>",align:'center'}
+      ]]
+      ,page: true
+      ,done: function(res, curr, count){
+    	  tabledata=res.data;
+    	  if(count!=null){
+    		  excoptcount=count;
+    	  }else{
+    		  excoptcount=10;
+    	  }
+      }
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-reload)', function(obj){
+    switch(obj.event){
+ 	      case 'LAYTABLE_TIP_EXPORT':
+ 	    	  if(tabledata!=null){
+ 	    	  var arr = new Array();
+ 	    	  //弹出loading
+ 	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+ 	    	  for (var i = 0; i < tabledata.length; i++) {
+ 	    		 var o = new Object();
+ 	    		 var el=tabledata[i];
+ 	    		 o.index=el.LAY_TABLE_INDEX+1;
+ 				 o.operator=el.operator;
+ 				 o.deviceId=el.deviceId;
+ 				 o.memo=el.memo;
+ 				 arr.push(o);
+ 			  }
+ 	    	  //数组头部新增表头
+ 	    	  arr.unshift({index:'序号',operator:'商铺名称',deviceId:'访问次数(单位:次)',memo:'访问次数百分比'});
+ 	    	  //设置样式的函数，传入设置的范围，表头样式
+               excel.setExportCellStyle(arr, 'A1:D1', {
+                   s: {
+                       fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                       alignment: {
+                           horizontal: 'center',
+                           vertical: 'center'
+                       },
+                       font: { sz: 12, bold: true }
+                   }
+               });
+               //设置样式的函数，传入设置的范围，单元格边框样式
+               excel.setExportCellStyle(arr, 'A1:D' + arr.length, {
+                   s: {
+                       border: {
+                           top: {
+                               style: 'thin', color: { rgb: "000000" }
+                           }, bottom: {
+                               style: 'thin', color: { rgb: "000000" }
+                           }, left: {
+                               style: 'thin', color: { rgb: "000000" }
+                           }, right: {
+                               style: 'thin', color: { rgb: "000000" }
+                           }
+                       }
+                   }
+               });
+               var colConf = excel.makeColConfig({
+                   'A': 60,
+                   'B': 120,
+                   'C': 120,
+                   'D': 120
+               }, 100);
+ 	     	  //如果需要调整顺序，请执行梳理函数
+               //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+          	  //执行导出函数，系统会弹出弹框
+          	  excel.exportExcel({
+                     sheet1: arr
+               }, '商铺访问量报表数据.xlsx', 'xlsx', {
+                     extend: {
+                         '!cols': colConf
+                     }
+               });
+               layer.close(index);
+         	   }else{
+         		  layer.msg('当前暂无数据，请先查询。'); 
+         	   }
+ 	      break;
+ 	  };
+    });
+  //监听单选框切换月与年
+    $("#compareofmouth").show();
+    $("#compareofday").hide();
+    form.on('radio(change-type-month)', function (data) {
+    	 $("#compareofmouth").show();
+  		 $("#compareofday").hide();
+    	 form.render();
+    });
+    form.on('radio(change-type-day)', function (data) {
+    	 $("#compareofmouth").hide();
+  		 $("#compareofday").show();
+   		 form.render();
+    });
+    
+    //年月选择器
+    var date1=new Date();
+    var date2=new Date();
+    date1.setDate(1);
+    date2.setDate(1);
+    date1.setMonth(date1.getMonth()-1);
+    laydate.render({
+      elem: '#begin-month'
+      ,type: 'month'
+      ,value: date1
+    });
+    laydate.render({
+      elem: '#end-month'
+      ,type: 'month'
+      ,value: date2
+	});
+    
+    laydate.render({
+        elem: '#sTimeof1'
+        ,range: true
+   	});
+    laydate.render({
+        elem: '#eTimeof2'
+        ,range: true
+	});
+    
+    //开始日期
+    var insStart = laydate.render({
+    	elem: '#time-start'
+       ,done: function(value, date){
+        insEnd.config.min = lay.extend({}, date, {
+          month: date.month - 1
+        });
+        insEnd.config.elem[0].focus();
+      }
+    });
+    //结束日期
+    var insEnd = laydate.render({
+      elem: '#time-end'
+     ,done: function(value, date){
+      //更新开始日期的最大日期
+      insStart.config.max = lay.extend({}, date, {
+    	  month: date.month - 1
+      });
+      }
+    });
+    
+    var $ = layui.$, active = {
+  	      reload: function(){
+  	        var start = $('#time-start');
+  	       	var end = $('#time-end');
+  	       
+  	        //执行重载
+  	        table.reload('test-table-reload', {
+  	          page: {
+  	            curr: 1 //重新从第 1 页开始
+  	        	}
+  	          ,where: {
+  	            startTime:  start.val(),
+  	            endTime: end.val()
+  	          }
+  	        });
+  	      }
+  	};
+   
+   $('.test-table-reload-btn .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+   });
+  
+   //查看图表
+   $("#tochart").click(function(){
+		//获取开始时间
+		var startTime = $("#time-start").val();
+		var endTime = $("#time-end").val();
+		var Tochart = "${rc.contextPath}/storeVisited/toStoreVisitsChartPage?startTime="+startTime+"&endTime="+endTime+"&count="+excoptcount
+		parent.layui.index.openTabsPage(Tochart,"<@spring.message code='mess.report.store.chartTittle'/>");//商铺访问量图表
+   });
+   //查看对比图表
+   $("#tocontrastchart").click(function(){
+		layer.open({
+	            type: 1,
+	            title: "<@spring.message code='mess.report.open.title'/>",//选择方式
+	            skin: 'layui-layer-rim',
+	            <#if i18n_l ?? && i18n_l =='en_US'>
+	            area: ['800px', '300px'],
+	            <#else>
+	            area: ['700px', '300px'],
+	            </#if>
+	            btn: ["<@spring.message code='mess.report.open.btn1'/>","<@spring.message code='mess.report.open.btn2'/>"],//选择方式
+	            content: $('#SelectionMethod'),
+	            yes: function(index, layero){
+	            	 var type= $('input[name="type"]:checked').val();
+	            	 if(type==1){
+	            		 var mouth1 =$("#begin-month").val();
+		            	 var mouth2 =$("#end-month").val();
+		            	 if(mouth1==mouth2){
+		            		 layer.msg("<@spring.message code='mess.report.open.msg1'/>");//相同月份无法比较
+		            		 return false;
+		            	 }else{
+		            		 var type= $('input[name="type"]:checked').val();
+			            	 var Tochart = "${rc.contextPath}/storeVisited/toStoreContrastChartPage?mouth1="+mouth1+"&mouth2="+mouth2+"&type="+type+"&count="+excoptcount  
+			            	 parent.layui.index.openTabsPage(Tochart,"<@spring.message code='mess.report.store.compare.chartTittle'/>");//商铺访问量对比图表
+		            	 }
+	            	 }else if(type==0){
+	            		 var day1 =$("#sTimeof1").val();
+		            	 var day2 =$("#eTimeof2").val();
+		            	 if(day1==null||day1==''||day2==null||day2==''){
+		            		 layer.msg("<@spring.message code='mess.report.open.msg2'/>");//请先选择比较日期
+		            		 return false;
+		            	 }
+		            	 if(day1==day2){
+		            		 layer.msg("<@spring.message code='mess.report.open.msg3'/>");//相同日期无法比较
+		            		 return false;
+		            	 }
+		            	 var stdat1=day1.substr(0,10)
+		            	 var endat1=day1.substr(13,day1.length)
+		            	 var daynum1=(Date.parse(endat1)-Date.parse(stdat1))/1000/3600/24;
+		            	 
+		            	 var stdat2=day2.substr(0,10)
+		            	 var endat2=day2.substr(13,day2.length)
+		            	 var daynum2=(Date.parse(endat2)-Date.parse(stdat2))/1000/3600/24;
+		            	 if(Number(daynum1)>50||Number(daynum2)>50){
+		            		 layer.msg("<@spring.message code='mess.report.open.msg4'/>");//为了展示效果,日期天数需要控制在50天以内
+		            		 return false;
+		            	 }
+		            	 if(daynum1!=daynum2){
+		            		 layer.msg("<@spring.message code='mess.report.open.msg5'/>");//比较天数要相同
+		            		 return false;
+		            	 }
+		            	  var Tochart = "${rc.contextPath}/storeVisited/toStoreContrastChartPage?stdat1="+stdat1+"&endat1="+endat1+"&stdat2="+stdat2+"&endat2="+endat2+"&type="+type  
+			      		  parent.layui.index.openTabsPage(Tochart,"<@spring.message code='mess.report.store.compare.chartTittle'/>");//商铺访问量对比图表
+	            	 }layer.close(index);
+	            },
+	            btn2: function(index, layero){layer.close(index)}
+	 	});
+		form.render();
+   })
+	
+  });
+  </script>
+  <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+  </script>
+</body>
+</html>

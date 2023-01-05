@@ -1,0 +1,22 @@
+/**
+	提取公共基础样式。
+*/
+
+/* 表单必选项样式 */
+.layui-bixuan{
+			color:red;
+		}
+		
+		
+		
+.vali-red{
+			color:red;
+		}
+
+/* 图片边框样式 */
+.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}
+
+.storeicon{
+	margin: 10px 10px;
+}
+

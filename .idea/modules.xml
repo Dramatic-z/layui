@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/common/cache/common-cache.iml" filepath="$PROJECT_DIR$/common/cache/common-cache.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/core/common-core.iml" filepath="$PROJECT_DIR$/common/core/common-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/dal/common-dal.iml" filepath="$PROJECT_DIR$/common/dal/common-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/domain/common-domain.iml" filepath="$PROJECT_DIR$/common/domain/common-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/logger/common-logger.iml" filepath="$PROJECT_DIR$/common/logger/common-logger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/web/common-web.iml" filepath="$PROJECT_DIR$/common/web/common-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-layui/dal/layui-dal.iml" filepath="$PROJECT_DIR$/cloud-layui/dal/layui-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-layui/domain/layui-domain.iml" filepath="$PROJECT_DIR$/cloud-layui/domain/layui-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-layui/rest/layui-rest.iml" filepath="$PROJECT_DIR$/cloud-layui/rest/layui-rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-layui/service/layui-service.iml" filepath="$PROJECT_DIR$/cloud-layui/service/layui-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-layui/nrc-layui-root.iml" filepath="$PROJECT_DIR$/cloud-layui/nrc-layui-root.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nrc-project-root.iml" filepath="$PROJECT_DIR$/nrc-project-root.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>版本日志详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">商场版本日志信息</div>
+    	  <div class="layui-card-body" style="padding:15px;width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	  <#if userType ?? && userType == -2>   
+   	      商场：  <div class="layui-inline">
+              <select name="marketId" id="search-market">
+                <option value="">请选择商场</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>		
+					</#list>
+			    </#if>
+              </select>
+            </div>
+       </#if>
+            日志类型： <div class="layui-inline">
+              <select name="type" id="search-type">
+                <option value="">请选择日志类型</option>
+                <option value="0">成功</option>
+                <option value="1">下载失败</option>
+                <option value="2">系统错误</option>
+                <option value="3">回滚错误</option>
+                <option value="4">回滚成功</option>
+              </select>
+            </div>
+      	
+		    <button class="layui-btn" data-type="reload">  搜索</button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()">重置</button>
+       </div>
+			<table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload" style="margin: 50px;"></table>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+ 
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate','excel'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer
+	 	,excel = layui.excel;
+	 	 
+  var tabledata;
+  var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/versionLog/queryVersionLogList'
+	    ,toolbar: '#test-table-toolbar-toolbarDemo'
+    	,defaultToolbar: ['filter',{
+        	title: '导出' //标题
+            ,layEvent: 'LAYTABLE_TIP_EXPORT' //事件名，用于 toolbar 事件中使用
+            ,icon: 'layui-icon-export' //图标类名
+	    },'print']
+	    ,title: '版本日志信息表'
+	    ,cols: [[
+		  {type: 'checkbox', fixed: 'left'}
+	      ,{field:'id', title:'序号', width:80,templet:'#zizeng'}
+	      ,{field:'extension', title:'导览机名称', width:200}
+	      /* ,{field:'marketname', title:'商场名', width:200} */
+	      ,{field:'vnum', title:'当前版本号', width:120}
+	      ,{field:'memo', title:'日志类型', width:120}
+	      ,{field:'cretime', title:'创建时间'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+	    ,done: function(res, curr, count){
+	    	 tabledata=res.data;
+	    }
+   });
+  	 
+  //头工具栏事件
+  table.on('toolbar(test-table-reload)', function(obj){
+  //var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+	      case 'LAYTABLE_TIP_EXPORT':
+	    	  if(tabledata!=null){
+	    	  var arr = new Array();
+	    	  //弹出loading
+	          var index = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.2 });
+	    	  for (var i = 0; i < tabledata.length; i++) {
+	    		 var o = new Object();
+	    		 var el=tabledata[i];
+	    		 o.index=el.LAY_TABLE_INDEX+1;
+				 o.extension=el.extension;
+				 o.vnum=el.vnum;
+				 o.content=el.content;
+				 o.cretime=el.cretime;
+				 arr.push(o);
+			  }
+	    	  //数组头部新增表头
+	    	  arr.unshift({index:'序号',extension:'导览机名称',vnum:'当前版本号',
+	    		  content:'日志类型',cretime:'创建时间'});
+	    	  //设置样式的函数，传入设置的范围，表头样式
+             excel.setExportCellStyle(arr, 'A1:E1', {
+                 s: {
+                     fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                     alignment: {
+                         horizontal: 'center',
+                         vertical: 'center'
+                     },
+                     font: { sz: 12, bold: true }
+                 }
+             });
+             //设置样式的函数，传入设置的范围，单元格边框样式
+             excel.setExportCellStyle(arr, 'A1:E' + arr.length, {
+                 s: {
+                     border: {
+                         top: {
+                             style: 'thin', color: { rgb: "000000" }
+                         }, bottom: {
+                             style: 'thin', color: { rgb: "000000" }
+                         }, left: {
+                             style: 'thin', color: { rgb: "000000" }
+                         }, right: {
+                             style: 'thin', color: { rgb: "000000" }
+                         }
+                     }
+                 }
+             });
+             var colConf = excel.makeColConfig({
+                 'B': 120,
+                 'E': 120
+             }, 100);
+	     	  //如果需要调整顺序，请执行梳理函数
+             //var data = excel.filterExportData(res.data, ['name','sex','age',]);
+        	  //执行导出函数，系统会弹出弹框
+        	  excel.exportExcel({
+                   sheet1: arr
+             }, '版本日志信息表数据.xlsx', 'xlsx', {
+                   extend: {
+                       '!cols': colConf
+                   }
+             });
+             layer.close(index);
+	    	 }else{
+         		 layer.msg('当前暂无数据，请先查询。'); 
+         	 }
+	      break;
+	  };
+   });
+    
+     var $ = layui.$, active = {
+   	      reload: function(){
+   	    		var market = $('#search-market');
+	   	     	var type = $('#search-type');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	marketId: market.val(),
+	   	        	type: type.val()
+	   	          }
+	   	        });
+   	      }
+     };
+     
+     
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+    <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>

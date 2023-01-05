@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><@spring.message code='mess.store.update'/><!--修改商铺 --></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <!-- 公共css文件 -->
+  <link rel="stylesheet" href="${rc.contextPath}/common/utiljs/common.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <!--中文-->
+  <style type="text/css">
+    #US-form-select{
+    	width: 280px;
+    }
+	.search{
+		background : url(${rc.contextPath}/layuiadmin/layui/css/sousuo.png) no-repeat 200px center;
+		padding-left: 10px;
+		margin-left: 10px;
+	}
+	/*新的复选框样式边框   未使用点位的配置*/
+	.layui-form-checked[lay-skin=primary_u] i{
+		border-color:#5fb878 !important;
+		background-color:#FFF !important;
+		color:#5fb878 !important;
+		font-weight: bold;
+	}
+	/*新的复选框样式边框   默认选中的配置*/
+	.layui-form-checked[lay-skin=primary_c] i{
+		border-color:#5fb878 !important;
+		background-color:#FFF !important;
+		color:#5fb878 !important;
+		font-weight: bold;
+	}
+	/*新的复选框样式边框   已使用点位的配置*/
+	.layui-form-checked[lay-skin=primary_n] i{
+		border-color:#5fb878 !important;
+		background-color:#FFF !important;
+		color:#5fb878 !important;
+		font-weight: bold;
+	}
+	/*新的复选框样式  鼠标移入的样式*/
+	/*.layui-form-checkbox[lay-skin=primary_u]:hover i{
+		border-color:#5fb878 !important;
+	}
+	.layui-form-checkbox[lay-skin=primary_n]:hover i{
+		border-color:#5fb878 !important;
+	}
+	.layui-form-radio>i:hover, .layui-form-radioed>i{
+		 color: #5fb878 !important;
+	}*/
+	/*新的复选框样式  文本的长度*/
+	.layui-form-checkbox span {
+		width: 64px;
+	}
+	/*新的复选框样式  新定义的样式  文字不同的颜色进行区分*/
+	.layui-form-checkbox[lay-skin=primary_u] span {
+		background-color: #b7b287 !important;
+	}
+	.layui-form-checkbox[lay-skin=primary_n] span {
+		background-color: #b9b6b6 !important;
+	}
+  </style>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  <!--en_US-->
+  <style type="text/css">
+    #US-form-lable{
+    	width: 190px;
+    }
+    #US-form-select{
+    	width: 300px;
+    }
+  </style></#if>
+</head>
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+<script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','element','admin', 'upload', 'util'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,element = layui.element
+    ,layer = layui.layer
+    ,form = layui.form
+    ,upload = layui.upload
+    ,util = layui.util
+    ,data;
+    $(function(){
+       var idd=$("#id").val();
+   	   $.ajax({
+              url: '${rc.contextPath}/store/toSelectStoreById?id='+idd,
+              type: "POST",
+              dataType: 'json',
+              async: false,
+              success: function (result) {
+           	   if(result!=null&&result.code=="0"){
+ 	          		 var store = result.data;
+ 	          		 data = store;
+ 	          		 $("#img-upload-logo").attr("src",store.logoUrl);
+ 	               	 $("#img-upload-store").attr("src",store.storeUrl);
+ 	               	 $("#img-upload-intro").attr("src",store.introduceUrl);
+ 	               	 if(store.status == 1){
+ 	               		$("#test-status").prop("checked",true);
+ 	               	 }else{
+ 	               		$("#test-status").prop("checked",false);
+ 	               	 }
+ 	       		   	 form.val('component-form-group', {
+ 	           	          "nameChina": store.nameChina,
+ 	           	          "nameEng": store.nameEng,
+						  "nameFan": store.nameFan,
+ 	           	          "marketId": store.marketId,
+ 	           	          "bigFormat": store.bigFormat,
+ 	           	          "smallFormat": store.smallFormat,
+ 	           	          "floor": store.floor,
+ 	           	          "point": store.point,
+ 	           	      	  "keyword": store.keyword,
+ 	           	      	  "storeIntroductionChina": store.storeIntroductionChina,
+ 	           			  "storeIntroductionEng": store.storeIntroductionEng,
+						  "storeIntroductionFan": store.storeIntroductionFan,
+ 	           			  "logoUrl": store.logoUrl,
+ 	           			  "storeUrl": store.storeUrl,
+ 	           			  "introduceUrl": store.introduceUrl,
+ 	           	     });
+ 	       		     form.render(); 
+           	   }
+           	}
+          });
+   	      
+      	  var ret=$("#returnMsg").val();
+      	  if(ret!=null&&ret!=''){
+      		 if(ret=='修改成功'){
+      			layer.msg("<@spring.message code='mess.store.return.Msg1'/>");
+      		 }else if(ret=='修改失败'){
+      			layer.msg("<@spring.message code='mess.store.return.Msg2'/>");
+      		 }else if(ret=='提交申请成功'){
+      			layer.msg("<@spring.message code='mess.store.return.Msg3'/>");
+      		 }else if(ret=='提交申请失败'){
+      			layer.msg("<@spring.message code='mess.store.return.Msg4'/>");
+      		 } 
+      	  } 
+   	});
+    
+    //logo图片上传
+    var uploadInst1 = upload.render({
+	     elem: '#test-upload-logo' //绑定元素
+	     ,url: '${rc.contextPath}/store/deallogopic' //上传接口	
+	     ,acceptMime:'image/png,image/JPG,.jpg'
+	     ,exts:'jpg|png|JPG'
+    	 ,auto: false  //关闭自动上传 使得像素验证起效
+         ,size: 1024*1  //上传大小限制  最大值（单位kb）
+  	 	 ,choose: function(obj){uploadimage_choose(obj,300,300,1000,1000)}
+	     ,before: function(obj){uploadimage_before(obj,"#logoload","#logo","#img-upload-logo")} 
+	     ,done: function(res){uploadimage_done(res,"#logo","#logoload","#logoUrl")}
+	     ,error: function(){layer.msg("<@spring.message code='mess.bformat.upload.error'/>")}//上传异常
+	});
+    //双击查看原图
+    $("#img-upload-logo").dblclick(function(){doubleclickviewimage(this.src)});
+  	
+    //商铺图片上传
+    var uploadInst2 = upload.render({
+	     elem: '#test-upload-store' //绑定元素
+	     ,url: '${rc.contextPath}/store/dealstorepic' //上传接口	
+	     ,acceptMime:'image/png,image/JPG,.jpg'
+	     ,exts:'jpg|png|JPG'
+    	 ,auto: false  //关闭自动上传 使得像素验证起效
+      // ,size: 1024*1  //上传大小限制  最大值（单位kb）
+    	 ,choose: function(obj){uploadimage_choose(obj,800,600,1920,1080)}
+	     ,before: function(obj){uploadimage_before(obj,"#storeload","#store","#img-upload-store")} 
+	     ,done: function(res){uploadimage_done(res,"#store","#storeload","#storeUrl")}
+	     ,error: function(){layer.msg("<@spring.message code='mess.bformat.upload.error'/>")}//上传异常
+	});
+    //双击查看原图
+    $("#img-upload-store").dblclick(function(){doubleclickviewimage(this.src)});
+    
+  	//商铺简介图片上传
+    var uploadInst3 = upload.render({
+	     elem: '#test-upload-intro' //绑定元素
+	     ,url: '${rc.contextPath}/store/dealintropic' //上传接口	
+	     ,acceptMime:'image/png,image/JPG,.jpg'
+	     ,exts:'jpg|png|JPG'
+    	 ,auto: false  //关闭自动上传 使得像素验证起效
+      // ,size: 1024*1  //上传大小限制  最大值（单位kb）
+    	 ,choose: function(obj){uploadimage_choose(obj,800,600,1920,1080,uploadInst2)}
+	     ,before: function(obj){uploadimage_before(obj,"#introload","#intro","#img-upload-intro")} 
+	     ,done: function(res){uploadimage_done(res,"#intro","#introload","#introduceUrl")}
+	     ,error: function(){layer.msg("<@spring.message code='mess.bformat.upload.error'/>")}//上传异常
+	});
+    //双击查看原图
+    $("#img-upload-intro").dblclick(function(){doubleclickviewimage(this.src)});
+  	
+  	//监听下拉框选中事件
+    //根据所选商场id查询楼层和大业态
+    form.on('select(findall)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainbformatfloorbymarketid(data,path);
+    	form.render('select');
+    });
+    //根据所选大业态id查询小业态
+    form.on('select(findsmformat)', function (data) {
+    	var path='${rc.contextPath}';
+    	obtainsmallformatbybformatid(data,path);
+    	form.render('select');
+    });
+
+	//监听指定开关
+	form.on('switch(component-form-switchTest)', function(data){
+	  if(this.checked == false){
+		  layer.tips('温馨提示：商铺状态设置为不启用时，该商铺绑定的点位状态会更新为未使用！', data.othis);
+	  }
+	});
+
+	//页面图片清除
+	$("#logo_clear").click(function(){
+		$("#img-upload-logo").attr('src', '');
+		$("#logoUrl").val('');
+	})
+	//页面图片清除
+	$("#store_clear").click(function(){
+	  $("#img-upload-store").attr('src', '');
+	  $("#storeUrl").val('');
+	})
+	//页面图片清除
+	$("#intro_clear").click(function(){
+	  $("#img-upload-intro").attr('src', '');
+	  $("#introduceUrl").val('');
+	})
+
+	//按钮事件
+	util.event('lay-demo', {
+	  setpoint: function(){
+		  layer.load(2);
+		  var oldfloor = data.floor;
+		  var oldpoint = data.point;
+		  var path='${rc.contextPath}';
+		  var floor=$("#test-floor").val();
+		  var marketId =$("#test-marketId").val();
+		  if(floor==''||marketId==''){
+			  layer.close(layer.index);
+			  layer.msg("<@spring.message code='mess.store.enter.floor'/>");//请先选择楼层
+		  }else if(marketId!=null&&marketId!=''&&floor!=null&&floor!=''){
+			  var point=$("#test-point").val();
+			  if(floor!=oldfloor){
+				  obtainallstorepointbybformatid(floor,marketId,path,point);
+			  }else if(floor==oldfloor){
+				  obtainallstorepointbybformatid(floor,marketId,path,point);
+				  if(oldpoint!=null&&oldpoint!=''){
+					  var arr=oldpoint.split(',');
+					  for (var i = 0; i < arr.length; i++) {
+						  $("#editPoint").prepend("<div style='float: left;'><input type='checkbox' checked lay-skin='primary_c' name='checkpoint' value="+arr[i]+" title="+arr[i]+"></div>");
+					  }
+				  }
+			  }
+			  //添加点位搜索
+			  /*inp = document.getElementById("quick_search");*/
+			  $("#editPoint").prepend('<input type="text" class="layui-input search" id="quick_search" autocomplete="off" style="width: 240px;">');
+			  form.render();
+			  layer.close(layer.index);
+
+			  layer.open({
+				  type: 1,
+				  title: "选择点位&nbsp;&nbsp;"+
+						  "注：<i class='layui-icon layui-icon-circle-dot' style='color: #5fb878;'></i>-当前使用，"+
+						  "<i class='layui-icon layui-icon-circle-dot' style='color: #b7b287;'></i>-已使用，"+
+						  "<i class='layui-icon layui-icon-circle-dot' style='color: #b9b6b6;'></i>-未使用。",
+				  skin: 'layui-layer-rim',
+				  area: ['850px', '500px'],
+				  btn: ["<@spring.message code='mess.bformat.addform'/>", "<@spring.message code='mess.bformat.cancel'/>"],//确定，取消
+				  content: $('#editPoint'),
+				  yes: function(index, layero){
+					  var arr=new Array();
+					  $("input:checkbox[name='checkpoint']:checked").each(function(){
+						  arr.push($(this).val());
+					  });
+					  $("#test-point").val(arr);
+					  layer.close(index);
+				  },
+				  btn2: function(index, layero){layer.close(index)}
+			  });
+			  form.render();
+		  }
+	  }
+	});
+	//搜索  -  函数
+	$('#editPoint').on("input propertychange",":input", function (event) {
+		var search = $("#quick_search").val();
+		$.each($("#editPoint input:checkbox"),function(){
+			var str = $(this).val();
+			if(str.indexOf(search)!= -1){
+				$(this).parent().show();
+			}else{
+				$(this).parent().hide();
+			}
+		});
+		form.render();
+	});
+  
+    /* 自定义验证规则 */
+    form.verify({
+      nameChina: function(value){
+        if(value.length > 20){
+          return "<@spring.message code='mess.store.verify.chname'/>";//商铺中文名不能超过20个字符
+        }
+      }
+      ,nameEng: function(value){
+        if(value.length > 60){
+          return "<@spring.message code='mess.store.verify.enname'/>";//商铺英文名不能超过60个字符
+        }
+      }
+		,nameFan: function(value){
+			if(value.length > 20){
+				return "商铺繁体名不能超过20个字符";//商铺英文名不能超过60个字符
+			}
+		}
+      ,keyword: function(value){
+        if(value.length > 20){
+            return "<@spring.message code='mess.store.verify.keyw'/>";//关键字不能超过20个字符
+          }
+      }
+      ,storech: function(value){
+        if(value.length > 500){
+          return "商铺中文描述不能超过500个字符";//商铺中文描述不能超过200个字符
+        }
+      }
+      ,storeeng: function(value){
+        if(value.length > 2000){
+      	return "商铺英文描述不能超过2000个字符";//商铺中文描述不能超过500个字符
+        }
+      }
+		,storeFan: function(value){
+			if(value.length > 500){
+				return "商铺繁体描述不能超过500个字符";//商铺中文描述不能超过500个字符
+			}
+		}
+     
+   });
+
+	//监听提交事件
+	form.on("submit(component-form-submit)",function(data){
+	  var marketId =$("#test-marketId").val();
+	  var point =$("#test-point").val();
+	  var path='${rc.contextPath}';
+	  var id =$("#id").val();
+	  var tar = false;
+	  $.ajax({
+		  url: path+'/store/CheckPoint?point='+point+'&marketId='+marketId+'&id='+id,
+		  type: "POST",
+		  dataType: 'json',
+		  async: false,
+		  success: function (result) {
+			  if ("0" == result.code) {
+				  var msg=result.msg
+				  if(msg!=null&&msg!=''){
+					  layer.confirm("点位："+msg+" 已其他商铺使用，确认添加吗？", function(index){
+						  layer.close(index);
+						  $('form').submit();
+					  });
+				  }else{
+					  tar=true;
+				  }
+			  }
+		  }
+	  });
+	  return tar;
+	});
+});
+
+</script>
+<body>
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-header"><@spring.message code='mess.store.update'/><!-- 修改商铺 --> <span>  (<@spring.message code='mess.store.note1'/><!--注 -->：<img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/><@spring.message code='mess.store.note2'/><!--为必填项-->)</span></div>
+    <div class="layui-card-body" style="padding: 15px;">
+      <form class="layui-form layui-form-pane" method="post" action="${rc.contextPath}/store/updateStore" lay-filter="component-form-group">
+        <#if id??>
+        	<input type="hidden" name="id" id ="id" value="${id?c}">
+        </#if>
+        <#if returnMsg??>
+        	<input type="hidden" name="returnMsg" id ="returnMsg" value="${returnMsg}">
+        </#if>
+       	  <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!-- 商铺中文名 --> <@spring.message code='mess.store.Chinese.name'/></label>
+	            <div class="layui-input-inline" style="width: 515px;">
+	              <input type="text" name="nameChina" id ="test-nameChina" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="<@spring.message code='mess.store.enter.Chinese.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameChina"><!--20个字符以内--><@spring.message code='mess.bformat.20chart'/></div>
+          </div>
+          <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable"><!--商铺英文名--><@spring.message code='mess.store.English.name'/></label>
+	            <div class="layui-input-inline" style="width: 515px;">
+	              <input type="text" name="nameEng" id ="test-nameEng" class="layui-input" lay-verify="required|nameEng" autocomplete="off" placeholder="<@spring.message code='mess.store.enter.English.name'/>">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-nameEng"><!--60个字符以内 --><@spring.message code='mess.bformat.60chart'/></div>
+          </div>
+		  <div class="layui-form-item">
+			  <label class="layui-form-label" id="US-form-lable">商铺繁体名</label>
+			  <div class="layui-input-inline" style="width: 515px;">
+				  <input type="text" name="nameFan" id ="test-nameFan" class="layui-input" lay-verify="required|nameEng" autocomplete="off" placeholder="请输入商铺繁体名">
+			  </div>
+			  <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+			  <div class="layui-form-mid layui-word-aux" id="check-nameFan"><!--20个字符以内--><@spring.message code='mess.bformat.20chart'/></div>
+		  </div>
+          
+          <div class="layui-form-item">
+	         <div class="layui-inline" style="display: none;">
+	           <label class="layui-form-label" id="US-form-lable">选择商场</label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="marketId" lay-filter="findall" lay-verify="required" id="test-marketId">
+	               <!-- <option value="">-请选择商场-</option> -->
+	               <#if marketlist??>
+						<#list marketlist as market>
+							<#if userType ?? && userType !=-2>
+								<#if market.id == domain.marketId>
+								    <option value="${market.id}">${market.marketName}</option>
+								</#if>
+							<#elseif userType == -2>
+								<option value="${market.id}">${market.marketName}</option>
+							</#if>			
+						</#list>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	         </div>
+	         <div class="layui-inline">
+	           <label class="layui-form-label" id="US-form-lable"><!--一级业态 --><@spring.message code='mess.store.bformat'/></label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="bigFormat" lay-filter="findsmformat" lay-verify="required" id="test-bigFormat">
+	               <option value="">-<@spring.message code='mess.store.enter.bformat'/>-</option><!--请选择一级业态 -->
+	               <#if bformatlist??>
+						<#list bformatlist as bformat>
+							<#if userType ?? && userType !=-2>
+								<#if bformat.marketId == domain.marketId>
+									<option value="${bformat.id}">${bformat.nameChina}</option>
+								</#if>
+							<#else >
+								<option value="${bformat.id}">${bformat.nameChina}</option>
+							</#if>		
+						</#list>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	         </div>
+	         <div class="layui-inline">
+	           <label class="layui-form-label" id="US-form-lable"><!--二级业态--><@spring.message code='mess.store.sformat'/></label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="smallFormat" lay-verify="required" id="test-smallFormat">
+	               <option value="">-<@spring.message code='mess.store.enter.sformat'/>-</option><!-- 请选择二级业态 -->
+	               <#if sformatlist??>
+						<#list sformatlist as sformat>
+							<#if sformat.bigFormatId == domain.bigFormat>
+								<option value="${sformat.id}">${sformat.nameChina}</option>
+					 		</#if>
+						</#list>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	         </div>
+	      </div>
+	      
+	      <div class="layui-form-item">
+	         <div class="layui-inline">
+	           <label class="layui-form-label" id="US-form-lable"><!--楼层 --><@spring.message code='mess.store.floor'/></label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <select name="floor" lay-filter="findstores" lay-verify="required" id="test-floor">
+	               <option value="">-<@spring.message code='mess.store.enter.floor'/>-</option><!--请选择楼层 -->
+	               <#if floorlist??>
+						<#list floorlist as floor>
+							<#if floor?number gt 0>
+								<option value="${floor}">${floor}<@spring.message code='mess.store.floor.layer'/></option><!--层 -->
+							<#else >
+								<option value="${floor}">${floor-1}<@spring.message code='mess.store.floor.layer'/></option><!--层 -->
+							</#if>
+						</#list>
+				   </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	         </div>
+	         <div class="layui-inline">
+	           <label class="layui-form-label" id="US-form-lable"><!-- 点位 --><@spring.message code='mess.store.point'/></label>
+	           <div class="layui-input-inline" id="US-form-select">
+	             <input type="text" name="point" id ="test-point" class="layui-input" readonly="readonly" lay-verify="required" placeholder="<@spring.message code='mess.store.enter.point'/>" autocomplete="off">
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	         </div>
+	         <div class="layui-inline">
+	            <button class="layui-btn layui-btn-radius layui-btn-xs layui-btn-normal" type="button" lay-demo="setpoint" id="setpoint"><!--选择点位--><@spring.message code='mess.store.select.point'/></button>
+				<div id="editPoint" class="demo-tree" hidden="" style="margin:10px;"></div>
+	         </div>
+	      </div>
+	      
+          <div class="layui-form-item">
+              <label class="layui-form-label" id="US-form-lable"><!-- 关键字 --><@spring.message code='mess.store.keyword'/></label>
+	          <div class="layui-input-inline" style="width: 515px;">
+	            <input type="text" name="keyword" id ="test-keyword" class="layui-input" lay-verify="keyword" placeholder="<@spring.message code='mess.store.enter.keyword'/>" autocomplete="off">
+	          </div>
+	          <div class="layui-form-mid layui-word-aux" id="check-keyword"><!-- 20个字符以内 --><@spring.message code='mess.bformat.20chart'/></div>
+	      </div>
+          <div class="layui-form-item">
+	          <label class="layui-form-label" id="US-form-lable"><!-- 状态 --><@spring.message code='mess.store.status'/></label>
+	          <div class="layui-input-block">
+	            <input type="checkbox" name="extension" id ="test-status" lay-skin="switch" lay-text="<@spring.message code='mess.store.notenable'/>" lay-filter="component-form-switchTest">
+	          </div>
+	      </div>
+        
+          <div class="layui-form-item layui-form-text">
+	          <label class="layui-form-label"><!-- 商铺中文描述 --><@spring.message code='mess.store.Chinese.description'/> <span class="layui-word-aux" id="check-ch" style="margin-left: 25px;"><!-- 200个字符以内 --><@spring.message code='mess.store.200chart'/></span></label>
+	          <div class="layui-input-block">
+	            <textarea name="storeIntroductionChina" id ="test-ch" class="layui-textarea" lay-verify="storech" placeholder="<@spring.message code='mess.store.enter.content'/>""></textarea>
+	          </div>
+	      </div>
+	      <div class="layui-form-item layui-form-text">
+	          <label class="layui-form-label"><!--商铺英文描述--><@spring.message code='mess.store.English.description'/><span class="layui-word-aux" id="check-eng" style="margin-left: 25px;"><!-- 500个字符以内 --><@spring.message code='mess.store.500chart'/></span></label>
+	          <div class="layui-input-block">
+	            <textarea name="storeIntroductionEng" id ="test-eng" class="layui-textarea" lay-verify="storeeng" placeholder="<@spring.message code='mess.store.enter.content'/>""></textarea>
+	          </div>
+	      </div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">商铺繁体描述<span class="layui-word-aux" id="check-Fan" style="margin-left: 25px;">500个字符以内</span></label>
+				<div class="layui-input-block">
+					<textarea name="storeIntroductionFan" id ="test-fan" class="layui-textarea" lay-verify="storeFan" placeholder="<@spring.message code='mess.store.enter.content'/>"></textarea>
+				</div>
+			</div>
+
+	      <div class="layui-form-item">
+	         <div class="layui-inline">
+	           <div class="layui-upload">
+	              <button type="button" class="layui-btn" id="test-upload-logo"><!-- 上传LOGO图片 --><@spring.message code='mess.store.uppic'/></button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" id="img-upload-logo" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 110px;">
+						<img src="${rc.contextPath}/layuiadmin/layui/css/qingchu.png" id="logo_clear" style="width: 20px;height: 20px;position:relative;left: -30px;"/>
+						<span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.store.up.note1'/></span></div>
+	                <p id="p-upload-logo"></p>
+	                <input type="hidden" name="logoload" id ="logoload">
+	                <input type="hidden" name="logo" id ="logo">
+	                <input type="hidden" name="logoUrl" id ="logoUrl">
+	              </div>
+	           </div> 
+	         </div>
+	         <div class="layui-inline">
+	           <div class="layui-upload" style="margin-left: 100px;">
+	              <button type="button" class="layui-btn" id="test-upload-store"><!-- 上传商铺图片--><@spring.message code='mess.store.upstorepic'/></button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" id="img-upload-store" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 100px;">
+						<img src="${rc.contextPath}/layuiadmin/layui/css/qingchu.png" id="store_clear" style="width: 20px;height: 20px;position:relative;left: -30px;"/>
+						<span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.store.up.note2'/></span></div>
+	                <p id="p-upload-store"></p>
+	                <input type="hidden" name="storeload" id ="storeload">
+	                <input type="hidden" name="store" id ="store">
+	                <input type="hidden" name="storeUrl" id ="storeUrl">
+	              </div>
+	           </div> 
+	         </div>
+	         <div class="layui-inline">
+	           <div class="layui-upload" style="margin-left: 100px;">
+	              <button type="button" class="layui-btn" id="test-upload-intro"><!-- 上传商铺简介图-->上传商铺简介图</button>
+	              <div class="layui-upload-list">
+	                <div style="float: left;"><img class="layui-upload-img" id="img-upload-intro" accept="image/*"></div>
+	                <div style="width: 300px;margin-left: 100px;">
+						<img src="${rc.contextPath}/layuiadmin/layui/css/qingchu.png" id="intro_clear" style="width: 20px;height: 20px;position:relative;left: -30px;"/>
+						<span><!-- 注：支持jpg,png类型上传<br>LOGO大小应为300*300以达到最佳展示效果 --><@spring.message code='mess.store.up.note2'/></span></div>
+	                <p id="p-upload-intro"></p>
+	                <input type="hidden" name="introload" id ="introload">
+	                <input type="hidden" name="intro" id ="intro">
+	                <input type="hidden" name="introduceUrl" id ="introduceUrl">
+	              </div>
+	           </div> 
+	         </div>
+	      </div>
+	      
+	      <div class="layui-form-item layui-layout-admin">
+            <div class="layui-input-block">
+              <div class="layui-footer" style="left: 0;">
+                <button class="layui-btn" lay-submit="" lay-filter="component-form-submit"><!-- 立即提交 --><@spring.message code='mess.store.submit'/></button>
+                <button type="reset" class="layui-btn layui-btn-primary"><!-- 重置 --><@spring.message code='mess.store.reset'/></button>
+              </div>
+         	</div>
+         </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  <!-- 定义公共获取数据模块 -->
+  <script src="${rc.contextPath}/common/utiljs/obtainodmarket.js?v=1.02"></script>
+  <!-- 定义图片上传模块 -->
+  <script src="${rc.contextPath}/common/utiljs/uploadpic.js"></script>
+  
+</body>
+</html>

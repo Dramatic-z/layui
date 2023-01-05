@@ -1,0 +1,105 @@
+<style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+    }  
+    .layui-form-label {
+   	 width: 90px;
+    }
+    .form-top{
+   	 margin-top: 20px;
+	}
+</style>
+<body>
+<form class="layui-form form-top" hidden="" id="openofrolepage" lay-filter="roleform">
+  		<input type="hidden" name="edit-id" id ="edit-id" value="" class="layui-input">
+  		<div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">角色名称</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-name" id ="edit-name" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入角色名称">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-name">20个字符以内</div>
+        </div>
+        <#if userType ?? && userType == -2>
+        <div class="layui-form-item" id="marketroleDiv">
+			   <label class="layui-form-label">选择商场</label>
+	           <div class="layui-input-inline">
+	             <select name="edit-marketId" id="edit-marketId" lay-filter="upcheck">
+	               <option value="">-请选择商场-</option>
+	               <#if marketlist??>
+					 <#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>
+					 </#list>
+			     </#if>
+	             </select>
+	           </div>
+	           <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	    </div>
+	    <div class="layui-form-item" id="basticroleDiv" hidden="">
+	            <label class="layui-form-label" id="US-form-lable">角色类型</label>
+	            <div class="layui-input-inline">
+	              <input type="text" class="layui-input" autocomplete="off" readonly="readonly" value="基础角色">
+	            </div>
+	            <img style="margin-top: 2px;" src="${rc.contextPath}/layuiadmin/layui/css/bitian.png"/>
+	            <div class="layui-form-mid layui-word-aux" id="check-memo">20个字符以内</div>
+        </div>
+	    <#else >
+	    <input type="hidden" name="marketId" id ="edit-marketId" value="${marketId?c}" class="layui-input">
+	    </#if>
+        <div class="layui-form-item">
+	            <label class="layui-form-label" id="US-form-lable">备注</label>
+	            <div class="layui-input-inline">
+	              <input type="text" name="edit-memo" id ="edit-memo" class="layui-input" lay-verify="required|nameChina" autocomplete="off" placeholder="请输入备注">
+	            </div>
+	            <div class="layui-form-mid layui-word-aux" id="check-memo">20个字符以内</div>
+        </div>
+	    <div class="layui-form-item">
+             <label class="layui-form-label" id="US-form-lable">状态</label>
+             <div class="layui-input-inline" id="US-form-select">
+               <select name="edit-status" id="edit-status">
+                <option value="1" selected="selected">启用</option><!--启用-->
+                <option value="0">未启用</option><!--未启用-->
+               </select>
+             </div>
+        </div>
+</form>
+  <script>
+  
+	//20字符以内
+	$('#edit-name').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-name').text("当前已超出20字符");//当前已超出20字符
+			$('#check-name').css("color","red");
+		}else{
+			$('#check-name').text("20个字符以内");//20个字符以内
+			$('#check-name').css("color","#999");
+		}
+	});
+	
+	//20字符以内
+	$('#edit-area').on("input propertychange", function () {
+		if($(this).val().length > 20){
+			$('#check-area').text("当前已超出20字符");//当前已超出20字符
+			$('#check-area').css("color","red");
+		}else{
+			$('#check-area').text("20个字符以内");//20个字符以内
+			$('#check-area').css("color","#999");
+		}
+	});
+	
+	//10字符以内
+	$('#edit-point').on("input propertychange", function () {
+		if($(this).val().length > 10){
+			$('#check-point').text("当前已超出10字符");//当前已超出10字符
+			$('#check-point').css("color","red");
+		}else{
+			$('#check-point').text("10个字符以内");//10个字符以内
+			$('#check-point').css("color","#999");
+		}
+	});
+	
+	
+</script>
+</body>

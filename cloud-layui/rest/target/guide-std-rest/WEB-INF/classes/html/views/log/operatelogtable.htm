@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>用户操作日志</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="${rc.contextPath}/js/jquery-3.0.0.min.js"></script>
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/style/admin.css" media="all">
+  <!-- 自定义图标样式引入  --》基于layui 图标引自阿里iconfont -->
+  <link rel="stylesheet" href="${rc.contextPath}/layuiadmin/layui/css/icon.css" media="all">
+  <style>.layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}</style>
+  <#include '/common/returnMsg.htm'/>
+  <style type="text/css">
+    .layui-table-cell{
+     /*  height: auto!important; */
+  	 /* height: 50px;
+     white-space: normal; */
+  }  
+  </style>
+</head>
+<body>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>组件</cite></a>
+      <a><cite>数据表格</cite></a>
+      <a><cite>开启头部工具栏</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">操作日志基本信息</div>
+    	  <div class="layui-card-body" style="width: 95%;min-height:750px;" >
+        <div class="test-table-reload-btn layui-form" style="margin-bottom: 10px;" lay-filter="component-form-group">
+   	      
+        <#if userType ?? && userType == -2>
+		商场：  <div class="layui-inline">
+              <select name="marketId" lay-filter="findfloor" id="search-marketId">
+                <option value="">-请选择商场-</option>
+                <#if marketlist??>
+					<#list marketlist as market>
+						<option value="${market.id}">${market.marketName}</option>	
+					</#list>
+			    </#if>
+              </select>
+            </div>	
+	     </#if>	
+	     <div class="layui-inline">
+             <label class="layui-form-label">选择日期</label>
+         </div>
+    	 <div class="layui-inline">
+           <input type="text" class="layui-input" value="" name="startTime" id="time-start" autocomplete="off" placeholder="开始日期">
+         </div>
+         -
+         <div class="layui-inline" style="margin-right: 15px;">
+           <input type="text" class="layui-input" value="" name="endTime" id="time-end" autocomplete="off" placeholder="结束日期">
+         </div>
+	           状态：<div class="layui-inline">
+	             <select name="status" id="test-status">
+	               <option value="">请选择状态</option>
+	               <option value="1">成功</option>
+	               <option value="0">失败</option>
+	             </select>
+            </div>
+		    <button class="layui-btn" data-type="reload">  搜索</button>
+            <button class="layui-btn" onclick="javascript:window.location.reload()">重置</button>
+       </div>
+
+            <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload" style="margin: 50px;"></table> 
+            
+            <!-- <script type="text/html" id="test-table-barDemo" lay-filter="test-table-barDemo"> 
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			  <#if userType??>
+		  	    <#if userType != 2>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+			    </#if>
+ 		      </#if>		
+            </script> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <#if i18n_l ?? && i18n_l =='en_US'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_US.js"></script>
+  <#elseif i18n_l ?? && i18n_l =='zh_HK'>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui_HK.js"></script>
+  <#else>
+  	 <script src="${rc.contextPath}/layuiadmin/layui/layui.js"></script>
+  </#if>
+  <!-- 定义表单验证模块 -->
+  <script src="${rc.contextPath}/common/utiljs/validation.js"></script>
+  
+  <script>
+  layui.config({
+    base: '${rc.contextPath}/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','admin','form','upload','laydate'], function(){
+	 	 var $ = layui.$
+	 	,admin = layui.admin
+	 	,element = layui.element
+	 	,table = layui.table
+	 	,form = layui.form
+	 	,upload = layui.upload
+	 	,laydate = layui.laydate
+	 	,layer  = layui.layer;
+	 	 
+  		element.render();
+   
+	var tableinit = table.render({
+	  	elem: '#test-table-reload'
+	    ,url:'${rc.contextPath}/operateLog/queryOperateLogList'
+	    ,title: '操作日志信息表'
+	    //,width:1200
+	    ,cols: [[
+		  /* {type: 'checkbox', fixed: 'left'}
+	      , */{field:'id', title:'序号', width:80,templet:'#zizeng',align:'center'}
+	      ,{field:'operator', title:'操作员', width:120,align:'center'}
+	      ,{field:'memo', title:'所属权限', width:120,align:'center'}
+	      ,{field:'module', title:'操作模块', width:260,align:'center'}
+	      ,{field:'methods', title:'执行方法', width:120,align:'center'}
+	      ,{field:'actionurl', title:'请求路径', width:260,align:'center'}
+	  	  ,{field:'content', title:'请求参数', width:300,align:'center'}
+	      ,{field:'ip', title:'请求终端IP', width:200,align:'center'}
+	      ,{field:'statu', title:'请求状态',width:100,align:'center'}
+	      ,{field:'finalmodiftime', title:'操作记录时间',width:200,align:'center'}
+	    //  ,{fixed: 'right',title:'操作',toolbar:'#test-table-barDemo',width:140,align:'center'}
+	      ]]
+	    ,page: true
+	    ,loading:true
+   });
+  
+   var $ = layui.$, active = {
+   	      reload: function(){
+   	    	    var start = $('#time-start');
+   	    	    var end = $('#time-end');
+   	    	    var status = $('#test-status');
+	   	        var marketId = $('#search-marketId');
+	   	        
+	   	        table.reload('test-table-reload', {
+	   	          page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        	}
+	   	          ,where: {
+	   	        	marketId:  marketId.val(),
+	   	        	startTime:  start.val(),
+	   	        	endTime:  end.val(),
+	   	        	status:  status.val(),
+	   	          }
+	   	        });
+   	      }
+     };
+     
+   //开始日期
+   var insStart = laydate.render({
+   	  elem: '#time-start'
+   	  ,type: 'datetime'
+      ,done: function(value, date){
+       insEnd.config.min = lay.extend({}, date, {
+         month: date.month - 1
+       });
+       insEnd.config.elem[0].focus();
+     }
+   });
+   //结束日期
+   var insEnd = laydate.render({
+     elem: '#time-end'
+    ,type: 'datetime'
+    ,done: function(value, date){
+     //更新开始日期的最大日期
+     insStart.config.max = lay.extend({}, date, {
+   	  month: date.month - 1
+     });
+     }
+   });
+   
+     $('.test-table-reload-btn .layui-btn').on('click', function(){
+         var type = $(this).data('type');
+         active[type] ? active[type].call(this) : '';
+     });
+ });
+
+  </script>
+    <script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+	</script>
+</body>
+</html>
